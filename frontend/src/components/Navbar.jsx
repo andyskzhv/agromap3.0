@@ -144,7 +144,7 @@ function Navbar() {
                     >
                       👤 Mi Perfil
                     </Link>
-                    {(usuario.rol === 'GESTOR' || usuario.rol === 'ADMIN') && (
+                    {usuario.rol === 'GESTOR' && (
                       <>
                         <Link
                           to="/mercado/crear"
