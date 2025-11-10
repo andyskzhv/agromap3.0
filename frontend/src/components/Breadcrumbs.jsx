@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
+import { FaHome } from 'react-icons/fa';
 import { mercadoService, productoService } from '../services/api';
 import './Breadcrumbs.css';
 
@@ -68,7 +69,7 @@ function Breadcrumbs() {
     <nav className="breadcrumbs" aria-label="breadcrumb">
       <div className="breadcrumbs-container">
         <Link to="/" className="breadcrumb-item">
-          🏠 Inicio
+          <FaHome style={{ marginRight: '6px' }} /> Inicio
         </Link>
 
         {pathnames.map((name, index) => {

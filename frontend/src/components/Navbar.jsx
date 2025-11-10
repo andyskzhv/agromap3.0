@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
+import { FaSearch, FaUser, FaStore, FaClipboardList, FaShieldAlt, FaSignOutAlt, FaSignInAlt, FaUserPlus } from 'react-icons/fa';
 import './Navbar.css';
 
 function Navbar() {
@@ -49,6 +50,21 @@ function Navbar() {
     }
   };
 
+  // Cerrar menú móvil al hacer click en el overlay
+  useEffect(() => {
+    const handleOverlayClick = (e) => {
+      if (menuAbierto && e.target.classList.contains('navbar-menu') && e.target === e.currentTarget) {
+        setMenuAbierto(false);
+      }
+    };
+
+    if (menuAbierto) {
+      document.addEventListener('click', handleOverlayClick);
+    }
+
+    return () => document.removeEventListener('click', handleOverlayClick);
+  }, [menuAbierto]);
+
   return (
     <nav className="navbar">
       <div className="navbar-container">
@@ -67,6 +83,14 @@ function Navbar() {
 
         {/* Links centrados */}
         <div className={`navbar-menu ${menuAbierto ? 'active' : ''}`}>
+          <a
+            href="#sobre-nosotros"
+            className="navbar-link"
+            onClick={() => setMenuAbierto(false)}
+          >
+            Sobre Nosotros
+          </a>
+
           <Link
             to="/productos"
             className={`navbar-link ${isActive('/productos')}`}
@@ -104,7 +128,7 @@ function Navbar() {
               className="search-input"
             />
             <button type="submit" className="search-button">
-              🔍
+              <FaSearch />
             </button>
           </form>
 
@@ -121,7 +145,7 @@ function Navbar() {
                   className="profile-avatar"
                 />
               ) : (
-                <div className="profile-icon">👤</div>
+                <div className="profile-icon"><FaUser /></div>
               )}
             </button>
 
@@ -142,7 +166,7 @@ function Navbar() {
                       className="dropdown-item"
                       onClick={() => setMenuPerfilAbierto(false)}
                     >
-                      👤 Mi Perfil
+                      <FaUser /> Mi Perfil
                     </Link>
                     {usuario.rol === 'GESTOR' && (
                       <>
@@ -151,14 +175,14 @@ function Navbar() {
                           className="dropdown-item"
                           onClick={() => setMenuPerfilAbierto(false)}
                         >
-                          🏪 Mi Mercado
+                          <FaStore /> Mi Mercado
                         </Link>
                         <Link
                           to="/gestion-productos"
                           className="dropdown-item"
                           onClick={() => setMenuPerfilAbierto(false)}
                         >
-                          📋 Mis Productos
+                          <FaClipboardList /> Mis Productos
                         </Link>
                       </>
                     )}
@@ -168,7 +192,7 @@ function Navbar() {
                         className="dropdown-item admin-item"
                         onClick={() => setMenuPerfilAbierto(false)}
                       >
-                        🛡️ Panel Admin
+                        <FaShieldAlt /> Panel Admin
                       </Link>
                     )}
                     <div className="dropdown-divider"></div>
@@ -176,7 +200,7 @@ function Navbar() {
                       onClick={cerrarSesion}
                       className="dropdown-item logout-item"
                     >
-                      🚪 Cerrar Sesión
+                      <FaSignOutAlt /> Cerrar Sesión
                     </button>
                   </>
                 ) : (
@@ -186,14 +210,14 @@ function Navbar() {
                       className="dropdown-item"
                       onClick={() => setMenuPerfilAbierto(false)}
                     >
-                      🔐 Iniciar Sesión
+                      <FaSignInAlt /> Iniciar Sesión
                     </Link>
                     <Link
                       to="/registro"
                       className="dropdown-item register-item"
                       onClick={() => setMenuPerfilAbierto(false)}
                     >
-                      ✨ Registrarse
+                      <FaUserPlus /> Registrarse
                     </Link>
                   </>
                 )}

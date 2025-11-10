@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { productoService, comentarioService } from '../services/api';
 import { useToast } from '../components/Toast';
+import { FaArrowLeft, FaClock, FaFolder, FaTag, FaDollarSign, FaBox, FaStore, FaMapMarkerAlt, FaComments, FaThumbsUp, FaTrash, FaCheckCircle, FaTimesCircle } from 'react-icons/fa';
 import './DetalleProducto.css';
 
 function DetalleProducto() {
@@ -18,6 +19,26 @@ function DetalleProducto() {
     recomienda: true
   });
   const [imagenPrincipal, setImagenPrincipal] = useState(0);
+
+  // Utilidad para formatear fechas relativas
+  const formatearTiempoRelativo = (fecha) => {
+    const ahora = new Date();
+    const fechaProducto = new Date(fecha);
+    const diferenciaMs = ahora - fechaProducto;
+    const segundos = Math.floor(diferenciaMs / 1000);
+    const minutos = Math.floor(segundos / 60);
+    const horas = Math.floor(minutos / 60);
+    const dias = Math.floor(horas / 24);
+    const meses = Math.floor(dias / 30);
+    const años = Math.floor(dias / 365);
+
+    if (segundos < 60) return 'Hace unos segundos';
+    if (minutos < 60) return `Hace ${minutos} ${minutos === 1 ? 'minuto' : 'minutos'}`;
+    if (horas < 24) return `Hace ${horas} ${horas === 1 ? 'hora' : 'horas'}`;
+    if (dias < 30) return `Hace ${dias} ${dias === 1 ? 'día' : 'días'}`;
+    if (meses < 12) return `Hace ${meses} ${meses === 1 ? 'mes' : 'meses'}`;
+    return `Hace ${años} ${años === 1 ? 'año' : 'años'}`;
+  };
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
@@ -105,14 +126,28 @@ function DetalleProducto() {
   return (
     <div className="detalle-container">
       <button onClick={() => navigate('/productos')} className="btn-volver">
-        ← Volver a productos
+        <FaArrowLeft /> Volver a productos
       </button>
 
       <div className="producto-detalle">
         <div className="detalle-header">
-          <h1>{producto.nombre}</h1>
+          <div className="header-content">
+            <h1>{producto.nombre}</h1>
+            {producto.actualizadoEn && (
+              <div className="timestamp-info">
+                <FaClock className="timestamp-icon" />
+                <span className="timestamp-text">
+                  Actualizado {formatearTiempoRelativo(producto.actualizadoEn)}
+                </span>
+              </div>
+            )}
+          </div>
           <span className={`badge-estado ${producto.estado.toLowerCase()}`}>
-            {producto.estado === 'DISPONIBLE' ? '✓ Disponible' : '✗ No disponible'}
+            {producto.estado === 'DISPONIBLE' ? (
+              <><FaCheckCircle /> Disponible</>
+            ) : (
+              <><FaTimesCircle /> No disponible</>
+            )}
           </span>
         </div>
 
@@ -143,47 +178,50 @@ function DetalleProducto() {
         )}
 
         <div className="detalle-info">
-          <p className="descripcion">{producto.descripcion || 'Sin descripción'}</p>
+          <div className="descripcion-section">
+            <h3>Descripción</h3>
+            <p className="descripcion">{producto.descripcion || 'Sin descripción'}</p>
+          </div>
 
           <div className="info-grid">
             <div className="info-card">
-              <strong>📂 Categoría</strong>
+              <strong><FaFolder /> Categoría</strong>
               <span>{producto.categoria?.nombre || 'Sin categoría'}</span>
             </div>
             {producto.tipoProducto && (
               <div className="info-card">
-                <strong>🏷️ Tipo</strong>
+                <strong><FaTag /> Tipo</strong>
                 <span>{producto.tipoProducto}</span>
               </div>
             )}
             {producto.precio && (
-              <div className="info-card">
-                <strong>💰 Precio</strong>
-                <span>${producto.precio.toFixed(2)}</span>
+              <div className="info-card precio-card">
+                <strong><FaDollarSign /> Precio</strong>
+                <span className="precio-destacado">${producto.precio.toFixed(2)}</span>
               </div>
             )}
             {producto.cantidad && (
               <div className="info-card">
-                <strong>📦 Cantidad</strong>
+                <strong><FaBox /> Cantidad</strong>
                 <span>{producto.cantidad}</span>
               </div>
             )}
           </div>
 
-          <div className="mercado-info">
-            <h3>🏪 Mercado</h3>
+          <div
+            className="mercado-info clickeable"
+            onClick={() => navigate(`/mercados/${producto.mercado.id}`)}
+          >
+            <h3><FaStore /> Mercado</h3>
             <p><strong>{producto.mercado.nombre}</strong></p>
-            <p>{producto.mercado.direccion}</p>
+            <p><FaMapMarkerAlt /> {producto.mercado.direccion}</p>
             <p>{producto.mercado.municipio}, {producto.mercado.provincia}</p>
-            {producto.mercado.horario && (
-              <p className="horario">🕒 {producto.mercado.horario}</p>
-            )}
           </div>
         </div>
       </div>
 
       <div className="comentarios-section">
-        <h2>💬 Comentarios y Valoraciones</h2>
+        <h2><FaComments /> Comentarios y Valoraciones</h2>
 
         {usuario ? (
           <form onSubmit={handleSubmitComentario} className="form-comentario">
@@ -201,7 +239,7 @@ function DetalleProducto() {
                   checked={nuevoComentario.recomienda}
                   onChange={(e) => setNuevoComentario({ ...nuevoComentario, recomienda: e.target.checked })}
                 />
-                <span>✓ Recomiendo este producto</span>
+                <span><FaCheckCircle /> Recomiendo este producto</span>
               </label>
               <button type="submit" className="btn-primary">Publicar</button>
             </div>
@@ -221,18 +259,18 @@ function DetalleProducto() {
                 <div className="comentario-header">
                   <div className="usuario-info">
                     <strong>{comentario.usuario.nombre}</strong>
-                    {comentario.recomienda && <span className="recomienda">✓ Recomienda</span>}
+                    {comentario.recomienda && <span className="recomienda"><FaCheckCircle /> Recomienda</span>}
                   </div>
                   <span className="fecha">{new Date(comentario.creadoEn).toLocaleDateString()}</span>
                 </div>
                 <p className="comentario-texto">{comentario.texto}</p>
                 <div className="comentario-footer">
                   <button onClick={() => handleLike(comentario.id)} className="btn-like">
-                    👍 {comentario.likes}
+                    <FaThumbsUp /> {comentario.likes}
                   </button>
                   {usuario && usuario.id === comentario.usuario.id && (
                     <button onClick={() => handleEliminarComentario(comentario.id)} className="btn-eliminar-comentario">
-                      🗑️ Eliminar
+                      <FaTrash /> Eliminar
                     </button>
                   )}
                 </div>
