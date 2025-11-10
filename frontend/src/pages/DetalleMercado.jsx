@@ -186,10 +186,6 @@ function DetalleMercado() {
 
       {/* Header */}
       <div className="mercado-header">
-        <button onClick={() => navigate('/mercados')} className="btn-back">
-          ← Volver a Mercados
-        </button>
-
         <div className="header-title-section">
           <h1>{mercado.nombre}</h1>
           {estadoAbierto && (
@@ -210,7 +206,7 @@ function DetalleMercado() {
           {/* Columna Izquierda */}
           <div className="columna-principal">
             {/* Galería */}
-            {mercado.imagenes && mercado.imagenes.length > 0 ? (
+            {mercado.imagenes && mercado.imagenes.length > 0 && (
               <section className="seccion-galeria">
                 <div className="imagen-principal" onClick={() => abrirModal(`http://localhost:5000${mercado.imagenes[imagenActual]}`)}>
                   <img
@@ -255,13 +251,6 @@ function DetalleMercado() {
                   </div>
                 )}
               </section>
-            ) : (
-              <section className="seccion-galeria">
-                <div className="sin-imagenes">
-                  <span className="icon">🏪</span>
-                  <p>No hay imágenes disponibles</p>
-                </div>
-              </section>
             )}
 
             {/* Descripción */}
@@ -277,10 +266,20 @@ function DetalleMercado() {
               <section className="seccion-card seccion-sas">
                 <div className="sas-content">
                   <div className="sas-info">
-                    <h2>Sistema de Acopio Social (SAS)</h2>
-                    <p>Este mercado forma parte del Sistema de Acopio Social de Cuba</p>
+                    <h2>Programa SAS Cuba</h2>
+                    <p>
+                      El "Programa SAS Cuba" es una iniciativa de apoyo estratégico a la seguridad alimentaria sostenible en Cuba,
+                      implementada entre 2019 y 2025 con financiamiento de la Unión Europea. Se enfoca en fortalecer los sistemas
+                      alimentarios locales en seis municipios de las provincias de Villa Clara y Sancti Spíritus, promoviendo la
+                      resiliencia y la producción de alimentos de calidad.
+                    </p>
+                    <p className="sas-proyectos">
+                      El programa incluye tres proyectos principales: Fortalecimiento de políticas para la seguridad alimentaria
+                      sostenible (POSAS), Autoabastecimiento local para una alimentación sostenible y sana (ALASS), y Fortalecimiento
+                      del Sistema Integrado de Gestión del Conocimiento para la seguridad alimentaria sostenible (CONSAS).
+                    </p>
                   </div>
-                  <img src="/logo sas.jpg" alt="Sistema de Acopio Social" className="sas-logo" />
+                  <img src="/logo sas.jpg" alt="Programa SAS Cuba" className="sas-logo" />
                 </div>
               </section>
             )}
