@@ -208,55 +208,71 @@ function GestionProductos() {
                   />
                   {busquedaPlantilla && (
                     <small className="contador-resultados">
-                      {plantillas.filter(p => 
-                        p.nombre.toLowerCase().includes(busquedaPlantilla.toLowerCase()) ||
-                        p.categoria.toLowerCase().includes(busquedaPlantilla.toLowerCase())
-                      ).length} resultados encontrados
+                      {plantillas.filter(p => {
+                        const nombreCategoria = typeof p.categoria === 'object'
+                          ? p.categoria?.nombre || ''
+                          : p.categoria || '';
+                        return p.nombre.toLowerCase().includes(busquedaPlantilla.toLowerCase()) ||
+                          nombreCategoria.toLowerCase().includes(busquedaPlantilla.toLowerCase());
+                      }).length} resultados encontrados
                     </small>
                   )}
                 </div>
 
-                <div className="plantillas-grid">
+                <div className="plantillas-lista">
                   {plantillas
-                    .filter(p =>
-                      p.nombre.toLowerCase().includes(busquedaPlantilla.toLowerCase()) ||
-                      (p.categoria?.nombre || p.categoria || '').toLowerCase().includes(busquedaPlantilla.toLowerCase())
-                    )
+                    .filter(p => {
+                      const nombreCategoria = typeof p.categoria === 'object'
+                        ? p.categoria?.nombre || ''
+                        : p.categoria || '';
+                      return p.nombre.toLowerCase().includes(busquedaPlantilla.toLowerCase()) ||
+                        nombreCategoria.toLowerCase().includes(busquedaPlantilla.toLowerCase());
+                    })
                     .map((plantilla) => (
-                      <div 
-                        key={plantilla.id} 
-                        className="plantilla-card"
+                      <div
+                        key={plantilla.id}
+                        className="plantilla-item"
                         onClick={() => {
                           seleccionarPlantilla(plantilla);
                           setBusquedaPlantilla('');
                         }}
                       >
-                        {plantilla.imagen ? (
-                          <img 
-                            src={`http://localhost:5000${plantilla.imagen}`} 
-                            alt={plantilla.nombre}
-                            className="plantilla-imagen"
-                            onError={(e) => {
-                              e.target.style.display = 'none';
-                              e.target.nextSibling.style.display = 'flex';
-                            }}
-                          />
-                        ) : null}
-                        <div className="plantilla-sin-imagen" style={{ display: plantilla.imagen ? 'none' : 'flex' }}>
-                          <span>📦</span>
+                        <div className="plantilla-imagen-container">
+                          {plantilla.imagen ? (
+                            <img
+                              src={`http://localhost:5000${plantilla.imagen}`}
+                              alt={plantilla.nombre}
+                              className="plantilla-imagen-lista"
+                            />
+                          ) : (
+                            <div className="plantilla-sin-imagen-lista">
+                              <span>📦</span>
+                            </div>
+                          )}
                         </div>
-                        <div className="plantilla-info">
-                          <strong>{plantilla.nombre}</strong>
-                          <small>{plantilla.categoria?.nombre || plantilla.categoria}</small>
+                        <div className="plantilla-detalles">
+                          <div className="plantilla-nombre-categoria">
+                            <strong>{plantilla.nombre}</strong>
+                            <small>{typeof plantilla.categoria === 'object' ? plantilla.categoria?.nombre : plantilla.categoria}</small>
+                          </div>
+                          {plantilla.descripcion && (
+                            <p className="plantilla-descripcion-lista">{plantilla.descripcion}</p>
+                          )}
+                        </div>
+                        <div className="plantilla-accion">
+                          <span className="icono-seleccionar">→</span>
                         </div>
                       </div>
                     ))}
                 </div>
-                
-                {plantillas.filter(p =>
-                  p.nombre.toLowerCase().includes(busquedaPlantilla.toLowerCase()) ||
-                  (p.categoria?.nombre || p.categoria || '').toLowerCase().includes(busquedaPlantilla.toLowerCase())
-                ).length === 0 && (
+
+                {plantillas.filter(p => {
+                  const nombreCategoria = typeof p.categoria === 'object'
+                    ? p.categoria?.nombre || ''
+                    : p.categoria || '';
+                  return p.nombre.toLowerCase().includes(busquedaPlantilla.toLowerCase()) ||
+                    nombreCategoria.toLowerCase().includes(busquedaPlantilla.toLowerCase());
+                }).length === 0 && (
                   <p className="no-resultados">
                     No se encontraron plantillas para "{busquedaPlantilla}"
                   </p>
