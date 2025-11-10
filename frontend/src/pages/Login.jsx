@@ -44,8 +44,11 @@ function Login() {
   };
 
   return (
-    <div className="auth-container">
+    <div className="auth-container" style={{ backgroundImage: 'url(/hero.png)' }}>
       <div className="auth-card">
+        <div className="auth-logo">
+          <img src="/logo.png" alt="Agromap" />
+        </div>
         <h1>Iniciar Sesión</h1>
         <p className="subtitle">Accede a tu cuenta de Agromap</p>
 

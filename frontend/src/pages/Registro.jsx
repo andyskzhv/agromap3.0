@@ -98,8 +98,11 @@ function Registro() {
   };
 
   return (
-    <div className="auth-container">
+    <div className="auth-container" style={{ backgroundImage: 'url(/hero.png)' }}>
       <div className="auth-card">
+        <div className="auth-logo">
+          <img src="/logo.png" alt="Agromap" />
+        </div>
         <h1>Registro en Agromap</h1>
         <p className="subtitle">Crea tu cuenta para comenzar</p>
 
