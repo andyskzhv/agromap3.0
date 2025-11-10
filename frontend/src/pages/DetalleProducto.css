@@ -500,12 +500,26 @@
   cursor: pointer;
   font-size: 14px;
   transition: all 0.2s;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
 }
 
 .btn-like:hover {
   background: #f0f4ff;
   border-color: #667eea;
   color: #667eea;
+}
+
+.btn-like.active {
+  background: #667eea;
+  border-color: #667eea;
+  color: white;
+}
+
+.btn-like.active:hover {
+  background: #764ba2;
+  border-color: #764ba2;
 }
 
 .btn-eliminar-comentario {
@@ -597,6 +611,210 @@
   background: #e0e0e0;
 }
 
+/* Panel de Valoraciones */
+.panel-valoracion {
+  background: white;
+  border-radius: 16px;
+  padding: 35px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+  margin-bottom: 30px;
+  border: 1px solid #f0f0f0;
+}
+
+.panel-valoracion h2 {
+  margin: 0 0 25px 0;
+  color: #333;
+  font-size: 26px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding-bottom: 15px;
+  border-bottom: 3px solid #f0f0f0;
+}
+
+/* Estrellas */
+.estrellas-rating {
+  display: inline-flex;
+  gap: 6px;
+  align-items: center;
+}
+
+.estrella {
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  padding: 0;
+  color: #e0e0e0;
+}
+
+.estrella.activa {
+  color: #ffc107;
+}
+
+.estrella:hover:not(:disabled) {
+  transform: scale(1.15);
+}
+
+.estrella:disabled {
+  cursor: default;
+}
+
+.size-small .estrella {
+  font-size: 14px;
+}
+
+.size-medium .estrella {
+  font-size: 20px;
+}
+
+.size-large .estrella {
+  font-size: 32px;
+}
+
+.star-small {
+  font-size: 12px;
+  margin-left: 2px;
+  color: #ffc107;
+}
+
+/* Valoración General */
+.valoracion-general {
+  display: grid;
+  grid-template-columns: 1fr 1.5fr;
+  gap: 30px;
+  margin-bottom: 30px;
+  padding: 25px;
+  background: linear-gradient(135deg, #fffbf0 0%, #fff9e6 100%);
+  border-radius: 12px;
+  border: 2px solid #ffe082;
+}
+
+.promedio-grande {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px;
+  padding: 20px;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+.promedio-numero {
+  text-align: center;
+}
+
+.promedio-numero .numero {
+  font-size: 48px;
+  font-weight: 700;
+  color: #333;
+  display: block;
+  line-height: 1;
+}
+
+.promedio-numero .total-votos {
+  font-size: 14px;
+  color: #666;
+  display: block;
+  margin-top: 8px;
+}
+
+/* Distribución de Valoraciones */
+.distribucion-valoraciones {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  justify-content: center;
+}
+
+.barra-valoracion {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.estrellas-label {
+  min-width: 40px;
+  font-weight: 600;
+  color: #666;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.barra-contenedor {
+  flex: 1;
+  height: 24px;
+  background: #f0f0f0;
+  border-radius: 12px;
+  overflow: hidden;
+  position: relative;
+}
+
+.barra-relleno {
+  height: 100%;
+  background: linear-gradient(90deg, #ffc107 0%, #ff9800 100%);
+  transition: width 0.5s ease;
+  box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.porcentaje-label {
+  min-width: 45px;
+  text-align: right;
+  font-weight: 600;
+  color: #666;
+  font-size: 14px;
+}
+
+.sin-valoraciones {
+  text-align: center;
+  padding: 40px;
+  color: #999;
+  font-style: italic;
+  background: #fafafa;
+  border-radius: 8px;
+  margin: 20px 0;
+}
+
+/* Mi Valoración */
+.mi-valoracion-section {
+  margin-top: 30px;
+  padding: 25px;
+  background: linear-gradient(135deg, #f0f4ff 0%, #e8f5ff 100%);
+  border-radius: 12px;
+  border: 2px solid #667eea;
+}
+
+.mi-valoracion-section h3 {
+  margin: 0 0 15px 0;
+  color: #667eea;
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.texto-valoracion {
+  margin-top: 12px;
+  color: #666;
+  font-weight: 500;
+  font-style: italic;
+}
+
+.login-prompt-valoracion {
+  text-align: center;
+  padding: 25px;
+  background: #f9f9f9;
+  border-radius: 8px;
+  margin-top: 20px;
+}
+
+.login-prompt-valoracion p {
+  margin: 0;
+  color: #666;
+  font-size: 15px;
+}
+
 @media (max-width: 768px) {
   .detalle-container {
     padding: 15px;
@@ -605,6 +823,10 @@
   .producto-detalle {
     padding: 20px;
     border-radius: 12px;
+  }
+
+  .panel-valoracion {
+    padding: 20px;
   }
 
   .comentarios-section {
@@ -637,8 +859,25 @@
     font-size: 18px;
   }
 
+  .panel-valoracion h2 {
+    font-size: 22px;
+  }
+
   .comentarios-section h2 {
     font-size: 22px;
+  }
+
+  .valoracion-general {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+
+  .promedio-numero .numero {
+    font-size: 36px;
+  }
+
+  .size-large .estrella {
+    font-size: 24px;
   }
 
   .form-footer {

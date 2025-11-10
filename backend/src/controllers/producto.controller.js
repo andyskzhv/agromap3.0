@@ -101,12 +101,39 @@ const obtenerProductoPorId = async (req, res) => {
       return res.status(404).json({ error: 'Producto no encontrado' });
     }
 
-    res.json(producto);
+    // Obtener estadísticas de valoraciones
+    const statsValoracion = await prisma.valoracion.aggregate({
+      where: { productoId: parseInt(id) },
+      _avg: { estrellas: true },
+      _count: { id: true }
+    });
+
+    // Obtener distribución de valoraciones
+    const valoraciones = await prisma.valoracion.groupBy({
+      by: ['estrellas'],
+      where: { productoId: parseInt(id) },
+      _count: { estrellas: true }
+    });
+
+    // Crear objeto de distribución
+    const distribucion = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 };
+    valoraciones.forEach(v => {
+      distribucion[v.estrellas] = v._count.estrellas;
+    });
+
+    res.json({
+      ...producto,
+      valoraciones: {
+        promedio: statsValoracion._avg.estrellas || 0,
+        total: statsValoracion._count.id,
+        distribucion
+      }
+    });
   } catch (error) {
     console.error('Error al obtener producto:', error);
-    res.status(500).json({ 
+    res.status(500).json({
       error: 'Error al obtener producto',
-      details: error.message 
+      details: error.message
     });
   }
 };

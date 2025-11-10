@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { productoService, comentarioService } from '../services/api';
+import { productoService, comentarioService, valoracionService } from '../services/api';
 import { useToast } from '../components/Toast';
-import { FaArrowLeft, FaClock, FaFolder, FaTag, FaDollarSign, FaBox, FaStore, FaMapMarkerAlt, FaComments, FaThumbsUp, FaTrash, FaCheckCircle, FaTimesCircle } from 'react-icons/fa';
+import { FaArrowLeft, FaClock, FaFolder, FaTag, FaDollarSign, FaBox, FaStore, FaMapMarkerAlt, FaComments, FaThumbsUp, FaTrash, FaCheckCircle, FaTimesCircle, FaStar } from 'react-icons/fa';
 import './DetalleProducto.css';
 
 function DetalleProducto() {
@@ -19,6 +19,8 @@ function DetalleProducto() {
     recomienda: true
   });
   const [imagenPrincipal, setImagenPrincipal] = useState(0);
+  const [miValoracion, setMiValoracion] = useState(null);
+  const [comentarioExistente, setComentarioExistente] = useState(null);
 
   // Utilidad para formatear fechas relativas
   const formatearTiempoRelativo = (fecha) => {
@@ -52,12 +54,32 @@ function DetalleProducto() {
 
   const cargarDatos = async () => {
     try {
-      const [productoRes, comentariosRes] = await Promise.all([
+      const requests = [
         productoService.obtenerPorId(id),
         comentarioService.obtenerPorProducto(id)
-      ]);
-      setProducto(productoRes.data);
-      setComentarios(comentariosRes.data);
+      ];
+
+      // Si el usuario está autenticado, cargar su valoración
+      if (usuario) {
+        requests.push(
+          valoracionService.obtenerMiValoracion(id).catch(() => ({ data: null }))
+        );
+      }
+
+      const results = await Promise.all(requests);
+      setProducto(results[0].data);
+      setComentarios(results[1].data);
+
+      // Verificar si el usuario ya comentó
+      if (usuario) {
+        const miComentario = results[1].data.find(c => c.usuarioId === usuario.id);
+        setComentarioExistente(miComentario || null);
+
+        // Cargar valoración del usuario
+        if (results[2]) {
+          setMiValoracion(results[2].data);
+        }
+      }
     } catch (error) {
       console.error('Error al cargar datos:', error);
       toast.error('Error al cargar el producto');
@@ -88,7 +110,7 @@ function DetalleProducto() {
     }
   };
 
-  const handleLike = async (comentarioId) => {
+  const handleLike = async (comentario) => {
     if (!usuario) {
       toast.warning('Debes iniciar sesión para dar like');
       navigate('/login');
@@ -96,10 +118,41 @@ function DetalleProducto() {
     }
 
     try {
-      await comentarioService.darLike(comentarioId);
+      // Toggle: si ya dio like, quitarlo; si no, darlo
+      if (comentario.usuarioActualDioLike) {
+        await comentarioService.quitarLike(comentario.id);
+        toast.success('Like removido');
+      } else {
+        await comentarioService.darLike(comentario.id);
+        toast.success('Like agregado');
+      }
       cargarDatos();
     } catch (error) {
-      console.error('Error al dar like:', error);
+      if (error.response?.data?.error) {
+        toast.error(error.response.data.error);
+      } else {
+        console.error('Error con like:', error);
+      }
+    }
+  };
+
+  const handleValorar = async (estrellas) => {
+    if (!usuario) {
+      toast.warning('Debes iniciar sesión para valorar');
+      navigate('/login');
+      return;
+    }
+
+    try {
+      const response = await valoracionService.crearOActualizar({
+        productoId: parseInt(id),
+        estrellas
+      });
+      setMiValoracion(response.data);
+      toast.success(miValoracion ? 'Valoración actualizada' : 'Valoración guardada');
+      cargarDatos();
+    } catch (error) {
+      toast.error(error.response?.data?.error || 'Error al valorar');
     }
   };
 
@@ -113,6 +166,58 @@ function DetalleProducto() {
     } catch (error) {
       toast.error(error.response?.data?.error || 'Error al eliminar');
     }
+  };
+
+  // Componente de estrellas
+  const EstrellaRating = ({ valoracion, onChange, readOnly = false, size = 'medium' }) => {
+    const [hover, setHover] = useState(0);
+
+    return (
+      <div className={`estrellas-rating size-${size}`}>
+        {[1, 2, 3, 4, 5].map((estrella) => (
+          <button
+            key={estrella}
+            type="button"
+            className={`estrella ${estrella <= (hover || valoracion) ? 'activa' : 'inactiva'}`}
+            onClick={() => !readOnly && onChange && onChange(estrella)}
+            onMouseEnter={() => !readOnly && setHover(estrella)}
+            onMouseLeave={() => !readOnly && setHover(0)}
+            disabled={readOnly}
+          >
+            <FaStar />
+          </button>
+        ))}
+      </div>
+    );
+  };
+
+  // Componente de distribución de valoraciones
+  const DistribucionValoraciones = ({ distribucion, total }) => {
+    if (!total || total === 0) return null;
+
+    const calcularPorcentaje = (cantidad) => ((cantidad / total) * 100).toFixed(0);
+
+    return (
+      <div className="distribucion-valoraciones">
+        {[5, 4, 3, 2, 1].map(estrellas => {
+          const cantidad = distribucion?.[estrellas] || 0;
+          const porcentaje = calcularPorcentaje(cantidad);
+
+          return (
+            <div key={estrellas} className="barra-valoracion">
+              <span className="estrellas-label">{estrellas}<FaStar className="star-small" /></span>
+              <div className="barra-contenedor">
+                <div
+                  className="barra-relleno"
+                  style={{ width: `${porcentaje}%` }}
+                />
+              </div>
+              <span className="porcentaje-label">{porcentaje}%</span>
+            </div>
+          );
+        })}
+      </div>
+    );
   };
 
   if (loading) {
@@ -220,6 +325,58 @@ function DetalleProducto() {
         </div>
       </div>
 
+      {/* Panel de Valoraciones */}
+      <div className="panel-valoracion">
+        <h2><FaStar /> Valoración del Producto</h2>
+
+        {/* Promedio General */}
+        {producto.valoraciones && producto.valoraciones.total > 0 ? (
+          <div className="valoracion-general">
+            <div className="promedio-grande">
+              <EstrellaRating
+                valoracion={Math.round(producto.valoraciones.promedio)}
+                readOnly={true}
+                size="large"
+              />
+              <div className="promedio-numero">
+                <span className="numero">{producto.valoraciones.promedio.toFixed(1)}</span>
+                <span className="total-votos">({producto.valoraciones.total} {producto.valoraciones.total === 1 ? 'valoración' : 'valoraciones'})</span>
+              </div>
+            </div>
+
+            {/* Distribución de valoraciones */}
+            <DistribucionValoraciones
+              distribucion={producto.valoraciones.distribucion}
+              total={producto.valoraciones.total}
+            />
+          </div>
+        ) : (
+          <p className="sin-valoraciones">Este producto aún no tiene valoraciones. ¡Sé el primero en valorarlo!</p>
+        )}
+
+        {/* Tu Valoración */}
+        {usuario ? (
+          <div className="mi-valoracion-section">
+            <h3>Tu valoración:</h3>
+            <EstrellaRating
+              valoracion={miValoracion?.estrellas || 0}
+              onChange={handleValorar}
+              size="large"
+            />
+            {miValoracion && (
+              <p className="texto-valoracion">Has valorado este producto con {miValoracion.estrellas} {miValoracion.estrellas === 1 ? 'estrella' : 'estrellas'}</p>
+            )}
+          </div>
+        ) : (
+          <div className="login-prompt-valoracion">
+            <p>
+              <button onClick={() => navigate('/login')} className="link-btn">Inicia sesión</button>
+              {' '}para valorar este producto
+            </p>
+          </div>
+        )}
+      </div>
+
       <div className="comentarios-section">
         <h2><FaComments /> Comentarios y Valoraciones</h2>
 
@@ -265,7 +422,10 @@ function DetalleProducto() {
                 </div>
                 <p className="comentario-texto">{comentario.texto}</p>
                 <div className="comentario-footer">
-                  <button onClick={() => handleLike(comentario.id)} className="btn-like">
+                  <button
+                    onClick={() => handleLike(comentario)}
+                    className={`btn-like ${comentario.usuarioActualDioLike ? 'active' : ''}`}
+                  >
                     <FaThumbsUp /> {comentario.likes}
                   </button>
                   {usuario && usuario.id === comentario.usuario.id && (

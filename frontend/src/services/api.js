@@ -187,6 +187,14 @@ export const comentarioService = {
   quitarLike: (id) => api.post(`/comentarios/${id}/unlike`)
 };
 
+// Servicios de valoraciones
+export const valoracionService = {
+  crearOActualizar: (datos) => api.post('/valoraciones', datos),
+  obtenerMiValoracion: (productoId) => api.get(`/valoraciones/producto/${productoId}`),
+  obtenerEstadisticas: (productoId) => api.get(`/valoraciones/producto/${productoId}/estadisticas`),
+  eliminar: (id) => api.delete(`/valoraciones/${id}`)
+};
+
 // Servicios de plantillas
 export const plantillaService = {
   obtenerTodas: (params) => api.get('/plantillas', { params }),

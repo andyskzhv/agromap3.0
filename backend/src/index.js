@@ -27,6 +27,7 @@ app.use('/api/auth', require('./routes/auth.routes'));
 app.use('/api/mercados', require('./routes/mercado.routes'));
 app.use('/api/productos', require('./routes/producto.routes'));
 app.use('/api/comentarios', require('./routes/comentario.routes'));
+app.use('/api/valoraciones', require('./routes/valoracion.routes'));
 app.use('/api/plantillas', require('./routes/plantilla.routes'));
 app.use('/api/categorias', require('./routes/categoria.routes'));
 app.use('/api/admin', require('./routes/admin.routes'));

@@ -50,6 +50,8 @@ model Usuario {
   // Relaciones
   mercados      Mercado[]
   comentarios   Comentario[]
+  valoraciones  Valoracion[]
+  likesComentarios UsuarioLikeComentario[]
 
   @@map("usuarios")
 }
@@ -92,11 +94,12 @@ model Producto {
   mercadoId          Int
   creadoEn           DateTime        @default(now())
   actualizadoEn      DateTime        @updatedAt
-  
+
   // Relaciones
   mercado            Mercado         @relation(fields: [mercadoId], references: [id], onDelete: Cascade)
   categoria          Categoria       @relation(fields: [categoriaId], references: [id])
   comentarios        Comentario[]
+  valoraciones       Valoracion[]
 
   @@map("productos")
 }
@@ -123,10 +126,42 @@ model Comentario {
   recomienda Boolean  @default(true)
   likes      Int      @default(0)
   creadoEn   DateTime @default(now())
-  
+
+  // Relaciones
+  usuario    Usuario  @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
+  producto   Producto @relation(fields: [productoId], references: [id], onDelete: Cascade)
+  usuariosLike UsuarioLikeComentario[]
+
+  @@unique([usuarioId, productoId])
+  @@map("comentarios")
+}
+
+model Valoracion {
+  id         Int      @id @default(autoincrement())
+  usuarioId  Int
+  productoId Int
+  estrellas  Int      // 1-5
+  creadoEn   DateTime @default(now())
+  actualizadoEn DateTime @updatedAt
+
   // Relaciones
   usuario    Usuario  @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
   producto   Producto @relation(fields: [productoId], references: [id], onDelete: Cascade)
 
-  @@map("comentarios")
+  @@unique([usuarioId, productoId])
+  @@map("valoraciones")
+}
+
+model UsuarioLikeComentario {
+  id           Int       @id @default(autoincrement())
+  usuarioId    Int
+  comentarioId Int
+  creadoEn     DateTime  @default(now())
+
+  // Relaciones
+  usuario      Usuario   @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
+  comentario   Comentario @relation(fields: [comentarioId], references: [id], onDelete: Cascade)
+
+  @@unique([usuarioId, comentarioId])
+  @@map("usuario_like_comentario")
 }

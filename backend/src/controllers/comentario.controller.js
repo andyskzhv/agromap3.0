@@ -5,6 +5,7 @@ const prisma = new PrismaClient();
 const obtenerComentariosProducto = async (req, res) => {
   try {
     const { productoId } = req.params;
+    const usuarioActualId = req.usuario?.id;
 
     const comentarios = await prisma.comentario.findMany({
       where: { productoId: parseInt(productoId) },
@@ -15,6 +16,11 @@ const obtenerComentariosProducto = async (req, res) => {
             nombre: true,
             imagen: true
           }
+        },
+        usuariosLike: {
+          select: {
+            usuarioId: true
+          }
         }
       },
       orderBy: {
@@ -22,12 +28,21 @@ const obtenerComentariosProducto = async (req, res) => {
       }
     });
 
-    res.json(comentarios);
+    // Agregar info si el usuario actual dio like
+    const comentariosConLikeInfo = comentarios.map(comentario => ({
+      ...comentario,
+      usuarioActualDioLike: usuarioActualId ?
+        comentario.usuariosLike.some(like => like.usuarioId === usuarioActualId) :
+        false,
+      usuariosLike: undefined // No enviar lista completa al frontend
+    }));
+
+    res.json(comentariosConLikeInfo);
   } catch (error) {
     console.error('Error al obtener comentarios:', error);
-    res.status(500).json({ 
+    res.status(500).json({
       error: 'Error al obtener comentarios',
-      details: error.message 
+      details: error.message
     });
   }
 };
@@ -39,8 +54,8 @@ const crearComentario = async (req, res) => {
 
     // Validaciones
     if (!productoId || !texto) {
-      return res.status(400).json({ 
-        error: 'Producto y texto son obligatorios' 
+      return res.status(400).json({
+        error: 'Producto y texto son obligatorios'
       });
     }
 
@@ -51,6 +66,22 @@ const crearComentario = async (req, res) => {
 
     if (!producto) {
       return res.status(404).json({ error: 'Producto no encontrado' });
+    }
+
+    // Verificar si el usuario ya comentó este producto
+    const comentarioExistente = await prisma.comentario.findUnique({
+      where: {
+        usuarioId_productoId: {
+          usuarioId: req.usuario.id,
+          productoId: parseInt(productoId)
+        }
+      }
+    });
+
+    if (comentarioExistente) {
+      return res.status(400).json({
+        error: 'Ya has comentado este producto. Puedes editar tu comentario existente.'
+      });
     }
 
     const nuevoComentario = await prisma.comentario.create({
@@ -78,9 +109,9 @@ const crearComentario = async (req, res) => {
     });
   } catch (error) {
     console.error('Error al crear comentario:', error);
-    res.status(500).json({ 
+    res.status(500).json({
       error: 'Error al crear comentario',
-      details: error.message 
+      details: error.message
     });
   }
 };
@@ -188,10 +219,48 @@ const darLike = async (req, res) => {
       return res.status(404).json({ error: 'Comentario no encontrado' });
     }
 
-    const comentarioActualizado = await prisma.comentario.update({
+    // Verificar si el usuario ya dio like
+    const likeExistente = await prisma.usuarioLikeComentario.findUnique({
+      where: {
+        usuarioId_comentarioId: {
+          usuarioId: req.usuario.id,
+          comentarioId
+        }
+      }
+    });
+
+    if (likeExistente) {
+      return res.status(400).json({
+        error: 'Ya diste like a este comentario'
+      });
+    }
+
+    // Crear registro de like e incrementar contador en una transacción
+    await prisma.$transaction([
+      prisma.usuarioLikeComentario.create({
+        data: {
+          usuarioId: req.usuario.id,
+          comentarioId
+        }
+      }),
+      prisma.comentario.update({
+        where: { id: comentarioId },
+        data: {
+          likes: { increment: 1 }
+        }
+      })
+    ]);
+
+    const comentarioActualizado = await prisma.comentario.findUnique({
       where: { id: comentarioId },
-      data: {
-        likes: comentario.likes + 1
+      include: {
+        usuario: {
+          select: {
+            id: true,
+            nombre: true,
+            imagen: true
+          }
+        }
       }
     });
 
@@ -201,9 +270,9 @@ const darLike = async (req, res) => {
     });
   } catch (error) {
     console.error('Error al dar like:', error);
-    res.status(500).json({ 
+    res.status(500).json({
       error: 'Error al dar like',
-      details: error.message 
+      details: error.message
     });
   }
 };
@@ -222,10 +291,47 @@ const quitarLike = async (req, res) => {
       return res.status(404).json({ error: 'Comentario no encontrado' });
     }
 
-    const comentarioActualizado = await prisma.comentario.update({
+    // Verificar si el usuario dio like
+    const likeExistente = await prisma.usuarioLikeComentario.findUnique({
+      where: {
+        usuarioId_comentarioId: {
+          usuarioId: req.usuario.id,
+          comentarioId
+        }
+      }
+    });
+
+    if (!likeExistente) {
+      return res.status(400).json({
+        error: 'No has dado like a este comentario'
+      });
+    }
+
+    // Eliminar registro de like y decrementar contador en una transacción
+    await prisma.$transaction([
+      prisma.usuarioLikeComentario.delete({
+        where: {
+          id: likeExistente.id
+        }
+      }),
+      prisma.comentario.update({
+        where: { id: comentarioId },
+        data: {
+          likes: { decrement: 1 }
+        }
+      })
+    ]);
+
+    const comentarioActualizado = await prisma.comentario.findUnique({
       where: { id: comentarioId },
-      data: {
-        likes: Math.max(0, comentario.likes - 1) // No puede ser negativo
+      include: {
+        usuario: {
+          select: {
+            id: true,
+            nombre: true,
+            imagen: true
+          }
+        }
       }
     });
 
@@ -235,9 +341,9 @@ const quitarLike = async (req, res) => {
     });
   } catch (error) {
     console.error('Error al quitar like:', error);
-    res.status(500).json({ 
+    res.status(500).json({
       error: 'Error al quitar like',
-      details: error.message 
+      details: error.message
     });
   }
 };
