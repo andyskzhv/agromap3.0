@@ -87,7 +87,6 @@ const crearMercado = async (req, res) => {
       municipio,
       latitud,
       longitud,
-      imagenes,
       beneficiarioLegal,
       horario,
       perteneceSas
@@ -95,8 +94,8 @@ const crearMercado = async (req, res) => {
 
     // Validaciones
     if (!nombre || !direccion || !provincia || !municipio) {
-      return res.status(400).json({ 
-        error: 'Nombre, dirección, provincia y municipio son obligatorios' 
+      return res.status(400).json({
+        error: 'Nombre, dirección, provincia y municipio son obligatorios'
       });
     }
 
@@ -107,11 +106,14 @@ const crearMercado = async (req, res) => {
       });
 
       if (mercadoExistente) {
-        return res.status(400).json({ 
-          error: 'Ya tienes un mercado creado. Solo puedes gestionar uno.' 
+        return res.status(400).json({
+          error: 'Ya tienes un mercado creado. Solo puedes gestionar uno.'
         });
       }
     }
+
+    // Procesar imágenes subidas
+    const imagenesUrls = req.files ? req.files.map(file => `/uploads/mercados/${file.filename}`) : [];
 
     const nuevoMercado = await prisma.mercado.create({
       data: {
@@ -122,10 +124,10 @@ const crearMercado = async (req, res) => {
         municipio,
         latitud: latitud ? parseFloat(latitud) : null,
         longitud: longitud ? parseFloat(longitud) : null,
-        imagenes: imagenes || [],
+        imagenes: imagenesUrls,
         beneficiarioLegal,
         horario,
-        perteneceSas: perteneceSas || false,
+        perteneceSas: perteneceSas === 'true' || perteneceSas === true,
         gestorId: req.usuario.id
       },
       include: {
@@ -145,9 +147,9 @@ const crearMercado = async (req, res) => {
     });
   } catch (error) {
     console.error('Error al crear mercado:', error);
-    res.status(500).json({ 
+    res.status(500).json({
       error: 'Error al crear mercado',
-      details: error.message 
+      details: error.message
     });
   }
 };
@@ -182,11 +184,16 @@ const actualizarMercado = async (req, res) => {
       municipio,
       latitud,
       longitud,
-      imagenes,
       beneficiarioLegal,
       horario,
       perteneceSas
     } = req.body;
+
+    // Procesar nuevas imágenes subidas
+    const nuevasImagenes = req.files ? req.files.map(file => `/uploads/mercados/${file.filename}`) : [];
+
+    // Si hay nuevas imágenes, reemplazar las antiguas; si no, mantener las existentes
+    const imagenesFinales = nuevasImagenes.length > 0 ? nuevasImagenes : mercadoExistente.imagenes;
 
     const mercadoActualizado = await prisma.mercado.update({
       where: { id: mercadoId },
@@ -198,10 +205,10 @@ const actualizarMercado = async (req, res) => {
         ...(municipio && { municipio }),
         ...(latitud && { latitud: parseFloat(latitud) }),
         ...(longitud && { longitud: parseFloat(longitud) }),
-        ...(imagenes && { imagenes }),
+        imagenes: imagenesFinales,
         ...(beneficiarioLegal !== undefined && { beneficiarioLegal }),
         ...(horario !== undefined && { horario }),
-        ...(perteneceSas !== undefined && { perteneceSas })
+        ...(perteneceSas !== undefined && { perteneceSas: perteneceSas === 'true' || perteneceSas === true })
       },
       include: {
         gestor: {

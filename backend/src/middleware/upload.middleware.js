@@ -47,6 +47,17 @@ const storageProductos = multer.diskStorage({
   }
 });
 
+// Configuración para mercados
+const storageMercados = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, 'uploads/mercados/');
+  },
+  filename: (req, file, cb) => {
+    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+    cb(null, 'mercado-' + uniqueSuffix + path.extname(file.originalname));
+  }
+});
+
 // Middlewares específicos
 const uploadPerfiles = multer({
   storage: storagePerfiles,
@@ -72,6 +83,14 @@ const uploadProductos = multer({
   fileFilter: fileFilter
 });
 
+const uploadMercados = multer({
+  storage: storageMercados,
+  limits: {
+    fileSize: 5 * 1024 * 1024 // 5MB máximo
+  },
+  fileFilter: fileFilter
+});
+
 // Exportar todos los middlewares
 module.exports = {
   single: uploadPerfiles.single.bind(uploadPerfiles),
@@ -79,5 +98,6 @@ module.exports = {
   // Para compatibilidad con código existente
   uploadPerfiles,
   uploadPlantillas,
-  uploadProductos
+  uploadProductos,
+  uploadMercados
 };

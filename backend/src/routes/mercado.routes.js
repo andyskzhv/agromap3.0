@@ -8,11 +8,12 @@ const {
   eliminarMercado,
   obtenerMiMercado
 } = require('../controllers/mercado.controller');
-const { 
-  verificarToken, 
+const {
+  verificarToken,
   verificarGestorOAdmin,
-  verificarAdmin 
+  verificarAdmin
 } = require('../middleware/auth.middleware');
+const { uploadMercados } = require('../middleware/upload.middleware');
 
 // Rutas públicas
 router.get('/', obtenerMercados);
@@ -20,8 +21,8 @@ router.get('/:id', obtenerMercadoPorId);
 
 // Rutas protegidas - Gestor o Admin
 router.get('/mi/mercado', verificarToken, verificarGestorOAdmin, obtenerMiMercado);
-router.post('/', verificarToken, verificarGestorOAdmin, crearMercado);
-router.put('/:id', verificarToken, verificarGestorOAdmin, actualizarMercado);
+router.post('/', verificarToken, verificarGestorOAdmin, uploadMercados.array('imagenes', 5), crearMercado);
+router.put('/:id', verificarToken, verificarGestorOAdmin, uploadMercados.array('imagenes', 5), actualizarMercado);
 
 // Rutas protegidas - Solo Admin
 router.delete('/:id', verificarToken, verificarAdmin, eliminarMercado);

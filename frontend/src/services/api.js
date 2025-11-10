@@ -55,8 +55,30 @@ export const mercadoService = {
   obtenerTodos: (params) => api.get('/mercados', { params }),
   obtenerPorId: (id) => api.get(`/mercados/${id}`),
   obtenerMiMercado: () => api.get('/mercados/mi/mercado'),
-  crear: (datos) => api.post('/mercados', datos),
-  actualizar: (id, datos) => api.put(`/mercados/${id}`, datos),
+  crear: (datos) => {
+    // Si datos es FormData, enviarlo directamente
+    // Si no, enviarlo como JSON
+    if (datos instanceof FormData) {
+      return api.post('/mercados', datos, {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+      });
+    }
+    return api.post('/mercados', datos);
+  },
+  actualizar: (id, datos) => {
+    // Si datos es FormData, enviarlo directamente
+    // Si no, enviarlo como JSON
+    if (datos instanceof FormData) {
+      return api.put(`/mercados/${id}`, datos, {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+      });
+    }
+    return api.put(`/mercados/${id}`, datos);
+  },
   eliminar: (id) => api.delete(`/mercados/${id}`)
 };
 

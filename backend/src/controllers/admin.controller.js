@@ -279,7 +279,7 @@ const obtenerTodosMercados = async (req, res) => {
           select: {
             id: true,
             nombre: true,
-            correo: true
+            nombreUsuario: true
           }
         },
         _count: {
