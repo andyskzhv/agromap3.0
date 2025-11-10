@@ -4,7 +4,7 @@
   padding: 20px;
 }
 
-/* Loading y Error States */
+/* Loading y Error */
 .loading-container,
 .error-container {
   display: flex;
@@ -29,7 +29,69 @@
   100% { transform: rotate(360deg); }
 }
 
-/* Header Refinado */
+/* Modal de Imagen */
+.modal-imagen {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.95);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  cursor: zoom-out;
+  animation: fadeIn 0.2s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.modal-contenido {
+  position: relative;
+  max-width: 95vw;
+  max-height: 95vh;
+  cursor: default;
+}
+
+.modal-contenido img {
+  max-width: 100%;
+  max-height: 95vh;
+  object-fit: contain;
+  border-radius: 8px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+}
+
+.modal-cerrar {
+  position: absolute;
+  top: -50px;
+  right: 0;
+  background: white;
+  border: none;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  font-size: 24px;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  color: #333;
+}
+
+.modal-cerrar:hover {
+  background: #f44336;
+  color: white;
+  transform: rotate(90deg);
+}
+
+/* Header */
 .mercado-header {
   background: white;
   padding: 24px 30px;
@@ -59,18 +121,7 @@
   transform: translateX(-4px);
 }
 
-.header-main {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  gap: 30px;
-}
-
-.header-left {
-  flex: 1;
-}
-
-.header-left h1 {
+.header-title-section h1 {
   margin: 0 0 16px 0;
   color: #333;
   font-size: 36px;
@@ -125,20 +176,7 @@
   font-weight: 500;
 }
 
-/* Logo SAS */
-.sas-logo-container {
-  flex-shrink: 0;
-}
-
-.sas-logo {
-  height: 80px;
-  width: auto;
-  border-radius: 8px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  border: 2px solid #e0e0e0;
-}
-
-/* Content Layout - Dos Columnas */
+/* Content Layout */
 .mercado-content {
   display: flex;
   flex-direction: column;
@@ -152,19 +190,14 @@
   margin-bottom: 20px;
 }
 
-.columna-principal {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-}
-
+.columna-principal,
 .columna-lateral {
   display: flex;
   flex-direction: column;
   gap: 20px;
 }
 
-/* Cards Genéricas */
+/* Cards */
 .seccion-card {
   background: white;
   border-radius: 12px;
@@ -198,12 +231,37 @@
   overflow: hidden;
   background-color: #f0f0f0;
   margin-bottom: 16px;
+  cursor: zoom-in;
+  transition: all 0.3s;
+}
+
+.imagen-principal:hover {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+}
+
+.imagen-principal:hover .zoom-indicator {
+  opacity: 1;
 }
 
 .imagen-principal img {
   width: 100%;
   height: 100%;
   object-fit: cover;
+}
+
+.zoom-indicator {
+  position: absolute;
+  bottom: 16px;
+  right: 16px;
+  background-color: rgba(0, 0, 0, 0.8);
+  color: white;
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 600;
+  opacity: 0;
+  transition: opacity 0.3s;
+  pointer-events: none;
 }
 
 .sin-imagenes {
@@ -247,6 +305,7 @@
   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.2);
   color: #333;
   font-weight: 700;
+  z-index: 10;
 }
 
 .nav-btn:hover {
@@ -255,13 +314,8 @@
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
 }
 
-.nav-btn.prev {
-  left: 20px;
-}
-
-.nav-btn.next {
-  right: 20px;
-}
+.nav-btn.prev { left: 20px; }
+.nav-btn.next { right: 20px; }
 
 .thumbnails {
   display: flex;
@@ -300,11 +354,51 @@
   white-space: pre-line;
 }
 
+/* SAS Section */
+.seccion-sas {
+  background: linear-gradient(135deg, #e8f5e9 0%, #f1f8f4 100%);
+  border: 2px solid #4caf50;
+}
+
+.sas-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+}
+
+.sas-info {
+  flex: 1;
+}
+
+.sas-info h2 {
+  color: #2e7d32;
+  font-size: 20px;
+  margin-bottom: 8px;
+}
+
+.sas-info p {
+  color: #555;
+  font-size: 14px;
+  line-height: 1.6;
+  margin: 0;
+}
+
+.sas-logo {
+  height: 120px;
+  width: auto;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  border: 3px solid white;
+  flex-shrink: 0;
+}
+
 /* Info Lists */
 .info-list {
   display: flex;
   flex-direction: column;
   gap: 12px;
+  margin-bottom: 20px;
 }
 
 .info-row {
@@ -332,6 +426,26 @@
   font-size: 14px;
   font-weight: 500;
   text-align: right;
+}
+
+/* Mapa */
+.mapa-wrapper {
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 2px solid #f0f0f0;
+}
+
+.mapa-container {
+  width: 100%;
+  height: 250px;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 2px solid #e0e0e0;
+}
+
+.mapa-mercado {
+  width: 100%;
+  height: 100%;
 }
 
 /* Horario */
@@ -385,22 +499,7 @@
   margin: 0;
 }
 
-/* Mapa */
-.mapa-container {
-  width: 100%;
-  height: 250px;
-  border-radius: 8px;
-  overflow: hidden;
-  border: 2px solid #e0e0e0;
-  margin-top: 12px;
-}
-
-.mapa-mercado {
-  width: 100%;
-  height: 100%;
-}
-
-/* Sección Productos */
+/* Productos */
 .seccion-productos {
   background: white;
   border-radius: 12px;
@@ -427,10 +526,12 @@
 .productos-count {
   background-color: #00a650;
   color: white;
-  padding: 8px 16px;
+  padding: 6px 16px;
   border-radius: 20px;
-  font-size: 14px;
+  font-size: 16px;
   font-weight: 700;
+  min-width: 40px;
+  text-align: center;
 }
 
 /* Filtros */
@@ -461,7 +562,7 @@
 }
 
 .filtro-grupo select {
-  padding: 12px 15px;
+  padding: 10px 14px;
   border: 2px solid #e0e0e0;
   border-radius: 8px;
   font-size: 14px;
@@ -496,18 +597,18 @@
   transform: translateY(-2px);
 }
 
-/* Grid de Productos */
+/* Grid de Productos Compacto */
 .productos-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-  gap: 24px;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 16px;
   margin-bottom: 32px;
 }
 
-.producto-card {
+.producto-card-compact {
   background: white;
   border: 2px solid #e0e0e0;
-  border-radius: 12px;
+  border-radius: 10px;
   overflow: hidden;
   transition: all 0.3s;
   text-decoration: none;
@@ -516,101 +617,71 @@
   flex-direction: column;
 }
 
-.producto-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+.producto-card-compact:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
   border-color: #00a650;
 }
 
-.producto-imagen {
+.producto-card-compact .producto-imagen {
   width: 100%;
-  height: 200px;
+  height: 140px;
   object-fit: cover;
 }
 
-.producto-sin-imagen {
+.producto-card-compact .producto-sin-imagen {
   width: 100%;
-  height: 200px;
+  height: 140px;
   background: linear-gradient(135deg, #f5f5f5 0%, #e0e0e0 100%);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 64px;
+  font-size: 48px;
 }
 
-.producto-info {
-  padding: 20px;
-  flex-grow: 1;
+.producto-card-compact .producto-info {
+  padding: 12px;
   display: flex;
   flex-direction: column;
+  gap: 8px;
+  flex-grow: 1;
 }
 
-.producto-header-card {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  gap: 12px;
-  margin-bottom: 12px;
-}
-
-.producto-header-card h3 {
+.producto-card-compact h3 {
   margin: 0;
-  font-size: 17px;
+  font-size: 14px;
   color: #333;
   font-weight: 700;
   line-height: 1.3;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 
-.producto-header-card .badge {
-  flex-shrink: 0;
-  font-size: 10px;
-  padding: 5px 10px;
-  border-radius: 12px;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
-.producto-header-card .badge.disponible {
-  background-color: #e8f5e9;
-  color: #2e7d32;
-  border: 1px solid #4caf50;
-}
-
-.producto-header-card .badge.no_disponible {
-  background-color: #ffebee;
-  color: #c62828;
-  border: 1px solid #f44336;
-}
-
-.producto-descripcion {
-  color: #666;
-  font-size: 14px;
-  line-height: 1.6;
-  margin-bottom: 12px;
-  flex-grow: 1;
-}
-
-.producto-detalles {
+.producto-card-compact .producto-footer {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding-top: 12px;
+  margin-top: auto;
+  padding-top: 8px;
   border-top: 1px solid #f0f0f0;
 }
 
-.producto-detalles .categoria {
+.producto-card-compact .categoria {
   background-color: #f0f0f0;
-  padding: 6px 12px;
-  border-radius: 20px;
-  font-size: 12px;
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 10px;
   color: #666;
   font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
 }
 
-.producto-detalles .precio {
+.producto-card-compact .precio {
   color: #00a650;
-  font-size: 18px;
+  font-size: 15px;
   font-weight: 700;
 }
 
@@ -662,6 +733,10 @@
     grid-template-columns: repeat(2, 1fr);
     gap: 20px;
   }
+
+  .productos-grid {
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  }
 }
 
 @media (max-width: 768px) {
@@ -673,23 +748,19 @@
     padding: 16px 20px;
   }
 
-  .header-main {
-    flex-direction: column;
-    gap: 20px;
-  }
-
-  .header-left h1 {
+  .header-title-section h1 {
     font-size: 26px;
-  }
-
-  .sas-logo {
-    height: 60px;
   }
 
   .estado-container {
     flex-direction: column;
     align-items: flex-start;
     gap: 10px;
+  }
+
+  .estado-badge {
+    font-size: 13px;
+    padding: 8px 16px;
   }
 
   .content-grid {
@@ -718,16 +789,25 @@
     font-size: 24px;
   }
 
-  .nav-btn.prev {
-    left: 10px;
-  }
+  .nav-btn.prev { left: 10px; }
+  .nav-btn.next { right: 10px; }
 
-  .nav-btn.next {
-    right: 10px;
+  .zoom-indicator {
+    font-size: 11px;
+    padding: 6px 12px;
   }
 
   .seccion-card {
     padding: 20px;
+  }
+
+  .sas-content {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .sas-logo {
+    height: 80px;
   }
 
   .filtros-grid {
@@ -735,7 +815,21 @@
   }
 
   .productos-grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 12px;
+  }
+
+  .producto-card-compact .producto-imagen,
+  .producto-card-compact .producto-sin-imagen {
+    height: 120px;
+  }
+
+  .producto-card-compact .producto-info {
+    padding: 10px;
+  }
+
+  .producto-card-compact h3 {
+    font-size: 13px;
   }
 
   .mapa-container {
@@ -746,16 +840,19 @@
     width: 80px;
     height: 80px;
   }
+
+  .modal-cerrar {
+    top: 10px;
+    right: 10px;
+    width: 36px;
+    height: 36px;
+    font-size: 20px;
+  }
 }
 
 @media (max-width: 480px) {
-  .header-left h1 {
+  .header-title-section h1 {
     font-size: 22px;
-  }
-
-  .estado-badge {
-    font-size: 13px;
-    padding: 8px 14px;
   }
 
   .productos-header {
@@ -766,5 +863,9 @@
 
   .productos-count {
     align-self: flex-start;
+  }
+
+  .productos-grid {
+    grid-template-columns: repeat(2, 1fr);
   }
 }

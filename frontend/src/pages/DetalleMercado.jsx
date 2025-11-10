@@ -28,6 +28,7 @@ function DetalleMercado() {
   const [categorias, setCategorias] = useState([]);
   const [loading, setLoading] = useState(true);
   const [imagenActual, setImagenActual] = useState(0);
+  const [modalImagen, setModalImagen] = useState(null);
 
   // Filtros de productos
   const [filtros, setFiltros] = useState({
@@ -37,7 +38,7 @@ function DetalleMercado() {
 
   // Paginación
   const [paginaActual, setPaginaActual] = useState(1);
-  const productosPorPagina = 12;
+  const productosPorPagina = 16;
 
   useEffect(() => {
     cargarDatos();
@@ -73,7 +74,7 @@ function DetalleMercado() {
 
       const response = await productoService.obtenerTodos(params);
       setProductos(response.data);
-      setPaginaActual(1); // Reset a primera página al filtrar
+      setPaginaActual(1);
     } catch (error) {
       console.error('Error al cargar productos:', error);
       toast.error('Error al cargar productos');
@@ -84,13 +85,11 @@ function DetalleMercado() {
     if (!horarioString) return null;
     try {
       const parsed = JSON.parse(horarioString);
-      // Validar que sea un objeto con formato esperado
       if (typeof parsed === 'object' && parsed.lunes) {
         return parsed;
       }
       return null;
     } catch {
-      // Si no es JSON, retornar null para mostrar como texto
       return null;
     }
   };
@@ -100,7 +99,7 @@ function DetalleMercado() {
 
     const ahora = new Date();
     const diaActual = diasSemana[ahora.getDay()];
-    const horaActual = ahora.getHours() * 60 + ahora.getMinutes(); // Minutos desde medianoche
+    const horaActual = ahora.getHours() * 60 + ahora.getMinutes();
 
     const horarioDia = horario[diaActual];
     if (!horarioDia) return { abierto: false, mensaje: 'Horario no disponible' };
@@ -109,7 +108,6 @@ function DetalleMercado() {
       return { abierto: false, mensaje: 'Cerrado hoy' };
     }
 
-    // Parsear hora de apertura y cierre
     const [abreH, abreM] = horarioDia.abre.split(':').map(Number);
     const [cierraH, cierraM] = horarioDia.cierra.split(':').map(Number);
 
@@ -130,6 +128,16 @@ function DetalleMercado() {
       categoria: '',
       estado: ''
     });
+  };
+
+  const abrirModal = (imagenUrl) => {
+    setModalImagen(imagenUrl);
+    document.body.style.overflow = 'hidden';
+  };
+
+  const cerrarModal = () => {
+    setModalImagen(null);
+    document.body.style.overflow = 'auto';
   };
 
   if (loading) {
@@ -159,7 +167,6 @@ function DetalleMercado() {
   const horarioParsed = parseHorario(mercado.horario);
   const estadoAbierto = horarioParsed ? estaAbierto(horarioParsed) : null;
 
-  // Paginación de productos
   const indexUltimo = paginaActual * productosPorPagina;
   const indexPrimero = indexUltimo - productosPorPagina;
   const productosPaginados = productos.slice(indexPrimero, indexUltimo);
@@ -167,29 +174,31 @@ function DetalleMercado() {
 
   return (
     <div className="detalle-mercado-container">
-      {/* Header con información principal */}
+      {/* Modal de Imagen */}
+      {modalImagen && (
+        <div className="modal-imagen" onClick={cerrarModal}>
+          <div className="modal-contenido" onClick={(e) => e.stopPropagation()}>
+            <button className="modal-cerrar" onClick={cerrarModal}>✕</button>
+            <img src={modalImagen} alt="Imagen ampliada" />
+          </div>
+        </div>
+      )}
+
+      {/* Header */}
       <div className="mercado-header">
         <button onClick={() => navigate('/mercados')} className="btn-back">
           ← Volver a Mercados
         </button>
 
-        <div className="header-main">
-          <div className="header-left">
-            <h1>{mercado.nombre}</h1>
-            {estadoAbierto && (
-              <div className="estado-container">
-                <span className={`estado-badge ${estadoAbierto.abierto ? 'abierto' : 'cerrado'}`}>
-                  <span className="estado-icon">{estadoAbierto.abierto ? '●' : '●'}</span>
-                  {estadoAbierto.abierto ? 'Abierto' : 'Cerrado'}
-                </span>
-                <span className="estado-mensaje">{estadoAbierto.mensaje}</span>
-              </div>
-            )}
-          </div>
-
-          {mercado.perteneceSas && (
-            <div className="sas-logo-container">
-              <img src="/logo sas.jpg" alt="Sistema de Acopio Social (SAS)" className="sas-logo" />
+        <div className="header-title-section">
+          <h1>{mercado.nombre}</h1>
+          {estadoAbierto && (
+            <div className="estado-container">
+              <span className={`estado-badge ${estadoAbierto.abierto ? 'abierto' : 'cerrado'}`}>
+                <span className="estado-icon">{estadoAbierto.abierto ? '●' : '●'}</span>
+                {estadoAbierto.abierto ? 'Abierto' : 'Cerrado'}
+              </span>
+              <span className="estado-mensaje">{estadoAbierto.mensaje}</span>
             </div>
           )}
         </div>
@@ -198,27 +207,34 @@ function DetalleMercado() {
       <div className="mercado-content">
         {/* Layout de dos columnas */}
         <div className="content-grid">
-          {/* Columna Izquierda: Galería + Descripción */}
+          {/* Columna Izquierda */}
           <div className="columna-principal">
-            {/* Galería de Imágenes */}
+            {/* Galería */}
             {mercado.imagenes && mercado.imagenes.length > 0 ? (
               <section className="seccion-galeria">
-                <div className="imagen-principal">
+                <div className="imagen-principal" onClick={() => abrirModal(`http://localhost:5000${mercado.imagenes[imagenActual]}`)}>
                   <img
                     src={`http://localhost:5000${mercado.imagenes[imagenActual]}`}
                     alt={`${mercado.nombre} - Imagen ${imagenActual + 1}`}
                   />
+                  <div className="zoom-indicator">🔍 Click para ampliar</div>
                   {mercado.imagenes.length > 1 && (
                     <>
                       <button
                         className="nav-btn prev"
-                        onClick={() => setImagenActual((prev) => (prev === 0 ? mercado.imagenes.length - 1 : prev - 1))}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setImagenActual((prev) => (prev === 0 ? mercado.imagenes.length - 1 : prev - 1));
+                        }}
                       >
                         ‹
                       </button>
                       <button
                         className="nav-btn next"
-                        onClick={() => setImagenActual((prev) => (prev === mercado.imagenes.length - 1 ? 0 : prev + 1))}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setImagenActual((prev) => (prev === mercado.imagenes.length - 1 ? 0 : prev + 1));
+                        }}
                       >
                         ›
                       </button>
@@ -255,11 +271,24 @@ function DetalleMercado() {
                 <p className="descripcion-texto">{mercado.descripcion}</p>
               </section>
             )}
+
+            {/* SAS - Sección independiente */}
+            {mercado.perteneceSas && (
+              <section className="seccion-card seccion-sas">
+                <div className="sas-content">
+                  <div className="sas-info">
+                    <h2>Sistema de Acopio Social (SAS)</h2>
+                    <p>Este mercado forma parte del Sistema de Acopio Social de Cuba</p>
+                  </div>
+                  <img src="/logo sas.jpg" alt="Sistema de Acopio Social" className="sas-logo" />
+                </div>
+              </section>
+            )}
           </div>
 
-          {/* Columna Derecha: Información detallada */}
+          {/* Columna Derecha */}
           <div className="columna-lateral">
-            {/* Ubicación */}
+            {/* Ubicación con Mapa integrado */}
             <section className="seccion-card">
               <h2>📍 Ubicación</h2>
               <div className="info-list">
@@ -276,6 +305,26 @@ function DetalleMercado() {
                   <span className="value">{mercado.provincia}</span>
                 </div>
               </div>
+
+              {/* Mapa dentro de ubicación */}
+              {mercado.latitud && mercado.longitud && (
+                <div className="mapa-wrapper">
+                  <div className="mapa-container">
+                    <MapContainer
+                      center={[mercado.latitud, mercado.longitud]}
+                      zoom={15}
+                      scrollWheelZoom={false}
+                      className="mapa-mercado"
+                    >
+                      <TileLayer
+                        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+                        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                      />
+                      <Marker position={[mercado.latitud, mercado.longitud]} />
+                    </MapContainer>
+                  </div>
+                </div>
+              )}
             </section>
 
             {/* Horario */}
@@ -318,35 +367,14 @@ function DetalleMercado() {
                 <p className="beneficiario">{mercado.beneficiarioLegal}</p>
               </section>
             )}
-
-            {/* Mapa */}
-            {mercado.latitud && mercado.longitud && (
-              <section className="seccion-card">
-                <h2>📌 Ubicación en el Mapa</h2>
-                <div className="mapa-container">
-                  <MapContainer
-                    center={[mercado.latitud, mercado.longitud]}
-                    zoom={15}
-                    scrollWheelZoom={false}
-                    className="mapa-mercado"
-                  >
-                    <TileLayer
-                      attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-                      url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                    />
-                    <Marker position={[mercado.latitud, mercado.longitud]} />
-                  </MapContainer>
-                </div>
-              </section>
-            )}
           </div>
         </div>
 
-        {/* Productos del Mercado - Full width */}
+        {/* Productos - Full width */}
         <section className="seccion-productos">
           <div className="productos-header">
             <h2>Productos Disponibles</h2>
-            <span className="productos-count">{productos.length} producto{productos.length !== 1 ? 's' : ''}</span>
+            <span className="productos-count">{productos.length}</span>
           </div>
 
           {/* Filtros */}
@@ -358,7 +386,7 @@ function DetalleMercado() {
                   value={filtros.categoria}
                   onChange={(e) => setFiltros({ ...filtros, categoria: e.target.value })}
                 >
-                  <option value="">Todas las categorías</option>
+                  <option value="">Todas</option>
                   {categorias.map((cat) => (
                     <option key={cat.id} value={cat.id}>
                       {cat.nombre}
@@ -373,7 +401,7 @@ function DetalleMercado() {
                   value={filtros.estado}
                   onChange={(e) => setFiltros({ ...filtros, estado: e.target.value })}
                 >
-                  <option value="">Todos los estados</option>
+                  <option value="">Todos</option>
                   <option value="DISPONIBLE">Disponible</option>
                   <option value="NO_DISPONIBLE">No Disponible</option>
                 </select>
@@ -395,7 +423,7 @@ function DetalleMercado() {
                   <Link
                     key={producto.id}
                     to={`/productos/${producto.id}`}
-                    className="producto-card"
+                    className="producto-card-compact"
                   >
                     {producto.imagenes && producto.imagenes.length > 0 ? (
                       <img
@@ -409,22 +437,9 @@ function DetalleMercado() {
                       </div>
                     )}
                     <div className="producto-info">
-                      <div className="producto-header-card">
-                        <h3>{producto.nombre}</h3>
-                        <span className={`badge ${producto.estado.toLowerCase()}`}>
-                          {producto.estado === 'DISPONIBLE' ? 'Disponible' : 'No Disponible'}
-                        </span>
-                      </div>
-                      {producto.descripcion && (
-                        <p className="producto-descripcion">
-                          {producto.descripcion.substring(0, 100)}
-                          {producto.descripcion.length > 100 ? '...' : ''}
-                        </p>
-                      )}
-                      <div className="producto-detalles">
-                        <span className="categoria">
-                          {producto.categoria?.nombre || producto.categoria}
-                        </span>
+                      <h3>{producto.nombre}</h3>
+                      <div className="producto-footer">
+                        <span className="categoria">{producto.categoria?.nombre || producto.categoria}</span>
                         {producto.precio && (
                           <span className="precio">${producto.precio.toFixed(2)}</span>
                         )}
