@@ -167,108 +167,128 @@ function DetalleMercado() {
 
   return (
     <div className="detalle-mercado-container">
-      {/* Header */}
+      {/* Header con información principal */}
       <div className="mercado-header">
         <button onClick={() => navigate('/mercados')} className="btn-back">
           ← Volver a Mercados
         </button>
-        <div className="header-title">
-          <h1>{mercado.nombre}</h1>
-          {mercado.perteneceSas && <span className="badge sas-badge">SAS</span>}
-          {estadoAbierto && (
-            <span className={`badge estado-badge ${estadoAbierto.abierto ? 'abierto' : 'cerrado'}`}>
-              {estadoAbierto.abierto ? '🟢 Abierto' : '🔴 Cerrado'}
-            </span>
+
+        <div className="header-main">
+          <div className="header-left">
+            <h1>{mercado.nombre}</h1>
+            {estadoAbierto && (
+              <div className="estado-container">
+                <span className={`estado-badge ${estadoAbierto.abierto ? 'abierto' : 'cerrado'}`}>
+                  <span className="estado-icon">{estadoAbierto.abierto ? '●' : '●'}</span>
+                  {estadoAbierto.abierto ? 'Abierto' : 'Cerrado'}
+                </span>
+                <span className="estado-mensaje">{estadoAbierto.mensaje}</span>
+              </div>
+            )}
+          </div>
+
+          {mercado.perteneceSas && (
+            <div className="sas-logo-container">
+              <img src="/logo sas.jpg" alt="Sistema de Acopio Social (SAS)" className="sas-logo" />
+            </div>
           )}
         </div>
-        {estadoAbierto && <p className="estado-mensaje">{estadoAbierto.mensaje}</p>}
       </div>
 
       <div className="mercado-content">
-        {/* Galería de Imágenes */}
-        {mercado.imagenes && mercado.imagenes.length > 0 && (
-          <section className="seccion-imagenes">
-            <div className="imagen-principal">
-              <img
-                src={`http://localhost:5000${mercado.imagenes[imagenActual]}`}
-                alt={`${mercado.nombre} - Imagen ${imagenActual + 1}`}
-              />
-              {mercado.imagenes.length > 1 && (
-                <>
-                  <button
-                    className="nav-btn prev"
-                    onClick={() => setImagenActual((prev) => (prev === 0 ? mercado.imagenes.length - 1 : prev - 1))}
-                  >
-                    ‹
-                  </button>
-                  <button
-                    className="nav-btn next"
-                    onClick={() => setImagenActual((prev) => (prev === mercado.imagenes.length - 1 ? 0 : prev + 1))}
-                  >
-                    ›
-                  </button>
-                </>
-              )}
-            </div>
-            {mercado.imagenes.length > 1 && (
-              <div className="thumbnails">
-                {mercado.imagenes.map((img, index) => (
+        {/* Layout de dos columnas */}
+        <div className="content-grid">
+          {/* Columna Izquierda: Galería + Descripción */}
+          <div className="columna-principal">
+            {/* Galería de Imágenes */}
+            {mercado.imagenes && mercado.imagenes.length > 0 ? (
+              <section className="seccion-galeria">
+                <div className="imagen-principal">
                   <img
-                    key={index}
-                    src={`http://localhost:5000${img}`}
-                    alt={`Thumbnail ${index + 1}`}
-                    className={imagenActual === index ? 'active' : ''}
-                    onClick={() => setImagenActual(index)}
+                    src={`http://localhost:5000${mercado.imagenes[imagenActual]}`}
+                    alt={`${mercado.nombre} - Imagen ${imagenActual + 1}`}
                   />
-                ))}
-              </div>
+                  {mercado.imagenes.length > 1 && (
+                    <>
+                      <button
+                        className="nav-btn prev"
+                        onClick={() => setImagenActual((prev) => (prev === 0 ? mercado.imagenes.length - 1 : prev - 1))}
+                      >
+                        ‹
+                      </button>
+                      <button
+                        className="nav-btn next"
+                        onClick={() => setImagenActual((prev) => (prev === mercado.imagenes.length - 1 ? 0 : prev + 1))}
+                      >
+                        ›
+                      </button>
+                    </>
+                  )}
+                </div>
+                {mercado.imagenes.length > 1 && (
+                  <div className="thumbnails">
+                    {mercado.imagenes.map((img, index) => (
+                      <img
+                        key={index}
+                        src={`http://localhost:5000${img}`}
+                        alt={`Thumbnail ${index + 1}`}
+                        className={imagenActual === index ? 'active' : ''}
+                        onClick={() => setImagenActual(index)}
+                      />
+                    ))}
+                  </div>
+                )}
+              </section>
+            ) : (
+              <section className="seccion-galeria">
+                <div className="sin-imagenes">
+                  <span className="icon">🏪</span>
+                  <p>No hay imágenes disponibles</p>
+                </div>
+              </section>
             )}
-          </section>
-        )}
 
-        {/* Información del Mercado */}
-        <section className="seccion-info">
-          <div className="info-card">
-            <h2>Información del Mercado</h2>
-
+            {/* Descripción */}
             {mercado.descripcion && (
-              <div className="info-item">
-                <h3>Descripción</h3>
-                <p>{mercado.descripcion}</p>
-              </div>
+              <section className="seccion-card">
+                <h2>Sobre este mercado</h2>
+                <p className="descripcion-texto">{mercado.descripcion}</p>
+              </section>
             )}
+          </div>
 
-            <div className="info-item">
-              <h3>📍 Ubicación</h3>
-              <p><strong>Dirección:</strong> {mercado.direccion}</p>
-              <p><strong>Municipio:</strong> {mercado.municipio}</p>
-              <p><strong>Provincia:</strong> {mercado.provincia}</p>
-            </div>
-
-            {mercado.beneficiarioLegal && (
-              <div className="info-item">
-                <h3>👤 Beneficiario Legal</h3>
-                <p>{mercado.beneficiarioLegal}</p>
+          {/* Columna Derecha: Información detallada */}
+          <div className="columna-lateral">
+            {/* Ubicación */}
+            <section className="seccion-card">
+              <h2>📍 Ubicación</h2>
+              <div className="info-list">
+                <div className="info-row">
+                  <span className="label">Dirección:</span>
+                  <span className="value">{mercado.direccion}</span>
+                </div>
+                <div className="info-row">
+                  <span className="label">Municipio:</span>
+                  <span className="value">{mercado.municipio}</span>
+                </div>
+                <div className="info-row">
+                  <span className="label">Provincia:</span>
+                  <span className="value">{mercado.provincia}</span>
+                </div>
               </div>
-            )}
-
-            <div className="info-item">
-              <h3>🏪 Gestor</h3>
-              <p><strong>{mercado.gestor.nombre}</strong></p>
-              <p className="text-muted">@{mercado.gestor.nombreUsuario}</p>
-            </div>
+            </section>
 
             {/* Horario */}
             {horarioParsed ? (
-              <div className="info-item">
-                <h3>🕒 Horario de Atención</h3>
-                <div className="horario-tabla">
+              <section className="seccion-card">
+                <h2>🕒 Horario de Atención</h2>
+                <div className="horario-lista">
                   {diasSemana.map((dia) => {
                     const horarioDia = horarioParsed[dia];
                     const esHoy = diasSemana[new Date().getDay()] === dia;
 
                     return (
-                      <div key={dia} className={`horario-fila ${esHoy ? 'hoy' : ''}`}>
+                      <div key={dia} className={`horario-item ${esHoy ? 'hoy' : ''}`}>
                         <span className="dia">{diasNombres[dia]}</span>
                         <span className="horario">
                           {horarioDia?.cerrado ? (
@@ -283,18 +303,26 @@ function DetalleMercado() {
                     );
                   })}
                 </div>
-              </div>
+              </section>
             ) : mercado.horario ? (
-              <div className="info-item">
-                <h3>🕒 Horario de Atención</h3>
+              <section className="seccion-card">
+                <h2>🕒 Horario de Atención</h2>
                 <p>{mercado.horario}</p>
-              </div>
+              </section>
             ) : null}
+
+            {/* Beneficiario Legal */}
+            {mercado.beneficiarioLegal && (
+              <section className="seccion-card">
+                <h2>👤 Beneficiario Legal</h2>
+                <p className="beneficiario">{mercado.beneficiarioLegal}</p>
+              </section>
+            )}
 
             {/* Mapa */}
             {mercado.latitud && mercado.longitud && (
-              <div className="info-item">
-                <h3>📌 Ubicación en el Mapa</h3>
+              <section className="seccion-card">
+                <h2>📌 Ubicación en el Mapa</h2>
                 <div className="mapa-container">
                   <MapContainer
                     center={[mercado.latitud, mercado.longitud]}
@@ -309,49 +337,52 @@ function DetalleMercado() {
                     <Marker position={[mercado.latitud, mercado.longitud]} />
                   </MapContainer>
                 </div>
-              </div>
+              </section>
             )}
           </div>
-        </section>
+        </div>
 
-        {/* Productos del Mercado */}
+        {/* Productos del Mercado - Full width */}
         <section className="seccion-productos">
           <div className="productos-header">
-            <h2>Productos Disponibles ({productos.length})</h2>
+            <h2>Productos Disponibles</h2>
+            <span className="productos-count">{productos.length} producto{productos.length !== 1 ? 's' : ''}</span>
           </div>
 
           {/* Filtros */}
-          <div className="filtros-productos">
-            <div className="filtro-grupo">
-              <label>Categoría</label>
-              <select
-                value={filtros.categoria}
-                onChange={(e) => setFiltros({ ...filtros, categoria: e.target.value })}
-              >
-                <option value="">Todas las categorías</option>
-                {categorias.map((cat) => (
-                  <option key={cat.id} value={cat.id}>
-                    {cat.nombre}
-                  </option>
-                ))}
-              </select>
-            </div>
+          <div className="filtros-container">
+            <div className="filtros-grid">
+              <div className="filtro-grupo">
+                <label>Categoría</label>
+                <select
+                  value={filtros.categoria}
+                  onChange={(e) => setFiltros({ ...filtros, categoria: e.target.value })}
+                >
+                  <option value="">Todas las categorías</option>
+                  {categorias.map((cat) => (
+                    <option key={cat.id} value={cat.id}>
+                      {cat.nombre}
+                    </option>
+                  ))}
+                </select>
+              </div>
 
-            <div className="filtro-grupo">
-              <label>Estado</label>
-              <select
-                value={filtros.estado}
-                onChange={(e) => setFiltros({ ...filtros, estado: e.target.value })}
-              >
-                <option value="">Todos los estados</option>
-                <option value="DISPONIBLE">Disponible</option>
-                <option value="NO_DISPONIBLE">No Disponible</option>
-              </select>
+              <div className="filtro-grupo">
+                <label>Estado</label>
+                <select
+                  value={filtros.estado}
+                  onChange={(e) => setFiltros({ ...filtros, estado: e.target.value })}
+                >
+                  <option value="">Todos los estados</option>
+                  <option value="DISPONIBLE">Disponible</option>
+                  <option value="NO_DISPONIBLE">No Disponible</option>
+                </select>
+              </div>
             </div>
 
             {(filtros.categoria || filtros.estado) && (
               <button onClick={limpiarFiltros} className="btn-limpiar">
-                Limpiar filtros
+                ✕ Limpiar filtros
               </button>
             )}
           </div>
@@ -413,6 +444,7 @@ function DetalleMercado() {
             </>
           ) : (
             <div className="no-productos">
+              <span className="icon">🔍</span>
               <p>No hay productos disponibles con los filtros seleccionados</p>
             </div>
           )}
