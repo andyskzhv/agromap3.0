@@ -1,0 +1,197 @@
+.mercados-container {
+    min-height: calc(100vh - 70px);
+    background: #f5f7fa;
+    padding: 20px;
+  }
+  
+  .mercados-header {
+    text-align: center;
+    margin-bottom: 40px;
+    padding-top: 20px;
+  }
+  
+  .mercados-header h1 {
+    font-size: 36px;
+    color: #333;
+    margin-bottom: 10px;
+  }
+  
+  .mercados-header p {
+    color: #666;
+    font-size: 16px;
+  }
+  
+  .filtros-section {
+    display: flex;
+    gap: 15px;
+    max-width: 1200px;
+    margin: 0 auto 30px;
+    padding: 20px;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  }
+  
+  .filtro-group {
+    flex: 1;
+  }
+  
+  .filtro-group input {
+    width: 100%;
+    padding: 12px 15px;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    font-size: 14px;
+  }
+  
+  .filtro-group input:focus {
+    outline: none;
+    border-color: #667eea;
+  }
+  
+  .btn-filtrar,
+  .btn-limpiar {
+    padding: 12px 24px;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  
+  .btn-filtrar {
+    background: #667eea;
+    color: white;
+  }
+  
+  .btn-filtrar:hover {
+    background: #5568d3;
+  }
+  
+  .btn-limpiar {
+    background: #f5f5f5;
+    color: #666;
+  }
+  
+  .btn-limpiar:hover {
+    background: #e0e0e0;
+  }
+  
+  .loading,
+  .no-results {
+    text-align: center;
+    padding: 60px 20px;
+    color: #666;
+    font-size: 18px;
+  }
+  
+  .mercados-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    gap: 24px;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  
+  .mercado-card {
+    background: white;
+    border-radius: 12px;
+    padding: 24px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  
+  .mercado-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+  }
+  
+  .mercado-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+  }
+  
+  .mercado-header h3 {
+    font-size: 22px;
+    color: #333;
+    margin: 0;
+  }
+  
+  .badge-sas {
+    background: #4caf50;
+    color: white;
+    padding: 4px 12px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 600;
+  }
+  
+  .mercado-descripcion {
+    color: #666;
+    line-height: 1.5;
+    margin-bottom: 20px;
+    min-height: 48px;
+  }
+  
+  .mercado-info {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+  
+  .info-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 0;
+    border-bottom: 1px solid #f0f0f0;
+  }
+  
+  .info-item strong {
+    color: #555;
+    font-size: 14px;
+  }
+  
+  .info-item span {
+    color: #333;
+    font-size: 14px;
+  }
+  
+  .btn-ver-mas {
+    display: block;
+    width: 100%;
+    text-align: center;
+    padding: 12px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    text-decoration: none;
+    border-radius: 8px;
+    font-weight: 600;
+    transition: all 0.2s;
+  }
+  
+  .btn-ver-mas:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+  }
+  
+  @media (max-width: 768px) {
+    .filtros-section {
+      flex-direction: column;
+    }
+    
+    .mercados-grid {
+      grid-template-columns: 1fr;
+      padding: 0 10px;
+    }
+  
+    .mercados-header h1 {
+      font-size: 28px;
+    }
+  
+    .mercado-card {
+      padding: 20px;
+    }
+  }

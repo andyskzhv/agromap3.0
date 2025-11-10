@@ -1,0 +1,132 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Rol {
+  USUARIO
+  GESTOR
+  ADMIN
+}
+
+enum EstadoProducto {
+  DISPONIBLE
+  NO_DISPONIBLE
+}
+
+model Categoria {
+  id          Int      @id @default(autoincrement())
+  nombre      String   @unique
+  descripcion String?  @db.Text
+  activa      Boolean  @default(true)
+  creadoEn    DateTime @default(now())
+  actualizadoEn DateTime @updatedAt
+  
+  // Relaciones
+  productos   Producto[]
+  plantillas  PlantillaProducto[]
+
+  @@map("categorias")
+}
+
+model Usuario {
+  id            Int          @id @default(autoincrement())
+  nombre        String
+  nombreUsuario String       @unique
+  contrasena    String
+  imagen        String?
+  rol           Rol          @default(USUARIO)
+  provincia     String?
+  creadoEn      DateTime     @default(now())
+  actualizadoEn DateTime     @updatedAt
+
+  // Relaciones
+  mercados      Mercado[]
+  comentarios   Comentario[]
+
+  @@map("usuarios")
+}
+
+model Mercado {
+  id               Int       @id @default(autoincrement())
+  nombre           String
+  descripcion      String?   @db.Text
+  direccion        String
+  provincia        String
+  municipio        String
+  latitud          Float?
+  longitud         Float?
+  imagenes         String[]  // Array de URLs de imágenes
+  beneficiarioLegal String?
+  horario          String?   @db.Text
+  perteneceSas     Boolean   @default(false)
+  gestorId         Int
+  creadoEn         DateTime  @default(now())
+  actualizadoEn    DateTime  @updatedAt
+  
+  // Relaciones
+  gestor           Usuario   @relation(fields: [gestorId], references: [id], onDelete: Cascade)
+  productos        Producto[]
+
+  @@map("mercados")
+}
+
+model Producto {
+  id                 Int             @id @default(autoincrement())
+  nombre             String
+  descripcion        String?         @db.Text
+  cantidad           String?
+  imagenes           String[]        // Array de URLs de imágenes
+  categoriaId        Int
+  tipoProducto       String?
+  precio             Float?
+  estado             EstadoProducto  @default(DISPONIBLE)
+  fechaActualizacion DateTime        @default(now())
+  mercadoId          Int
+  creadoEn           DateTime        @default(now())
+  actualizadoEn      DateTime        @updatedAt
+  
+  // Relaciones
+  mercado            Mercado         @relation(fields: [mercadoId], references: [id], onDelete: Cascade)
+  categoria          Categoria       @relation(fields: [categoriaId], references: [id])
+  comentarios        Comentario[]
+
+  @@map("productos")
+}
+
+model PlantillaProducto {
+  id          Int       @id @default(autoincrement())
+  nombre      String
+  descripcion String?  @db.Text
+  imagen      String?
+  categoriaId Int
+  creadoEn    DateTime @default(now())
+  
+  // Relaciones
+  categoria   Categoria @relation(fields: [categoriaId], references: [id])
+
+  @@map("plantillas_productos")
+}
+
+model Comentario {
+  id         Int      @id @default(autoincrement())
+  usuarioId  Int
+  productoId Int
+  texto      String   @db.Text
+  recomienda Boolean  @default(true)
+  likes      Int      @default(0)
+  creadoEn   DateTime @default(now())
+  
+  // Relaciones
+  usuario    Usuario  @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
+  producto   Producto @relation(fields: [productoId], references: [id], onDelete: Cascade)
+
+  @@map("comentarios")
+}
