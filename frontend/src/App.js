@@ -9,6 +9,7 @@ import Login from './pages/Login';
 import Perfil from './pages/Perfil';
 import EditarPerfil from './pages/EditarPerfil';
 import Mercados from './pages/Mercados';
+import DetalleMercado from './pages/DetalleMercado';
 import FormularioMercado from './pages/FormularioMercado';
 import Productos from './pages/Productos';
 import GestionProductos from './pages/GestionProductos';
@@ -28,6 +29,7 @@ function App() {
           <Route path="/perfil" element={<Perfil />} />
           <Route path="/editar-perfil" element={<EditarPerfil />} />
           <Route path="/mercados" element={<Mercados />} />
+          <Route path="/mercados/:id" element={<DetalleMercado />} />
           <Route path="/mercado/crear" element={<FormularioMercado />} />
           <Route path="/mercado/editar" element={<FormularioMercado />} />
           <Route path="/productos" element={<Productos />} />
