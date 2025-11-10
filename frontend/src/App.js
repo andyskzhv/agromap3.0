@@ -1,7 +1,8 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { ToastProvider } from './components/Toast';
 import Navbar from './components/Navbar';
+import Home from './pages/Home';
 import Registro from './pages/Registro';
 import Login from './pages/Login';
 import Perfil from './pages/Perfil';
@@ -19,7 +20,7 @@ function App() {
       <ToastProvider>
         <Navbar />
         <Routes>
-          <Route path="/" element={<Navigate to="/mercados" />} />
+          <Route path="/" element={<Home />} />
           <Route path="/registro" element={<Registro />} />
           <Route path="/login" element={<Login />} />
           <Route path="/perfil" element={<Perfil />} />

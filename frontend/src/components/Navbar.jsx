@@ -41,21 +41,37 @@ function Navbar() {
         </button>
 
         <div className={`navbar-menu ${menuAbierto ? 'active' : ''}`}>
-          <Link 
-            to="/mercados" 
+          <Link
+            to="/mercados"
             className={`navbar-link ${isActive('/mercados')}`}
             onClick={() => setMenuAbierto(false)}
           >
-            🏪 Mercados
+            Sobre Nosotros
           </Link>
-          
-          <Link 
-            to="/productos" 
+
+          <Link
+            to="/productos"
             className={`navbar-link ${isActive('/productos')}`}
             onClick={() => setMenuAbierto(false)}
           >
-            📦 Productos
+            Productos
           </Link>
+
+          <a
+            href="#establecimientos"
+            className="navbar-link"
+            onClick={() => setMenuAbierto(false)}
+          >
+            Establecimientos
+          </a>
+
+          <a
+            href="#contacto"
+            className="navbar-link"
+            onClick={() => setMenuAbierto(false)}
+          >
+            Contacto
+          </a>
 
           {usuario ? (
             <>
