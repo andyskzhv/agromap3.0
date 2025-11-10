@@ -30,7 +30,7 @@ function Navbar() {
     <nav className="navbar">
       <div className="navbar-container">
         <Link to="/" className="navbar-logo">
-          🌾 Agromap
+          <img src="/logo.png" alt="Agromap" className="logo-image" />
         </Link>
 
         <button 
@@ -42,14 +42,6 @@ function Navbar() {
 
         <div className={`navbar-menu ${menuAbierto ? 'active' : ''}`}>
           <Link
-            to="/mercados"
-            className={`navbar-link ${isActive('/mercados')}`}
-            onClick={() => setMenuAbierto(false)}
-          >
-            Sobre Nosotros
-          </Link>
-
-          <Link
             to="/productos"
             className={`navbar-link ${isActive('/productos')}`}
             onClick={() => setMenuAbierto(false)}
@@ -57,13 +49,13 @@ function Navbar() {
             Productos
           </Link>
 
-          <a
-            href="#establecimientos"
-            className="navbar-link"
+          <Link
+            to="/mercados"
+            className={`navbar-link ${isActive('/mercados')}`}
             onClick={() => setMenuAbierto(false)}
           >
             Establecimientos
-          </a>
+          </Link>
 
           <a
             href="#contacto"

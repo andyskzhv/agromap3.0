@@ -59,7 +59,7 @@ function Home() {
   return (
     <div className="home-container">
       {/* Hero Section */}
-      <section className="hero-section">
+      <section className="hero-section" style={{ backgroundImage: 'url(/hero.png)' }}>
         <div className="hero-overlay">
           <div className="hero-content">
             <h1 className="hero-title">AgroMap</h1>
