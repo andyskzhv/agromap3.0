@@ -2,6 +2,7 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { ToastProvider } from './components/Toast';
 import Navbar from './components/Navbar';
+import Breadcrumbs from './components/Breadcrumbs';
 import Home from './pages/Home';
 import Registro from './pages/Registro';
 import Login from './pages/Login';
@@ -19,6 +20,7 @@ function App() {
     <Router>
       <ToastProvider>
         <Navbar />
+        <Breadcrumbs />
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/registro" element={<Registro />} />
