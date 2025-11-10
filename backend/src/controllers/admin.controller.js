@@ -1,5 +1,6 @@
 const { PrismaClient } = require('@prisma/client');
 const bcrypt = require('bcryptjs');
+const { eliminarArchivo, eliminarArchivos } = require('../utils/fileUtils');
 const prisma = new PrismaClient();
 
 // Obtener estadísticas generales
@@ -201,13 +202,52 @@ const eliminarUsuario = async (req, res) => {
 
     // No permitir eliminar al propio admin
     if (usuarioId === req.usuario.id) {
-      return res.status(400).json({ 
-        error: 'No puedes eliminar tu propia cuenta' 
+      return res.status(400).json({
+        error: 'No puedes eliminar tu propia cuenta'
       });
     }
 
+    // Obtener el usuario con sus datos antes de eliminarlo
+    const usuarioAEliminar = await prisma.usuario.findUnique({
+      where: { id: usuarioId },
+      include: {
+        mercados: {
+          include: {
+            productos: {
+              select: { imagenes: true }
+            }
+          }
+        }
+      }
+    });
+
+    if (!usuarioAEliminar) {
+      return res.status(404).json({ error: 'Usuario no encontrado' });
+    }
+
+    // Eliminar el usuario de la base de datos
     await prisma.usuario.delete({
       where: { id: usuarioId }
+    });
+
+    // Eliminar la imagen de perfil del usuario
+    if (usuarioAEliminar.imagen) {
+      eliminarArchivo(usuarioAEliminar.imagen);
+    }
+
+    // Eliminar las imágenes de los mercados y productos del usuario
+    usuarioAEliminar.mercados.forEach(mercado => {
+      // Eliminar imágenes del mercado
+      if (mercado.imagenes && mercado.imagenes.length > 0) {
+        eliminarArchivos(mercado.imagenes);
+      }
+
+      // Eliminar imágenes de los productos del mercado
+      mercado.productos.forEach(producto => {
+        if (producto.imagenes && producto.imagenes.length > 0) {
+          eliminarArchivos(producto.imagenes);
+        }
+      });
     });
 
     res.json({ message: 'Usuario eliminado exitosamente' });

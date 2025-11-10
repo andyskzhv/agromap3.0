@@ -55,6 +55,7 @@ export const mercadoService = {
   obtenerTodos: (params) => api.get('/mercados', { params }),
   obtenerPorId: (id) => api.get(`/mercados/${id}`),
   obtenerMiMercado: () => api.get('/mercados/mi/mercado'),
+  obtenerProvincias: () => api.get('/mercados/provincias/lista'),
   crear: (datos) => {
     // Si datos es FormData, enviarlo directamente
     // Si no, enviarlo como JSON

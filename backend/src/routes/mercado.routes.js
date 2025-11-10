@@ -6,7 +6,8 @@ const {
   crearMercado,
   actualizarMercado,
   eliminarMercado,
-  obtenerMiMercado
+  obtenerMiMercado,
+  obtenerProvinciasConMercados
 } = require('../controllers/mercado.controller');
 const {
   verificarToken,
@@ -17,6 +18,7 @@ const { uploadMercados } = require('../middleware/upload.middleware');
 
 // Rutas públicas
 router.get('/', obtenerMercados);
+router.get('/provincias/lista', obtenerProvinciasConMercados);
 router.get('/:id', obtenerMercadoPorId);
 
 // Rutas protegidas - Gestor o Admin

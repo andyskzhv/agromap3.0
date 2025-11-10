@@ -1,4 +1,5 @@
 const { PrismaClient } = require('@prisma/client');
+const { eliminarArchivos, eliminarArchivosNoUsados } = require('../utils/fileUtils');
 const prisma = new PrismaClient();
 
 // Obtener todos los productos (público)
@@ -292,11 +293,11 @@ const actualizarProducto = async (req, res) => {
 
     // Procesar imágenes subidas
     let imagenesUrls = productoExistente.imagenes || [];
-    
+
     // Si hay archivos subidos (nuevas imágenes)
     if (req.files && req.files.length > 0) {
       const nuevasImagenes = req.files.map(file => `/uploads/productos/${file.filename}`);
-      
+
       // Procesar imágenes existentes del body
       let imagenesExistentesArray = [];
       if (imagenesExistentes) {
@@ -310,13 +311,17 @@ const actualizarProducto = async (req, res) => {
         // Si no se enviaron imágenes existentes, mantener las del producto
         imagenesExistentesArray = imagenesUrls;
       }
-      
+
       // Combinar imágenes existentes con las nuevas
       imagenesUrls = [...imagenesExistentesArray, ...nuevasImagenes];
     } else if (imagenes !== undefined) {
       // Si no hay archivos pero se enviaron imágenes (puede ser para reemplazar)
       imagenesUrls = Array.isArray(imagenes) ? imagenes : [imagenes];
     }
+
+    // Eliminar imágenes que ya no están en la nueva lista
+    const imagenesAntiguasUrls = productoExistente.imagenes || [];
+    eliminarArchivosNoUsados(imagenesAntiguasUrls, imagenesUrls);
 
     const productoActualizado = await prisma.producto.update({
       where: { id: productoId },
@@ -377,16 +382,22 @@ const eliminarProducto = async (req, res) => {
     }
 
     // Verificar permisos
-    if (req.usuario.rol !== 'ADMIN' && 
+    if (req.usuario.rol !== 'ADMIN' &&
         productoExistente.mercado.gestorId !== req.usuario.id) {
-      return res.status(403).json({ 
-        error: 'No tienes permisos para eliminar este producto' 
+      return res.status(403).json({
+        error: 'No tienes permisos para eliminar este producto'
       });
     }
 
+    // Eliminar el producto de la base de datos
     await prisma.producto.delete({
       where: { id: productoId }
     });
+
+    // Eliminar las imágenes físicas del servidor
+    if (productoExistente.imagenes && productoExistente.imagenes.length > 0) {
+      eliminarArchivos(productoExistente.imagenes);
+    }
 
     res.json({ message: 'Producto eliminado exitosamente' });
   } catch (error) {

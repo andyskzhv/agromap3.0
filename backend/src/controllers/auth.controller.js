@@ -1,6 +1,7 @@
 const { PrismaClient } = require('@prisma/client');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const { eliminarArchivo } = require('../utils/fileUtils');
 
 const prisma = new PrismaClient();
 
@@ -193,7 +194,14 @@ const actualizarPerfil = async (req, res) => {
 
     if (nombre) datosActualizar.nombre = nombre;
     if (provincia !== undefined) datosActualizar.provincia = provincia || null;
-    if (nuevaImagen) datosActualizar.imagen = nuevaImagen;
+
+    // Si hay una nueva imagen, eliminar la anterior y actualizar
+    if (nuevaImagen) {
+      if (usuarioActual.imagen) {
+        eliminarArchivo(usuarioActual.imagen);
+      }
+      datosActualizar.imagen = nuevaImagen;
+    }
 
     // Si quiere cambiar la contraseña
     if (contrasenaNueva) {

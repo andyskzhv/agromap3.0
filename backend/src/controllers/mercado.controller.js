@@ -1,4 +1,5 @@
 const { PrismaClient } = require('@prisma/client');
+const { eliminarArchivos, eliminarArchivosNoUsados } = require('../utils/fileUtils');
 const prisma = new PrismaClient();
 
 // Obtener todos los mercados (público)
@@ -195,6 +196,11 @@ const actualizarMercado = async (req, res) => {
     // Si hay nuevas imágenes, reemplazar las antiguas; si no, mantener las existentes
     const imagenesFinales = nuevasImagenes.length > 0 ? nuevasImagenes : mercadoExistente.imagenes;
 
+    // Si se están reemplazando las imágenes, eliminar las antiguas
+    if (nuevasImagenes.length > 0 && mercadoExistente.imagenes && mercadoExistente.imagenes.length > 0) {
+      eliminarArchivos(mercadoExistente.imagenes);
+    }
+
     const mercadoActualizado = await prisma.mercado.update({
       where: { id: mercadoId },
       data: {
@@ -251,13 +257,32 @@ const eliminarMercado = async (req, res) => {
 
     // Solo admin puede eliminar
     if (req.usuario.rol !== 'ADMIN') {
-      return res.status(403).json({ 
-        error: 'Solo los administradores pueden eliminar mercados' 
+      return res.status(403).json({
+        error: 'Solo los administradores pueden eliminar mercados'
       });
     }
 
+    // Obtener todos los productos del mercado para eliminar sus imágenes
+    const productos = await prisma.producto.findMany({
+      where: { mercadoId: mercadoId },
+      select: { imagenes: true }
+    });
+
+    // Eliminar el mercado de la base de datos
     await prisma.mercado.delete({
       where: { id: mercadoId }
+    });
+
+    // Eliminar las imágenes del mercado
+    if (mercadoExistente.imagenes && mercadoExistente.imagenes.length > 0) {
+      eliminarArchivos(mercadoExistente.imagenes);
+    }
+
+    // Eliminar las imágenes de todos los productos del mercado
+    productos.forEach(producto => {
+      if (producto.imagenes && producto.imagenes.length > 0) {
+        eliminarArchivos(producto.imagenes);
+      }
     });
 
     res.json({ message: 'Mercado eliminado exitosamente' });
@@ -281,17 +306,50 @@ const obtenerMiMercado = async (req, res) => {
     });
 
     if (!mercado) {
-      return res.status(404).json({ 
-        error: 'No tienes ningún mercado creado aún' 
+      return res.status(404).json({
+        error: 'No tienes ningún mercado creado aún'
       });
     }
 
     res.json(mercado);
   } catch (error) {
     console.error('Error al obtener mi mercado:', error);
-    res.status(500).json({ 
+    res.status(500).json({
       error: 'Error al obtener mi mercado',
-      details: error.message 
+      details: error.message
+    });
+  }
+};
+
+// Obtener provincias con mercados (público)
+const obtenerProvinciasConMercados = async (req, res) => {
+  try {
+    // Provincias por defecto que siempre deben aparecer
+    const provinciasDefecto = ['Villa Clara', 'Sancti Spiritus'];
+
+    // Obtener provincias únicas de los mercados existentes
+    const mercados = await prisma.mercado.findMany({
+      select: {
+        provincia: true
+      },
+      distinct: ['provincia']
+    });
+
+    // Extraer las provincias de los mercados
+    const provinciasConMercados = mercados.map(m => m.provincia);
+
+    // Combinar provincias por defecto con las que tienen mercados
+    const todasLasProvincias = new Set([...provinciasDefecto, ...provinciasConMercados]);
+
+    // Convertir a array y ordenar alfabéticamente
+    const provinciasOrdenadas = Array.from(todasLasProvincias).sort();
+
+    res.json(provinciasOrdenadas);
+  } catch (error) {
+    console.error('Error al obtener provincias:', error);
+    res.status(500).json({
+      error: 'Error al obtener provincias',
+      details: error.message
     });
   }
 };
@@ -302,5 +360,6 @@ module.exports = {
   crearMercado,
   actualizarMercado,
   eliminarMercado,
-  obtenerMiMercado
+  obtenerMiMercado,
+  obtenerProvinciasConMercados
 };

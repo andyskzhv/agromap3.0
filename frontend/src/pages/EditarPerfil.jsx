@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { authService } from '../services/api';
+import { authService, mercadoService } from '../services/api';
 import { useToast } from '../components/Toast';
 import './Auth.css';
 
@@ -17,27 +17,33 @@ function EditarPerfil() {
   });
   const [imagenFile, setImagenFile] = useState(null);
   const [imagenPreview, setImagenPreview] = useState(null);
+  const [provincias, setProvincias] = useState([]);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(true);
   const [guardando, setGuardando] = useState(false);
 
   useEffect(() => {
-    cargarPerfil();
+    cargarDatos();
   }, []);
 
-  const cargarPerfil = async () => {
+  const cargarDatos = async () => {
     try {
-      const response = await authService.obtenerPerfil();
-      setUsuario(response.data);
+      const [perfilRes, provinciasRes] = await Promise.all([
+        authService.obtenerPerfil(),
+        mercadoService.obtenerProvincias()
+      ]);
+
+      setUsuario(perfilRes.data);
+      setProvincias(provinciasRes.data);
       setFormData({
-        nombre: response.data.nombre,
-        provincia: response.data.provincia || '',
+        nombre: perfilRes.data.nombre,
+        provincia: perfilRes.data.provincia || '',
         contrasenaActual: '',
         contrasenaNueva: '',
         confirmarContrasena: ''
       });
-      if (response.data.imagen) {
-        setImagenPreview(`http://localhost:5000${response.data.imagen}`);
+      if (perfilRes.data.imagen) {
+        setImagenPreview(`http://localhost:5000${perfilRes.data.imagen}`);
       }
     } catch (err) {
       setError('Error al cargar el perfil');
@@ -224,13 +230,18 @@ function EditarPerfil() {
 
           <div className="form-group">
             <label>Provincia</label>
-            <input
-              type="text"
+            <select
               name="provincia"
               value={formData.provincia}
               onChange={handleChange}
-              placeholder="Tu provincia"
-            />
+            >
+              <option value="">Selecciona una provincia</option>
+              {provincias.map((provincia) => (
+                <option key={provincia} value={provincia}>
+                  {provincia}
+                </option>
+              ))}
+            </select>
           </div>
 
           <div className="form-divider">

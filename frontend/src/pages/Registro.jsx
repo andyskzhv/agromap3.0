@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { authService } from '../services/api';
+import { authService, mercadoService } from '../services/api';
 import { useToast } from '../components/Toast';
 import './Auth.css';
 
@@ -15,8 +15,23 @@ function Registro() {
   });
   const [imagenFile, setImagenFile] = useState(null);
   const [imagenPreview, setImagenPreview] = useState(null);
+  const [provincias, setProvincias] = useState([]);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    cargarProvincias();
+  }, []);
+
+  const cargarProvincias = async () => {
+    try {
+      const response = await mercadoService.obtenerProvincias();
+      setProvincias(response.data);
+    } catch (err) {
+      console.error('Error al cargar provincias:', err);
+      toast.error('Error al cargar las provincias');
+    }
+  };
 
   const handleChange = (e) => {
     setFormData({
@@ -172,13 +187,18 @@ function Registro() {
 
           <div className="form-group">
             <label>Provincia (opcional)</label>
-            <input
-              type="text"
+            <select
               name="provincia"
               value={formData.provincia}
               onChange={handleChange}
-              placeholder="Tu provincia"
-            />
+            >
+              <option value="">Selecciona una provincia</option>
+              {provincias.map((provincia) => (
+                <option key={provincia} value={provincia}>
+                  {provincia}
+                </option>
+              ))}
+            </select>
           </div>
 
           <button type="submit" className="btn-primary" disabled={loading}>

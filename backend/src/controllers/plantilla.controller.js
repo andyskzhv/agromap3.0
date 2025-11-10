@@ -1,4 +1,5 @@
 const { PrismaClient } = require('@prisma/client');
+const { eliminarArchivo } = require('../utils/fileUtils');
 const prisma = new PrismaClient();
 
 // Obtener todas las plantillas (público)
@@ -142,6 +143,11 @@ const actualizarPlantilla = async (req, res) => {
       }
     }
 
+    // Si hay una nueva imagen, eliminar la anterior
+    if (imagen && plantillaExistente.imagen) {
+      eliminarArchivo(plantillaExistente.imagen);
+    }
+
     const plantillaActualizada = await prisma.plantillaProducto.update({
       where: { id: parseInt(id) },
       data: {
@@ -186,9 +192,15 @@ const eliminarPlantilla = async (req, res) => {
       return res.status(404).json({ error: 'Plantilla no encontrada' });
     }
 
+    // Eliminar la plantilla de la base de datos
     await prisma.plantillaProducto.delete({
       where: { id: parseInt(id) }
     });
+
+    // Eliminar la imagen física de la plantilla
+    if (plantillaExistente.imagen) {
+      eliminarArchivo(plantillaExistente.imagen);
+    }
 
     res.json({ message: 'Plantilla eliminada exitosamente' });
   } catch (error) {

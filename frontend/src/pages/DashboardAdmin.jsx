@@ -32,6 +32,7 @@ function DashboardAdmin() {
     provincia: ''
   });
   const [imagenUsuario, setImagenUsuario] = useState(null);
+  const [provincias, setProvincias] = useState([]);
   const [formProducto, setFormProducto] = useState({
     nombre: '',
     descripcion: '',
@@ -72,12 +73,14 @@ function DashboardAdmin() {
 
   const cargarEstadisticas = async () => {
     try {
-      const [statsRes, actividadRes] = await Promise.all([
+      const [statsRes, actividadRes, provinciasRes] = await Promise.all([
         adminService.obtenerEstadisticas(),
-        adminService.obtenerActividad()
+        adminService.obtenerActividad(),
+        mercadoService.obtenerProvincias()
       ]);
       setEstadisticas(statsRes.data);
       setActividad(actividadRes.data);
+      setProvincias(provinciasRes.data);
     } catch (error) {
       console.error('Error:', error);
     } finally {
@@ -811,11 +814,17 @@ function DashboardAdmin() {
               </div>
               <div className="form-group">
                 <label>Provincia</label>
-                <input
-                  type="text"
+                <select
                   value={formUsuario.provincia}
                   onChange={(e) => setFormUsuario({...formUsuario, provincia: e.target.value})}
-                />
+                >
+                  <option value="">Selecciona una provincia</option>
+                  {provincias.map((provincia) => (
+                    <option key={provincia} value={provincia}>
+                      {provincia}
+                    </option>
+                  ))}
+                </select>
               </div>
               <div className="modal-buttons">
                 <button type="submit" className="btn-primary">Crear</button>
