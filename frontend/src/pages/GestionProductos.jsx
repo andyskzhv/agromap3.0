@@ -19,9 +19,11 @@ function GestionProductos() {
     nombre: '',
     descripcion: '',
     cantidad: '',
+    unidadMedida: 'UNIDAD',
     categoriaId: '',
     tipoProducto: '',
     precio: '',
+    unidadPrecio: 'UNIDAD',
     estado: 'DISPONIBLE'
   });
   const [imagenesSeleccionadas, setImagenesSeleccionadas] = useState([]);
@@ -63,9 +65,11 @@ function GestionProductos() {
       nombre: '',
       descripcion: '',
       cantidad: '',
+      unidadMedida: 'UNIDAD',
       categoriaId: '',
       tipoProducto: '',
       precio: '',
+      unidadPrecio: 'UNIDAD',
       estado: 'DISPONIBLE'
     });
     setImagenesSeleccionadas([]);
@@ -79,9 +83,11 @@ function GestionProductos() {
       nombre: plantilla.nombre,
       descripcion: plantilla.descripcion || '',
       cantidad: '',
+      unidadMedida: 'UNIDAD',
       categoriaId: plantilla.categoria?.id || plantilla.categoriaId || '',
       tipoProducto: '',
       precio: '',
+      unidadPrecio: 'UNIDAD',
       estado: 'DISPONIBLE'
     });
   };
@@ -93,9 +99,11 @@ function GestionProductos() {
       nombre: producto.nombre,
       descripcion: producto.descripcion || '',
       cantidad: producto.cantidad || '',
+      unidadMedida: producto.unidadMedida || 'UNIDAD',
       categoriaId: producto.categoria?.id || producto.categoriaId || '',
       tipoProducto: producto.tipoProducto || '',
       precio: producto.precio || '',
+      unidadPrecio: producto.unidadPrecio || 'UNIDAD',
       estado: producto.estado
     });
     setImagenesSeleccionadas([]);
@@ -390,16 +398,35 @@ function GestionProductos() {
                   <div className="form-group">
                     <label>Cantidad</label>
                     <input
-                      type="text"
+                      type="number"
+                      step="0.01"
                       name="cantidad"
                       value={formData.cantidad}
                       onChange={handleChange}
-                      placeholder="Ej: 10 kg"
+                      placeholder="Ej: 10"
                     />
                   </div>
 
                   <div className="form-group">
-                    <label>Precio</label>
+                    <label>Unidad de Medida</label>
+                    <select
+                      name="unidadMedida"
+                      value={formData.unidadMedida}
+                      onChange={handleChange}
+                    >
+                      <option value="UNIDAD">Unidad</option>
+                      <option value="KG">Kilogramo (kg)</option>
+                      <option value="LB">Libra (lb)</option>
+                      <option value="SACO">Saco</option>
+                      <option value="QUINTAL">Quintal</option>
+                      <option value="TONELADA">Tonelada</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div className="form-row">
+                  <div className="form-group">
+                    <label>Precio (CUP)</label>
                     <input
                       type="number"
                       step="0.01"
@@ -408,6 +435,22 @@ function GestionProductos() {
                       onChange={handleChange}
                       placeholder="0.00"
                     />
+                  </div>
+
+                  <div className="form-group">
+                    <label>Precio por</label>
+                    <select
+                      name="unidadPrecio"
+                      value={formData.unidadPrecio}
+                      onChange={handleChange}
+                    >
+                      <option value="UNIDAD">Unidad</option>
+                      <option value="KG">Kilogramo (kg)</option>
+                      <option value="LB">Libra (lb)</option>
+                      <option value="SACO">Saco</option>
+                      <option value="QUINTAL">Quintal</option>
+                      <option value="TONELADA">Tonelada</option>
+                    </select>
                   </div>
                 </div>
 
@@ -420,7 +463,7 @@ function GestionProductos() {
                 </div>
 
                 <div className="form-group">
-                  <label>Imágenes del producto</label>
+                  <label>Imágenes del producto *</label>
                   <input
                     type="file"
                     accept="image/*"
@@ -428,7 +471,11 @@ function GestionProductos() {
                     onChange={handleImagenesChange}
                     className="input-imagenes"
                   />
-                  <small className="form-help">Puedes seleccionar múltiples imágenes (máximo 10)</small>
+                  <small className="form-help">
+                    {productoEditando
+                      ? 'Puedes seleccionar múltiples imágenes (máximo 10)'
+                      : '⚠️ Debes subir al menos 1 imagen (máximo 10)'}
+                  </small>
                   
                   {/* Preview de imágenes seleccionadas */}
                   {imagenesSeleccionadas.length > 0 && (

@@ -146,18 +146,30 @@ const crearProducto = async (req, res) => {
       nombre,
       descripcion,
       cantidad,
+      unidadMedida,
       imagenes,
       categoriaId,
       tipoProducto,
       precio,
+      unidadPrecio,
       estado,
       mercadoId
     } = req.body;
 
     // Validaciones
     if (!nombre || !categoriaId || !mercadoId) {
-      return res.status(400).json({ 
-        error: 'Nombre, categoría y mercado son obligatorios' 
+      return res.status(400).json({
+        error: 'Nombre, categoría y mercado son obligatorios'
+      });
+    }
+
+    // Validar que se haya subido al menos una imagen
+    const hayImagenesSubidas = req.files && req.files.length > 0;
+    const hayImagenesEnviadas = imagenes && (Array.isArray(imagenes) ? imagenes.length > 0 : true);
+
+    if (!hayImagenesSubidas && !hayImagenesEnviadas) {
+      return res.status(400).json({
+        error: 'Debe subir al menos una imagen del producto'
       });
     }
 
@@ -203,11 +215,14 @@ const crearProducto = async (req, res) => {
       data: {
         nombre,
         descripcion,
-        cantidad,
+        cantidad: cantidad ? parseFloat(cantidad) : null,
+        unidadMedida: unidadMedida || 'UNIDAD',
         imagenes: imagenesUrls,
         categoriaId: parseInt(categoriaId),
         tipoProducto,
         precio: precio ? parseFloat(precio) : null,
+        unidadPrecio: unidadPrecio || 'UNIDAD',
+        moneda: 'CUP',
         estado: estado || 'DISPONIBLE',
         mercadoId: parseInt(mercadoId)
       },
@@ -268,11 +283,13 @@ const actualizarProducto = async (req, res) => {
       nombre,
       descripcion,
       cantidad,
+      unidadMedida,
       imagenes,
       imagenesExistentes,
       categoriaId,
       tipoProducto,
       precio,
+      unidadPrecio,
       estado
     } = req.body;
 
@@ -328,11 +345,13 @@ const actualizarProducto = async (req, res) => {
       data: {
         ...(nombre && { nombre }),
         ...(descripcion !== undefined && { descripcion }),
-        ...(cantidad !== undefined && { cantidad }),
+        ...(cantidad !== undefined && { cantidad: cantidad ? parseFloat(cantidad) : null }),
+        ...(unidadMedida && { unidadMedida }),
         imagenes: imagenesUrls, // Siempre actualizar las imágenes
         ...(categoriaId && { categoriaId: parseInt(categoriaId) }),
         ...(tipoProducto !== undefined && { tipoProducto }),
         ...(precio !== undefined && { precio: precio ? parseFloat(precio) : null }),
+        ...(unidadPrecio && { unidadPrecio }),
         ...(estado && { estado }),
         fechaActualizacion: new Date()
       },

@@ -21,6 +21,16 @@ enum EstadoProducto {
   NO_DISPONIBLE
 }
 
+enum UnidadMedida {
+  UNIDAD
+  KG
+  LB
+  SACO
+  LIBRA
+  QUINTAL
+  TONELADA
+}
+
 model Categoria {
   id          Int      @id @default(autoincrement())
   nombre      String   @unique
@@ -84,11 +94,14 @@ model Producto {
   id                 Int             @id @default(autoincrement())
   nombre             String
   descripcion        String?         @db.Text
-  cantidad           String?
+  cantidad           Float?
+  unidadMedida       UnidadMedida    @default(UNIDAD)
   imagenes           String[]        // Array de URLs de imágenes
   categoriaId        Int
   tipoProducto       String?
   precio             Float?
+  unidadPrecio       UnidadMedida    @default(UNIDAD)
+  moneda             String          @default("CUP")
   estado             EstadoProducto  @default(DISPONIBLE)
   fechaActualizacion DateTime        @default(now())
   mercadoId          Int

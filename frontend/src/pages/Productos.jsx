@@ -150,13 +150,20 @@ function Productos() {
                   {producto.precio && (
                     <div className="info-item">
                       <strong>💰 Precio:</strong>
-                      <span>${producto.precio.toFixed(2)}</span>
+                      <span>
+                        ${producto.precio.toFixed(2)} CUP
+                        {producto.unidadPrecio && producto.unidadPrecio !== 'UNIDAD'
+                          ? ` / ${producto.unidadPrecio.toLowerCase()}`
+                          : ' / unidad'}
+                      </span>
                     </div>
                   )}
                   {producto.cantidad && (
                     <div className="info-item">
                       <strong>📦 Cantidad:</strong>
-                      <span>{producto.cantidad}</span>
+                      <span>
+                        {producto.cantidad} {producto.unidadMedida ? producto.unidadMedida.toLowerCase() : 'unidad(es)'}
+                      </span>
                     </div>
                   )}
                   <div className="info-item">

@@ -51,6 +51,8 @@ backend/src/
 ├── middleware/
 │   ├── auth.middleware.js      # JWT verification & RBAC
 │   └── upload.middleware.js    # Multer file upload configs
+├── utils/
+│   └── fileUtils.js            # File management utilities (delete files)
 ```
 
 **API Base URL**: `http://localhost:5000/api`
@@ -130,6 +132,8 @@ productoService.crear(data)
 
 - **November 2024**: Migrated from `correo` to `nombreUsuario` for authentication
 - **Category Refactoring**: Extracted `categoria` from string field to proper `Categoria` model
+- **File Management**: Added automatic file cleanup system (fileUtils.js)
+- **Dynamic Provinces**: Province selection now based on existing markets
 
 ## API Endpoints
 
@@ -144,6 +148,7 @@ All endpoints use `/api` prefix. Authentication via `Authorization: Bearer <toke
 ### Mercados (`/api/mercados`)
 - `GET /` - List all
 - `GET /:id` - Get details
+- `GET /provincias/lista` - Get provinces with markets (public)
 - `GET /mi/mercado` - Get my market (GESTOR/ADMIN)
 - `POST /` - Create (GESTOR/ADMIN, multipart)
 - `PUT /:id` - Update (GESTOR/ADMIN, multipart)
@@ -210,6 +215,33 @@ formData.append('imagenes', file);         // Multiple files (productos)
 await service.method(formData);            // API detects FormData
 ```
 
+### Automatic File Cleanup
+
+**File Utilities** (`utils/fileUtils.js`):
+
+The system automatically deletes orphaned files when resources are removed:
+
+```javascript
+// Delete single file
+eliminarArchivo(fileUrl)
+
+// Delete multiple files
+eliminarArchivos(fileUrls)
+
+// Delete unused files (for updates)
+eliminarArchivosNoUsados(oldFiles, newFiles)
+```
+
+**Cleanup Triggers**:
+- **Delete Product**: Removes all product images
+- **Delete Market**: Removes market images + all product images from that market
+- **Delete User**: Removes user profile image + all their market/product images
+- **Delete Template**: Removes template image
+- **Update Profile**: Removes old profile image when uploading new one
+- **Update Product**: Removes images that are no longer in the list
+- **Update Market**: Removes old images when uploading new ones
+- **Update Template**: Removes old image when uploading new one
+
 ## Adding Features
 
 ### New API Endpoint
@@ -256,6 +288,8 @@ const API_URL = 'http://localhost:5000/api';
 - **Authentication**: Username-based (`nombreUsuario`), not email
 - **Password Requirements**: Minimum 6 characters, bcrypt-hashed
 - **File Uploads**: Max 5MB per file, 10 images max for productos
+- **File Cleanup**: Automatic deletion of orphaned files when resources are deleted
+- **Provinces**: Dynamic list based on markets, with Villa Clara and Sancti Spiritus always visible
 - **JWT Expiration**: 7 days
 - **Database**: PostgreSQL on localhost:5432
 - **Ports**: Backend (5000), Frontend (3000)
