@@ -134,6 +134,11 @@ function GestionProductos() {
         mercadoId: mercado.id
       };
 
+      // Si se seleccionó una plantilla, agregar el plantillaId
+      if (plantillaSeleccionada && plantillaSeleccionada.id) {
+        datos.plantillaId = plantillaSeleccionada.id;
+      }
+
       // Si hay imágenes seleccionadas, agregarlas
       if (imagenesSeleccionadas.length > 0) {
         datos.imagenes = imagenesSeleccionadas;

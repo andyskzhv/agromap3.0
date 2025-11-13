@@ -105,12 +105,14 @@ model Producto {
   estado             EstadoProducto  @default(DISPONIBLE)
   fechaActualizacion DateTime        @default(now())
   mercadoId          Int
+  plantillaId        Int?            // Nueva relación con plantilla (opcional)
   creadoEn           DateTime        @default(now())
   actualizadoEn      DateTime        @updatedAt
 
   // Relaciones
   mercado            Mercado         @relation(fields: [mercadoId], references: [id], onDelete: Cascade)
   categoria          Categoria       @relation(fields: [categoriaId], references: [id])
+  plantilla          PlantillaProducto? @relation(fields: [plantillaId], references: [id], onDelete: SetNull)
   comentarios        Comentario[]
   valoraciones       Valoracion[]
 
@@ -124,9 +126,10 @@ model PlantillaProducto {
   imagen      String?
   categoriaId Int
   creadoEn    DateTime @default(now())
-  
+
   // Relaciones
   categoria   Categoria @relation(fields: [categoriaId], references: [id])
+  productos   Producto[] // Relación inversa con productos
 
   @@map("plantillas_productos")
 }

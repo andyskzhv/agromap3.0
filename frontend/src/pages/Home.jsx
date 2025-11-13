@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { productoService, categoriaService } from '../services/api';
+import { plantillaService, categoriaService } from '../services/api';
 import { usePageTitle } from '../hooks/usePageTitle';
 import './Home.css';
 
@@ -8,7 +8,7 @@ function Home() {
   usePageTitle('Inicio');
   const navigate = useNavigate();
   const [categorias, setCategorias] = useState([]);
-  const [productosPorCategoria, setProductosPorCategoria] = useState({});
+  const [plantillasPorCategoria, setPlantillasPorCategoria] = useState({});
   const [busqueda, setBusqueda] = useState('');
   const [loading, setLoading] = useState(true);
 
@@ -18,26 +18,26 @@ function Home() {
 
   const cargarDatos = async () => {
     try {
-      const [categoriasRes, productosRes] = await Promise.all([
+      const [categoriasRes, plantillasRes] = await Promise.all([
         categoriaService.obtenerTodas({ activas: 'true' }),
-        productoService.obtenerTodos()
+        plantillaService.obtenerDisponibles()
       ]);
 
       setCategorias(categoriasRes.data);
 
-      // Agrupar productos por categoría
+      // Agrupar plantillas por categoría
       const agrupados = {};
-      productosRes.data.forEach(producto => {
-        const categoriaNombre = producto.categoria?.nombre || 'Sin categoría';
+      plantillasRes.data.forEach(plantilla => {
+        const categoriaNombre = plantilla.categoria?.nombre || 'Sin categoría';
         if (!agrupados[categoriaNombre]) {
           agrupados[categoriaNombre] = [];
         }
-        if (agrupados[categoriaNombre].length < 4) { // Máximo 4 productos por categoría
-          agrupados[categoriaNombre].push(producto);
+        if (agrupados[categoriaNombre].length < 4) { // Máximo 4 plantillas por categoría
+          agrupados[categoriaNombre].push(plantilla);
         }
       });
 
-      setProductosPorCategoria(agrupados);
+      setPlantillasPorCategoria(agrupados);
     } catch (error) {
       console.error('Error al cargar datos:', error);
     } finally {
@@ -50,8 +50,8 @@ function Home() {
     navigate(`/productos?busqueda=${busqueda}`);
   };
 
-  const verDetalleProducto = (id) => {
-    navigate(`/productos/${id}`);
+  const verDetallePlantilla = (id) => {
+    navigate(`/plantilla/${id}`);
   };
 
   if (loading) {
@@ -101,12 +101,12 @@ function Home() {
       <section className="productos-section">
         <h2 className="section-title">Productos Disponibles</h2>
 
-        {Object.entries(productosPorCategoria).map(([categoria, productos]) => (
+        {Object.entries(plantillasPorCategoria).map(([categoria, plantillas]) => (
           <div key={categoria} className="categoria-grupo">
             <div className="categoria-header">
               <h3 className="categoria-titulo">{categoria}</h3>
               <button
-                onClick={() => navigate(`/productos?categoria=${categoria}`)}
+                onClick={() => navigate('/productos')}
                 className="ver-todos-link"
               >
                 Ver Todos
@@ -114,17 +114,17 @@ function Home() {
             </div>
 
             <div className="productos-grid">
-              {productos.map((producto) => (
+              {plantillas.map((plantilla) => (
                 <div
-                  key={producto.id}
+                  key={plantilla.id}
                   className="producto-card"
-                  onClick={() => verDetalleProducto(producto.id)}
+                  onClick={() => verDetallePlantilla(plantilla.id)}
                 >
                   <div className="producto-imagen-container">
-                    {producto.imagenes && producto.imagenes.length > 0 ? (
+                    {plantilla.imagen ? (
                       <img
-                        src={`http://localhost:5000${producto.imagenes[0]}`}
-                        alt={producto.nombre}
+                        src={`http://localhost:5000${plantilla.imagen}`}
+                        alt={plantilla.nombre}
                         className="producto-imagen"
                       />
                     ) : (
@@ -135,18 +135,12 @@ function Home() {
                   </div>
 
                   <div className="producto-info">
-                    <h4 className="producto-nombre">{producto.nombre}</h4>
+                    <h4 className="producto-nombre">{plantilla.nombre}</h4>
 
                     <div className="producto-estado">
-                      {producto.estado === 'DISPONIBLE' ? (
-                        <span className="estado-disponible">
-                          ✓ Disponible en {producto._count?.mercados || 1} mercados
-                        </span>
-                      ) : (
-                        <span className="estado-no-disponible">
-                          ✗ No disponible
-                        </span>
-                      )}
+                      <span className="estado-disponible">
+                        ✓ Disponible en {plantilla._count?.mercadosUnicos || 0} mercados
+                      </span>
                     </div>
 
                     <button className="producto-ver-detalles">
@@ -157,13 +151,13 @@ function Home() {
               ))}
             </div>
 
-            {productos.length === 0 && (
+            {plantillas.length === 0 && (
               <p className="no-productos">No hay productos disponibles en esta categoría</p>
             )}
           </div>
         ))}
 
-        {Object.keys(productosPorCategoria).length === 0 && (
+        {Object.keys(plantillasPorCategoria).length === 0 && (
           <p className="no-productos">No hay productos disponibles en este momento</p>
         )}
 

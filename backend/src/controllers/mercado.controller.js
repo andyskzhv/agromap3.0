@@ -325,7 +325,7 @@ const obtenerMiMercado = async (req, res) => {
 const obtenerProvinciasConMercados = async (req, res) => {
   try {
     // Provincias por defecto que siempre deben aparecer
-    const provinciasDefecto = ['Villa Clara', 'Sancti Spiritus'];
+    const provinciasDefecto = ['Villa Clara', 'Sancti Spíritus'];
 
     // Obtener provincias únicas de los mercados existentes
     const mercados = await prisma.mercado.findMany({
@@ -336,13 +336,27 @@ const obtenerProvinciasConMercados = async (req, res) => {
     });
 
     // Extraer las provincias de los mercados
-    const provinciasConMercados = mercados.map(m => m.provincia);
+    const provinciasConMercados = mercados.map(m => m.provincia).filter(p => p); // Filtrar valores nulos
 
-    // Combinar provincias por defecto con las que tienen mercados
-    const todasLasProvincias = new Set([...provinciasDefecto, ...provinciasConMercados]);
+    // Combinar provincias por defecto con las que tienen mercados, evitando duplicados
+    // Usar un Map para normalizar y evitar duplicados por diferencias mínimas
+    const provinciasMap = new Map();
+
+    // Agregar provincias por defecto
+    provinciasDefecto.forEach(p => {
+      provinciasMap.set(p.toLowerCase(), p);
+    });
+
+    // Agregar provincias de mercados, pero solo si no están ya (insensible a mayúsculas/minúsculas)
+    provinciasConMercados.forEach(p => {
+      const key = p.toLowerCase();
+      if (!provinciasMap.has(key)) {
+        provinciasMap.set(key, p);
+      }
+    });
 
     // Convertir a array y ordenar alfabéticamente
-    const provinciasOrdenadas = Array.from(todasLasProvincias).sort();
+    const provinciasOrdenadas = Array.from(provinciasMap.values()).sort();
 
     res.json(provinciasOrdenadas);
   } catch (error) {

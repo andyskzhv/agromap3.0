@@ -14,6 +14,7 @@ import FormularioMercado from './pages/FormularioMercado';
 import Productos from './pages/Productos';
 import GestionProductos from './pages/GestionProductos';
 import DetalleProducto from './pages/DetalleProducto';
+import DetallePlantilla from './pages/DetallePlantilla';
 import DashboardAdmin from './pages/DashboardAdmin';
 
 function App() {
@@ -34,6 +35,7 @@ function App() {
           <Route path="/mercado/editar" element={<FormularioMercado />} />
           <Route path="/productos" element={<Productos />} />
           <Route path="/productos/:id" element={<DetalleProducto />} />
+          <Route path="/plantilla/:id" element={<DetallePlantilla />} />
           <Route path="/gestion-productos" element={<GestionProductos />} />
           <Route path="/admin" element={<DashboardAdmin />} />
         </Routes>
