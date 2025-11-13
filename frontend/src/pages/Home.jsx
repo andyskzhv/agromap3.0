@@ -11,6 +11,7 @@ function Home() {
   const [plantillasPorCategoria, setPlantillasPorCategoria] = useState({});
   const [busqueda, setBusqueda] = useState('');
   const [loading, setLoading] = useState(true);
+  const [scrollPositions, setScrollPositions] = useState({});
 
   useEffect(() => {
     cargarDatos();
@@ -32,9 +33,7 @@ function Home() {
         if (!agrupados[categoriaNombre]) {
           agrupados[categoriaNombre] = [];
         }
-        if (agrupados[categoriaNombre].length < 4) { // Máximo 4 plantillas por categoría
-          agrupados[categoriaNombre].push(plantilla);
-        }
+        agrupados[categoriaNombre].push(plantilla);
       });
 
       setPlantillasPorCategoria(agrupados);
@@ -52,6 +51,21 @@ function Home() {
 
   const verDetallePlantilla = (id) => {
     navigate(`/plantilla/${id}`);
+  };
+
+  const scroll = (categoria, direction) => {
+    const container = document.getElementById(`scroll-${categoria}`);
+    if (container) {
+      const scrollAmount = 280; // Ancho de card + gap
+      const newPosition = direction === 'left'
+        ? container.scrollLeft - scrollAmount
+        : container.scrollLeft + scrollAmount;
+
+      container.scrollTo({
+        left: newPosition,
+        behavior: 'smooth'
+      });
+    }
   };
 
   if (loading) {
@@ -113,42 +127,60 @@ function Home() {
               </button>
             </div>
 
-            <div className="productos-grid">
-              {plantillas.map((plantilla) => (
-                <div
-                  key={plantilla.id}
-                  className="producto-card"
-                  onClick={() => verDetallePlantilla(plantilla.id)}
+            <div className="productos-carousel-wrapper">
+              {plantillas.length > 4 && (
+                <button
+                  className="carousel-btn carousel-btn-left"
+                  onClick={() => scroll(categoria, 'left')}
+                  aria-label="Anterior"
                 >
-                  <div className="producto-imagen-container">
-                    {plantilla.imagen ? (
-                      <img
-                        src={`http://localhost:5000${plantilla.imagen}`}
-                        alt={plantilla.nombre}
-                        className="producto-imagen"
-                      />
-                    ) : (
-                      <div className="producto-sin-imagen">
-                        <span>📦</span>
-                      </div>
-                    )}
-                  </div>
+                  ‹
+                </button>
+              )}
 
-                  <div className="producto-info">
-                    <h4 className="producto-nombre">{plantilla.nombre}</h4>
+              <div className="productos-carousel" id={`scroll-${categoria}`}>
+                {plantillas.map((plantilla) => (
+                  <div
+                    key={plantilla.id}
+                    className="producto-card-horizontal"
+                    onClick={() => verDetallePlantilla(plantilla.id)}
+                  >
+                    <div className="producto-imagen-horizontal">
+                      {plantilla.imagen ? (
+                        <img
+                          src={`http://localhost:5000${plantilla.imagen}`}
+                          alt={plantilla.nombre}
+                          className="producto-imagen"
+                        />
+                      ) : (
+                        <div className="producto-sin-imagen">
+                          <span>📦</span>
+                        </div>
+                      )}
+                    </div>
 
-                    <div className="producto-estado">
+                    <div className="producto-info-horizontal">
+                      <h4 className="producto-nombre">{plantilla.nombre}</h4>
                       <span className="estado-disponible">
                         ✓ Disponible en {plantilla._count?.mercadosUnicos || 0} mercados
                       </span>
+                      <button className="producto-ver-detalles-horizontal">
+                        Ver Disponibilidad
+                      </button>
                     </div>
-
-                    <button className="producto-ver-detalles">
-                      Ver Detalles
-                    </button>
                   </div>
-                </div>
-              ))}
+                ))}
+              </div>
+
+              {plantillas.length > 4 && (
+                <button
+                  className="carousel-btn carousel-btn-right"
+                  onClick={() => scroll(categoria, 'right')}
+                  aria-label="Siguiente"
+                >
+                  ›
+                </button>
+              )}
             </div>
 
             {plantillas.length === 0 && (

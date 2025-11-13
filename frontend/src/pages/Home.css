@@ -176,32 +176,84 @@
   text-decoration: underline;
 }
 
-/* Productos Grid */
-.productos-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 2rem;
+/* Carousel Container */
+.productos-carousel-wrapper {
+  position: relative;
   margin-bottom: 2rem;
 }
 
-/* Producto Card */
-.producto-card {
+.productos-carousel {
+  display: flex;
+  gap: 1rem;
+  overflow-x: auto;
+  scroll-behavior: smooth;
+  padding: 10px 0;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.productos-carousel::-webkit-scrollbar {
+  display: none;
+}
+
+/* Carousel Buttons */
+.carousel-btn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: white;
+  border: 2px solid #10b981;
+  color: #10b981;
+  width: 45px;
+  height: 45px;
+  border-radius: 50%;
+  font-size: 28px;
+  font-weight: bold;
+  cursor: pointer;
+  z-index: 10;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+}
+
+.carousel-btn:hover {
+  background: #10b981;
+  color: white;
+  transform: translateY(-50%) scale(1.1);
+}
+
+.carousel-btn-left {
+  left: -20px;
+}
+
+.carousel-btn-right {
+  right: -20px;
+}
+
+/* Producto Card Horizontal */
+.producto-card-horizontal {
+  min-width: 250px;
+  max-width: 250px;
   background: white;
   border-radius: 12px;
   overflow: hidden;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   transition: all 0.3s ease;
   cursor: pointer;
+  flex-shrink: 0;
 }
 
-.producto-card:hover {
+.producto-card-horizontal:hover {
   transform: translateY(-5px);
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
 }
 
-.producto-imagen-container {
+.producto-imagen-horizontal {
   width: 100%;
-  height: 220px;
+  height: 180px;
   overflow: hidden;
   background-color: #f5f5f5;
 }
@@ -213,7 +265,7 @@
   transition: transform 0.3s ease;
 }
 
-.producto-card:hover .producto-imagen {
+.producto-card-horizontal:hover .producto-imagen {
   transform: scale(1.05);
 }
 
@@ -224,50 +276,48 @@
   align-items: center;
   justify-content: center;
   background: linear-gradient(135deg, #e0e0e0 0%, #f5f5f5 100%);
-  font-size: 4rem;
+  font-size: 3.5rem;
 }
 
-.producto-info {
-  padding: 1.25rem;
+.producto-info-horizontal {
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
 }
 
 .producto-nombre {
-  font-size: 1.3rem;
+  font-size: 1.1rem;
   font-weight: 600;
   color: #333;
-  margin-bottom: 0.75rem;
-}
-
-.producto-estado {
-  margin-bottom: 1rem;
-  font-size: 0.95rem;
+  margin: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .estado-disponible {
-  color: #00a650;
+  color: #10b981;
   font-weight: 500;
+  font-size: 0.85rem;
 }
 
-.estado-no-disponible {
-  color: #e74c3c;
-  font-weight: 500;
-}
-
-.producto-ver-detalles {
+.producto-ver-detalles-horizontal {
   width: 100%;
-  padding: 0.75rem;
-  background-color: #00a650;
+  padding: 0.6rem;
+  background-color: #10b981;
   color: white;
   border: none;
   border-radius: 8px;
-  font-size: 1rem;
+  font-size: 0.9rem;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
 }
 
-.producto-ver-detalles:hover {
-  background-color: #008040;
+.producto-ver-detalles-horizontal:hover {
+  background-color: #059669;
+  transform: translateY(-2px);
 }
 
 .no-productos {
@@ -425,13 +475,80 @@
     font-size: 1.5rem;
   }
 
-  .productos-grid {
-    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-    gap: 1.5rem;
+  .carousel-btn {
+    width: 38px;
+    height: 38px;
+    font-size: 24px;
+  }
+
+  .carousel-btn-left {
+    left: -15px;
+  }
+
+  .carousel-btn-right {
+    right: -15px;
+  }
+
+  .producto-card-horizontal {
+    min-width: 200px;
+    max-width: 200px;
+  }
+
+  .producto-imagen-horizontal {
+    height: 150px;
+  }
+
+  .producto-info-horizontal {
+    padding: 0.8rem;
+  }
+
+  .producto-nombre {
+    font-size: 1rem;
+  }
+
+  .estado-disponible {
+    font-size: 0.75rem;
   }
 
   .footer-content {
     grid-template-columns: 1fr;
     gap: 2rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .hero-title {
+    font-size: 2rem;
+  }
+
+  .productos-section {
+    padding: 2rem 0.5rem;
+  }
+
+  .categoria-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+
+  .carousel-btn-left {
+    left: -10px;
+  }
+
+  .carousel-btn-right {
+    right: -10px;
+  }
+
+  .producto-card-horizontal {
+    min-width: 180px;
+    max-width: 180px;
+  }
+
+  .producto-imagen-horizontal {
+    height: 130px;
+  }
+
+  .ver-mas-container {
+    margin-top: 2rem;
   }
 }
