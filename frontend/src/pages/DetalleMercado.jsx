@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { mercadoService, productoService, categoriaService } from '../services/api';
 import { useToast } from '../components/Toast';
+import { usePageTitle } from '../hooks/usePageTitle';
 import Pagination from '../components/Pagination';
 import { MapContainer, TileLayer, Marker } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
@@ -24,6 +25,7 @@ function DetalleMercado() {
   const toast = useToast();
 
   const [mercado, setMercado] = useState(null);
+  usePageTitle(mercado ? mercado.nombre : 'Establecimiento');
   const [productos, setProductos] = useState([]);
   const [categorias, setCategorias] = useState([]);
   const [loading, setLoading] = useState(true);

@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { productoService, mercadoService, plantillaService, categoriaService } from '../services/api';
 import { useToast } from '../components/Toast';
+import { usePageTitle } from '../hooks/usePageTitle';
 import './GestionProductos.css';
 
 function GestionProductos() {
+  usePageTitle('Gestión de Productos');
   const toast = useToast();
   const [productos, setProductos] = useState([]);
   const [mercado, setMercado] = useState(null);

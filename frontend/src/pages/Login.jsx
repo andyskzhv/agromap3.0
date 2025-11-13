@@ -2,9 +2,11 @@ import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { authService } from '../services/api';
 import { useToast } from '../components/Toast';
+import { usePageTitle } from '../hooks/usePageTitle';
 import './Auth.css';
 
 function Login() {
+  usePageTitle('Iniciar Sesión');
   const navigate = useNavigate();
   const toast = useToast();
   const [formData, setFormData] = useState({

@@ -2,9 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { productoService, categoriaService } from '../services/api';
 import Pagination from '../components/Pagination';
+import { usePageTitle } from '../hooks/usePageTitle';
 import './Productos.css';
 
 function Productos() {
+  usePageTitle('Productos');
   const [productos, setProductos] = useState([]);
   const [categorias, setCategorias] = useState([]);
   const [loading, setLoading] = useState(true);

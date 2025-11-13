@@ -43,7 +43,8 @@ app.use((err, req, res, next) => {
 
 const PORT = process.env.PORT || 5000;
 
-app.listen(PORT, () => {
+app.listen(PORT, '0.0.0.0', () => {
   console.log(`🚀 Servidor corriendo en http://localhost:${PORT}`);
+  console.log(`🌐 Servidor accesible en http://172.21.8.76:${PORT}`);
   console.log(`📊 Base de datos conectada`);
 });

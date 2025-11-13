@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { productoService, categoriaService } from '../services/api';
+import { usePageTitle } from '../hooks/usePageTitle';
 import './Home.css';
 
 function Home() {
+  usePageTitle('Inicio');
   const navigate = useNavigate();
   const [categorias, setCategorias] = useState([]);
   const [productosPorCategoria, setProductosPorCategoria] = useState({});

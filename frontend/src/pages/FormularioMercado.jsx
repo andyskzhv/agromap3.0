@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { mercadoService } from '../services/api';
 import { useToast } from '../components/Toast';
+import { usePageTitle } from '../hooks/usePageTitle';
 import MapPicker from '../components/MapPicker';
 import { provincias, getMunicipiosPorProvincia } from '../data/provincias-municipios';
 import './FormularioMercado.css';
@@ -9,6 +10,7 @@ import './FormularioMercado.css';
 const diasSemana = ['lunes', 'martes', 'miercoles', 'jueves', 'viernes', 'sabado', 'domingo'];
 
 function FormularioMercado() {
+  usePageTitle('Formulario de Establecimiento');
   const navigate = useNavigate();
   const toast = useToast();
   const [formData, setFormData] = useState({

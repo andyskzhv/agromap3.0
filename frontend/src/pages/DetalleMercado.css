@@ -699,7 +699,7 @@
 
 /* Botones */
 .btn-primary {
-  background: linear-gradient(135deg, #00a650 0%, #008040 100%);
+  background: #10b981;
   color: white;
   border: none;
   padding: 14px 32px;
@@ -711,8 +711,9 @@
 }
 
 .btn-primary:hover {
+  background: #059669;
   transform: translateY(-2px);
-  box-shadow: 0 8px 20px rgba(0, 166, 80, 0.3);
+  box-shadow: 0 8px 20px rgba(16, 185, 129, 0.3);
 }
 
 /* Responsive */
@@ -734,135 +735,480 @@
 
 @media (max-width: 768px) {
   .detalle-mercado-container {
-    padding: 10px;
+    padding: 8px;
+    background-color: #fafafa;
+    max-width: 100vw;
+    overflow-x: hidden;
   }
 
+  /* Header más compacto */
   .mercado-header {
-    padding: 16px 20px;
+    padding: 12px 14px;
+    margin-bottom: 10px;
+    border-radius: 10px;
+    max-width: 100%;
+    box-sizing: border-box;
+  }
+
+  .header-title-section {
+    gap: 8px;
+    width: 100%;
   }
 
   .header-title-section h1 {
-    font-size: 26px;
+    font-size: 20px;
+    margin-bottom: 8px;
+    line-height: 1.3;
+    word-wrap: break-word;
+    max-width: 100%;
   }
 
   .estado-container {
     flex-direction: column;
     align-items: flex-start;
-    gap: 10px;
+    gap: 6px;
+    flex-wrap: wrap;
+    width: 100%;
   }
 
   .estado-badge {
-    font-size: 13px;
-    padding: 8px 16px;
+    font-size: 10px;
+    padding: 5px 12px;
+    letter-spacing: 0.2px;
+  }
+
+  .estado-icon {
+    font-size: 9px;
+  }
+
+  .estado-mensaje {
+    font-size: 11px;
+  }
+
+  /* Layout de contenido */
+  .mercado-content {
+    gap: 10px;
+    max-width: 100%;
+    overflow-x: hidden;
   }
 
   .content-grid {
     grid-template-columns: 1fr;
+    gap: 10px;
+    margin-bottom: 10px;
+    max-width: 100%;
+  }
+
+  .columna-principal,
+  .columna-lateral {
+    gap: 10px;
+    max-width: 100%;
   }
 
   .columna-lateral {
     grid-template-columns: 1fr;
   }
 
+  /* Galería más compacta */
+  .seccion-galeria {
+    padding: 10px;
+    max-width: 100%;
+    box-sizing: border-box;
+  }
+
   .imagen-principal {
-    height: 300px;
+    height: 220px;
+    border-radius: 8px;
+    margin-bottom: 8px;
+    max-width: 100%;
   }
 
   .sin-imagenes {
-    height: 300px;
+    height: 250px;
   }
 
   .sin-imagenes .icon {
-    font-size: 60px;
+    font-size: 50px;
+  }
+
+  .sin-imagenes p {
+    font-size: 13px;
   }
 
   .nav-btn {
-    width: 40px;
-    height: 40px;
-    font-size: 24px;
+    width: 36px;
+    height: 36px;
+    font-size: 22px;
   }
 
-  .nav-btn.prev { left: 10px; }
-  .nav-btn.next { right: 10px; }
+  .nav-btn.prev { left: 8px; }
+  .nav-btn.next { right: 8px; }
 
   .zoom-indicator {
-    font-size: 11px;
-    padding: 6px 12px;
+    font-size: 10px;
+    padding: 5px 10px;
+    bottom: 10px;
+    right: 10px;
   }
 
+  .thumbnails {
+    gap: 8px;
+    padding: 4px 0;
+  }
+
+  .thumbnails img {
+    width: 70px;
+    height: 70px;
+    border-radius: 6px;
+  }
+
+  /* Cards más compactos */
   .seccion-card {
-    padding: 20px;
+    padding: 14px;
+    border-radius: 10px;
+    max-width: 100%;
+    box-sizing: border-box;
+    overflow-x: hidden;
   }
 
+  .seccion-card h2 {
+    font-size: 15px;
+    margin-bottom: 10px;
+    word-wrap: break-word;
+  }
+
+  .descripcion-texto {
+    font-size: 13px;
+    line-height: 1.6;
+    word-wrap: break-word;
+  }
+
+  /* SAS Section */
   .sas-content {
     flex-direction: column;
-    text-align: center;
+    gap: 16px;
+  }
+
+  .sas-info h2 {
+    font-size: 17px;
+    text-align: left;
   }
 
   .sas-info p {
-    text-align: center;
+    font-size: 13px;
+    line-height: 1.6;
+    text-align: left;
   }
 
   .sas-logo {
-    height: 80px;
+    height: 70px;
+    align-self: center;
+  }
+
+  /* Info Lists */
+  .info-row {
+    padding: 8px 0;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  .info-row .label {
+    font-size: 11px;
+    min-width: 80px;
+  }
+
+  .info-row .value {
+    font-size: 12px;
+    word-wrap: break-word;
+    max-width: calc(100% - 90px);
+  }
+
+  /* Mapa */
+  .mapa-wrapper {
+    margin-top: 12px;
+    padding-top: 12px;
+  }
+
+  .mapa-container {
+    height: 180px;
+    border-radius: 6px;
+  }
+
+  /* Horario */
+  .horario-item {
+    padding: 10px 12px;
+    border-radius: 6px;
+  }
+
+  .horario-item .dia,
+  .horario-item .horario {
+    font-size: 12px;
+  }
+
+  /* Beneficiario */
+  .beneficiario {
+    font-size: 14px;
+  }
+
+  /* Productos */
+  .seccion-productos {
+    padding: 12px;
+    border-radius: 10px;
+    max-width: 100%;
+    box-sizing: border-box;
+  }
+
+  .productos-header {
+    margin-bottom: 12px;
+    padding-bottom: 10px;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .productos-header h2 {
+    font-size: 18px;
+  }
+
+  .productos-count {
+    padding: 4px 12px;
+    font-size: 13px;
+    border-radius: 14px;
+  }
+
+  /* Filtros más compactos */
+  .filtros-container {
+    padding: 12px;
+    border-radius: 8px;
+    margin-bottom: 12px;
+    max-width: 100%;
+    box-sizing: border-box;
   }
 
   .filtros-grid {
     grid-template-columns: 1fr;
+    gap: 8px;
+    margin-bottom: 8px;
   }
 
+  .filtro-grupo {
+    gap: 5px;
+    width: 100%;
+  }
+
+  .filtro-grupo label {
+    font-size: 11px;
+  }
+
+  .filtro-grupo select {
+    padding: 8px 10px;
+    font-size: 12px;
+    border-radius: 6px;
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .btn-limpiar {
+    padding: 7px 14px;
+    font-size: 11px;
+    border-radius: 6px;
+  }
+
+  /* Grid de Productos más compacto */
   .productos-grid {
-    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-    gap: 12px;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+    margin-bottom: 16px;
+    max-width: 100%;
+  }
+
+  .producto-card-compact {
+    border-radius: 8px;
+    max-width: 100%;
+    overflow: hidden;
   }
 
   .producto-card-compact .producto-imagen,
   .producto-card-compact .producto-sin-imagen {
-    height: 120px;
+    height: 100px;
+    width: 100%;
+  }
+
+  .producto-card-compact .producto-sin-imagen {
+    font-size: 36px;
   }
 
   .producto-card-compact .producto-info {
-    padding: 10px;
+    padding: 8px;
+    gap: 5px;
+    box-sizing: border-box;
   }
 
   .producto-card-compact h3 {
-    font-size: 13px;
+    font-size: 11px;
+    line-height: 1.4;
+    word-wrap: break-word;
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
   }
 
-  .mapa-container {
-    height: 200px;
+  .producto-card-compact .producto-footer {
+    padding-top: 5px;
+    gap: 5px;
+    flex-wrap: wrap;
   }
 
-  .thumbnails img {
-    width: 80px;
-    height: 80px;
+  .producto-card-compact .categoria {
+    padding: 2px 6px;
+    font-size: 8px;
+    border-radius: 8px;
   }
 
+  .producto-card-compact .precio {
+    font-size: 12px;
+  }
+
+  /* No productos */
+  .no-productos {
+    padding: 60px 16px;
+  }
+
+  .no-productos .icon {
+    font-size: 60px;
+  }
+
+  .no-productos p {
+    font-size: 14px;
+  }
+
+  /* Modal */
   .modal-cerrar {
     top: 10px;
     right: 10px;
-    width: 36px;
-    height: 36px;
-    font-size: 20px;
+    width: 34px;
+    height: 34px;
+    font-size: 18px;
+  }
+
+  .modal-contenido {
+    max-width: 92vw;
+    max-height: 92vh;
   }
 }
 
 @media (max-width: 480px) {
+  .detalle-mercado-container {
+    padding: 6px;
+    max-width: 100vw;
+    overflow-x: hidden;
+  }
+
+  .mercado-header {
+    padding: 10px 12px;
+    margin-bottom: 8px;
+  }
+
   .header-title-section h1 {
-    font-size: 22px;
+    font-size: 18px;
+  }
+
+  .estado-badge {
+    font-size: 9px;
+    padding: 4px 10px;
+  }
+
+  .estado-mensaje {
+    font-size: 10px;
+  }
+
+  .seccion-card {
+    padding: 12px;
+  }
+
+  .seccion-card h2 {
+    font-size: 14px;
+  }
+
+  .descripcion-texto {
+    font-size: 12px;
+  }
+
+  .imagen-principal {
+    height: 200px;
+  }
+
+  .thumbnails {
+    gap: 6px;
+  }
+
+  .thumbnails img {
+    width: 55px;
+    height: 55px;
+  }
+
+  .nav-btn {
+    width: 32px;
+    height: 32px;
+    font-size: 20px;
   }
 
   .productos-header {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 12px;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .productos-header h2 {
+    font-size: 16px;
   }
 
   .productos-count {
-    align-self: flex-start;
+    padding: 3px 10px;
+    font-size: 12px;
   }
 
   .productos-grid {
     grid-template-columns: repeat(2, 1fr);
+    gap: 6px;
+  }
+
+  .producto-card-compact .producto-imagen,
+  .producto-card-compact .producto-sin-imagen {
+    height: 90px;
+  }
+
+  .producto-card-compact .producto-info {
+    padding: 7px;
+  }
+
+  .producto-card-compact h3 {
+    font-size: 10px;
+  }
+
+  .producto-card-compact .categoria {
+    font-size: 7px;
+    padding: 2px 5px;
+  }
+
+  .producto-card-compact .precio {
+    font-size: 11px;
+  }
+
+  .sas-info p {
+    font-size: 12px;
+  }
+
+  .mapa-container {
+    height: 160px;
+  }
+
+  .horario-item {
+    padding: 8px 10px;
+  }
+
+  .horario-item .dia,
+  .horario-item .horario {
+    font-size: 11px;
   }
 }

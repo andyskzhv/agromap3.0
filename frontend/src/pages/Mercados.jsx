@@ -5,9 +5,10 @@ import { Icon } from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import { mercadoService } from '../services/api';
 import { setupMapCache, getCacheStatus } from '../utils/mapCache';
+import { usePageTitle } from '../hooks/usePageTitle';
 import './Mercados.css';
 
-// Icono personalizado para los marcadores
+// Icono personalizado para los marcadores de mercados
 const redIcon = new Icon({
   iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png',
   shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
@@ -33,6 +34,7 @@ function MapController({ center, zoom }) {
 }
 
 function Mercados() {
+  usePageTitle('Establecimientos');
   const [mercados, setMercados] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
@@ -48,6 +50,15 @@ function Mercados() {
     cargarDatos();
     initializeMapCache();
   }, []);
+
+  // Abrir Google Maps con el destino
+  const openDirections = (mercado) => {
+    const destLat = mercado.latitud;
+    const destLng = mercado.longitud;
+    // Abrir Google Maps con el destino (Google Maps detectará la ubicación del usuario automáticamente)
+    const url = `https://www.google.com/maps/search/?api=1&query=${destLat},${destLng}`;
+    window.open(url, '_blank');
+  };
 
   const initializeMapCache = async () => {
     // Configurar caché de mapas
@@ -124,8 +135,12 @@ function Mercados() {
         {/* Panel izquierdo */}
         <div className="mercados-panel">
         <div className="panel-header">
-          <h1>Establecimientos</h1>
-          <p className="panel-subtitle">Encuentra mercados agrícolas en Cuba</p>
+          <div className="header-content">
+            <div>
+              <h1>Establecimientos</h1>
+              <p className="panel-subtitle">Encuentra mercados agrícolas en Cuba</p>
+            </div>
+          </div>
           {cacheStatus.cachedTiles > 0 && (
             <div className="cache-indicator" title={`${cacheStatus.cachedTiles} tiles guardados para uso offline`}>
               📦 Mapa disponible offline
@@ -186,14 +201,25 @@ function Mercados() {
                     </svg>
                     {mercado.municipio}, {mercado.provincia}
                   </p>
-                  <span className={`mercado-status ${estaAbierto(mercado) ? 'open' : 'closed'}`}>
-                    <span className="status-dot"></span>
-                    {estaAbierto(mercado) ? 'Abierto' : 'Cerrado'}
-                  </span>
+                  <div className="mercado-footer">
+                    <span className={`mercado-status ${estaAbierto(mercado) ? 'open' : 'closed'}`}>
+                      <span className="status-dot"></span>
+                      {estaAbierto(mercado) ? 'Abierto' : 'Cerrado'}
+                    </span>
+                  </div>
                 </div>
-                <svg className="mercado-arrow" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <polyline points="9 18 15 12 9 6"></polyline>
-                </svg>
+                <button
+                  className="directions-button-mini"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    openDirections(mercado);
+                  }}
+                  title="Cómo llegar"
+                >
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <path d="M9 18l6-6-6-6"/>
+                  </svg>
+                </button>
               </div>
             ))
           )}
@@ -254,9 +280,20 @@ function Mercados() {
                           <span className="status-dot"></span>
                           {estaAbierto(mercado) ? 'Abierto ahora' : 'Cerrado'}
                         </span>
-                        <Link to={`/mercados/${mercado.id}`} className="popup-button">
-                          Ver detalles
-                        </Link>
+                        <div className="popup-buttons">
+                          <button
+                            onClick={() => openDirections(mercado)}
+                            className="popup-button directions"
+                          >
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                              <path d="M9 18l6-6-6-6"/>
+                            </svg>
+                            Cómo llegar
+                          </button>
+                          <Link to={`/mercados/${mercado.id}`} className="popup-button details">
+                            Ver detalles
+                          </Link>
+                        </div>
                       </div>
                     </div>
                   </Popup>

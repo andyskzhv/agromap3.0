@@ -2,9 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { adminService, mercadoService, productoService, comentarioService, plantillaService, categoriaService } from '../services/api';
 import { useToast } from '../components/Toast';
+import { usePageTitle } from '../hooks/usePageTitle';
 import './DashboardAdmin.css';
 
 function DashboardAdmin() {
+  usePageTitle('Panel de Administración');
   const navigate = useNavigate();
   const toast = useToast();
   const [vista, setVista] = useState('estadisticas');

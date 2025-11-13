@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { productoService, comentarioService, valoracionService } from '../services/api';
 import { useToast } from '../components/Toast';
+import { usePageTitle } from '../hooks/usePageTitle';
 import { FaArrowLeft, FaClock, FaFolder, FaTag, FaDollarSign, FaBox, FaStore, FaMapMarkerAlt, FaComments, FaThumbsUp, FaTrash, FaCheckCircle, FaTimesCircle, FaStar } from 'react-icons/fa';
 import './DetalleProducto.css';
 
@@ -9,6 +10,7 @@ function DetalleProducto() {
   const { id } = useParams();
   const navigate = useNavigate();
   const toast = useToast();
+  usePageTitle('Detalle del Producto');
   const [producto, setProducto] = useState(null);
   const [comentarios, setComentarios] = useState([]);
   const [loading, setLoading] = useState(true);

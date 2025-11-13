@@ -59,13 +59,20 @@
   pointer-events: none;
 }
 
+.header-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+  position: relative;
+  z-index: 1;
+}
+
 .panel-header h1 {
   font-size: 26px;
   margin: 0 0 8px 0;
   font-weight: 800;
   letter-spacing: -0.5px;
-  position: relative;
-  z-index: 1;
 }
 
 .panel-subtitle {
@@ -73,8 +80,50 @@
   font-size: 14px;
   opacity: 0.95;
   font-weight: 400;
-  position: relative;
-  z-index: 1;
+}
+
+.location-button {
+  background: rgba(255, 255, 255, 0.25);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  color: white;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  backdrop-filter: blur(10px);
+  flex-shrink: 0;
+}
+
+.location-button:hover {
+  background: rgba(255, 255, 255, 0.35);
+  transform: scale(1.1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.location-button:active {
+  transform: scale(0.95);
+}
+
+.location-button.loading {
+  pointer-events: none;
+  opacity: 0.8;
+}
+
+.spin {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 .cache-indicator {
@@ -175,6 +224,46 @@
   border-color: #d1d5db;
 }
 
+.distance-filter-btn {
+  width: 100%;
+  padding: 11px 14px;
+  border: 2px solid #e5e7eb;
+  border-radius: 12px;
+  font-size: 13px;
+  background: white;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  font-weight: 500;
+  color: #374151;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.distance-filter-btn:hover {
+  border-color: #10b981;
+  background: #f0fdf4;
+  color: #059669;
+}
+
+.distance-filter-btn.active {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  color: white;
+  border-color: #10b981;
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+}
+
+.distance-filter-btn.active:hover {
+  background: linear-gradient(135deg, #059669 0%, #047857 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(16, 185, 129, 0.4);
+}
+
+.distance-filter-btn svg {
+  flex-shrink: 0;
+}
+
 /* Lista de mercados */
 .mercados-list {
   flex: 1;
@@ -256,9 +345,8 @@
   width: 5px;
 }
 
-.mercado-item.active .mercado-arrow {
+.mercado-item.active .directions-button-mini {
   color: #10b981;
-  transform: translateX(3px);
 }
 
 .mercado-info {
@@ -267,6 +355,43 @@
   display: flex;
   flex-direction: column;
   gap: 5px;
+}
+
+.mercado-footer {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.mercado-distance {
+  font-size: 10px;
+  color: #6b7280;
+  font-weight: 600;
+  background: #f3f4f6;
+  padding: 3px 8px;
+  border-radius: 10px;
+}
+
+.directions-button-mini {
+  background: transparent;
+  border: none;
+  color: #9ca3af;
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  flex-shrink: 0;
+}
+
+.directions-button-mini:hover {
+  background: #f3f4f6;
+  color: #10b981;
+  transform: scale(1.1);
 }
 
 .mercado-info h3 {
@@ -500,24 +625,60 @@
   box-shadow: 0 2px 8px rgba(239, 68, 68, 0.2);
 }
 
-.popup-button {
-  display: block;
-  width: 100%;
-  text-align: center;
-  padding: 13px;
-  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-  color: white;
-  text-decoration: none;
+.popup-distance {
+  font-size: 12px;
+  color: #6b7280;
+  font-weight: 600;
+  background: #f3f4f6;
+  padding: 6px 12px;
   border-radius: 12px;
-  font-weight: 700;
-  font-size: 14px;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  margin-top: 4px;
-  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
-  letter-spacing: 0.3px;
+  margin-bottom: 16px;
+  display: inline-block;
 }
 
-.popup-button:hover {
+.popup-buttons {
+  display: flex;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.popup-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  flex: 1;
+  text-align: center;
+  padding: 12px;
+  border: none;
+  border-radius: 12px;
+  font-weight: 700;
+  font-size: 13px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  letter-spacing: 0.3px;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.popup-button.directions {
+  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+  color: white;
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+}
+
+.popup-button.directions:hover {
+  background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(59, 130, 246, 0.5);
+}
+
+.popup-button.details {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  color: white;
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+}
+
+.popup-button.details:hover {
   background: linear-gradient(135deg, #059669 0%, #047857 100%);
   transform: translateY(-2px);
   box-shadow: 0 8px 24px rgba(16, 185, 129, 0.5);
@@ -548,41 +709,140 @@
 @media (max-width: 768px) {
   .mercados-container {
     padding: 10px;
+    background: linear-gradient(135deg, #f5f7fa 0%, #e8f4f1 100%);
   }
 
   .mercados-map-layout {
     flex-direction: column;
-    height: auto;
-    min-height: calc(100vh - 130px);
-    border-radius: 12px;
+    height: calc(100vh - 90px);
+    min-height: calc(100vh - 90px);
+    border-radius: 16px;
+    max-height: calc(100vh - 90px);
   }
 
   .mercados-panel {
     width: 100%;
     min-width: 100%;
-    height: 45vh;
-    max-height: 45vh;
+    height: 48vh;
+    max-height: 48vh;
+    min-height: 48vh;
     border-right: none;
-    border-bottom: 1px solid #e5e7eb;
+    border-bottom: 2px solid #e5e7eb;
+    border-radius: 16px 16px 0 0;
   }
 
   .mercados-map {
-    height: 45vh;
-    width: 100%;
-    border-radius: 0 0 12px 12px;
+    height: calc(52vh - 20px);
+    min-height: calc(52vh - 20px);
+    max-height: calc(52vh - 20px);
+    width: calc(100% - 20px);
+    margin: 10px;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  }
+
+  .mercados-map > div {
+    border-radius: 12px;
+  }
+
+  /* Optimizar header para móvil */
+  .panel-header {
+    padding: 14px 14px 10px;
+  }
+
+  .panel-header h1 {
+    font-size: 17px;
+    margin-bottom: 3px;
+  }
+
+  .panel-subtitle {
+    font-size: 10px;
+  }
+
+  .location-button {
+    width: 36px;
+    height: 36px;
+  }
+
+  .location-button svg {
+    width: 17px;
+    height: 17px;
+  }
+
+  .cache-indicator {
+    margin-top: 6px;
+    padding: 3px 8px;
+    font-size: 9px;
+  }
+
+  /* Optimizar búsqueda y filtros para móvil */
+  .search-section {
+    padding: 10px 14px 8px;
+  }
+
+  .search-box {
+    margin-bottom: 8px;
+  }
+
+  .search-input {
+    padding: 9px 10px 9px 36px;
+    font-size: 13px;
+    border-radius: 10px;
+  }
+
+  .search-icon {
+    left: 11px;
+  }
+
+  .search-icon svg {
+    width: 16px;
+    height: 16px;
+  }
+
+  .filter-box {
+    margin-top: 8px;
+  }
+
+  .filter-select,
+  .distance-filter-btn {
+    padding: 9px 10px;
+    font-size: 12px;
+    border-radius: 10px;
+  }
+
+  /* Optimizar lista para móvil - Items más compactos */
+  .mercados-list {
+    padding: 2px 0;
   }
 
   .mercado-item {
-    padding: 12px 16px;
+    padding: 10px 14px;
+    border-bottom: 1px solid #f9fafb;
   }
 
   .mercado-item:hover,
   .mercado-item.active {
-    padding-left: 20px;
+    padding-left: 18px;
+  }
+
+  .mercado-item::before {
+    width: 0;
+  }
+
+  .mercado-item:hover::before,
+  .mercado-item.active::before {
+    width: 4px;
+  }
+
+  .mercado-info {
+    gap: 3px;
   }
 
   .mercado-info h3 {
-    font-size: 14px;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: -0.1px;
   }
 
   .mercado-location {
@@ -590,65 +850,113 @@
   }
 
   .mercado-location svg {
-    width: 12px;
-    height: 12px;
+    width: 11px;
+    height: 11px;
   }
 
-  .panel-header {
-    padding: 18px 16px 14px;
+  .mercado-status {
+    font-size: 9px;
+    padding: 2px 7px;
+    margin-top: 1px;
+    letter-spacing: 0.2px;
   }
 
-  .panel-header h1 {
-    font-size: 20px;
+  .status-dot {
+    width: 4px;
+    height: 4px;
   }
 
-  .panel-subtitle {
-    font-size: 12px;
+  .mercado-footer {
+    gap: 6px;
   }
 
-  .search-section {
-    padding: 14px 16px;
+  .mercado-distance {
+    font-size: 9px;
+    padding: 2px 6px;
   }
 
-  .search-input {
-    padding: 9px 12px 9px 36px;
-    font-size: 13px;
+  .directions-button-mini {
+    width: 28px;
+    height: 28px;
   }
 
-  .filter-select {
-    padding: 8px 10px;
-    font-size: 12px;
+  .directions-button-mini svg {
+    width: 15px;
+    height: 15px;
   }
 
+  .mercado-arrow {
+    width: 16px;
+    height: 16px;
+  }
+
+  /* Optimizar popups para móvil */
   .leaflet-popup-content-wrapper {
-    min-width: 240px;
-    max-width: 260px;
+    min-width: 260px;
+    max-width: 280px;
+    border-radius: 16px;
   }
 
   .popup-image,
   .popup-image-placeholder {
-    height: 120px;
+    height: 140px;
   }
 
   .popup-info {
-    padding: 14px;
+    padding: 16px;
   }
 
   .popup-info h3 {
-    font-size: 15px;
+    font-size: 16px;
+    margin-bottom: 10px;
   }
 
   .popup-address {
     font-size: 13px;
+    margin-bottom: 6px;
   }
 
   .popup-location {
     font-size: 12px;
+    margin-bottom: 12px;
+  }
+
+  .popup-status {
+    font-size: 10px;
+    padding: 5px 12px;
+    margin-bottom: 12px;
+  }
+
+  .popup-distance {
+    font-size: 11px;
+    padding: 5px 10px;
+    margin-bottom: 12px;
+  }
+
+  .popup-buttons {
+    gap: 8px;
   }
 
   .popup-button {
-    padding: 10px;
-    font-size: 13px;
+    padding: 11px;
+    font-size: 12px;
+    border-radius: 10px;
+  }
+
+  .popup-button svg {
+    width: 16px;
+    height: 16px;
+  }
+
+  /* Ajustar scrollbar para móvil */
+  .mercados-list::-webkit-scrollbar {
+    width: 4px;
+  }
+
+  /* No resultados */
+  .no-results {
+    padding: 40px 20px;
+    font-size: 14px;
   }
 }
 

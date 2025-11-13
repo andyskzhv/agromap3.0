@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { authService } from '../services/api';
+import { usePageTitle } from '../hooks/usePageTitle';
 import './Auth.css';
 
 function Perfil() {
+  usePageTitle('Mi Perfil');
   const navigate = useNavigate();
   const [usuario, setUsuario] = useState(null);
   const [loading, setLoading] = useState(true);

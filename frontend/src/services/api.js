@@ -1,6 +1,16 @@
 import axios from 'axios';
 
-const API_URL = 'http://localhost:5000/api';
+// Detectar si estamos en localhost o en la red
+const getApiUrl = () => {
+  // Si estamos en localhost, usar localhost
+  if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+    return 'http://localhost:5000/api';
+  }
+  // Si estamos accediendo desde la red local, usar la IP
+  return 'http://172.21.8.76:5000/api';
+};
+
+const API_URL = getApiUrl();
 
 const api = axios.create({
   baseURL: API_URL,

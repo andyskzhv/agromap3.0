@@ -2,9 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { authService, mercadoService } from '../services/api';
 import { useToast } from '../components/Toast';
+import { usePageTitle } from '../hooks/usePageTitle';
 import './Auth.css';
 
 function EditarPerfil() {
+  usePageTitle('Editar Perfil');
   const navigate = useNavigate();
   const toast = useToast();
   const [usuario, setUsuario] = useState(null);

@@ -331,7 +331,7 @@
 }
 
 .modal-buttons .btn-primary {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: #10b981;
   color: white;
   border: none;
 }
@@ -343,8 +343,9 @@
 }
 
 .modal-buttons .btn-primary:hover {
+  background: #059669;
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
 }
 
 .modal-buttons .btn-secondary:hover {
