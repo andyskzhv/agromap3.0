@@ -16,6 +16,16 @@ async function main() {
   await prisma.categoria.deleteMany({});
   await prisma.usuario.deleteMany({});
 
+  // Resetear las secuencias de auto-incremento
+  console.log('🔄 Reseteando secuencias de IDs...');
+  await prisma.$executeRawUnsafe('ALTER SEQUENCE usuarios_id_seq RESTART WITH 1');
+  await prisma.$executeRawUnsafe('ALTER SEQUENCE categorias_id_seq RESTART WITH 1');
+  await prisma.$executeRawUnsafe('ALTER SEQUENCE plantillas_productos_id_seq RESTART WITH 1');
+  await prisma.$executeRawUnsafe('ALTER SEQUENCE mercados_id_seq RESTART WITH 1');
+  await prisma.$executeRawUnsafe('ALTER SEQUENCE productos_id_seq RESTART WITH 1');
+  await prisma.$executeRawUnsafe('ALTER SEQUENCE comentarios_id_seq RESTART WITH 1');
+  await prisma.$executeRawUnsafe('ALTER SEQUENCE valoraciones_id_seq RESTART WITH 1');
+
   // Crear contraseña hasheada para todos los usuarios
   const passwordHash = await bcrypt.hash('123456', 10);
 

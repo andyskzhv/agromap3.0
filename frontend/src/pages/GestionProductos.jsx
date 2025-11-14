@@ -17,6 +17,17 @@ function GestionProductos() {
   const [confirmarEliminacion, setConfirmarEliminacion] = useState(null);
   const [plantillaSeleccionada, setPlantillaSeleccionada] = useState(null);
   const [busquedaPlantilla, setBusquedaPlantilla] = useState('');
+
+  // Estados para filtrado y búsqueda
+  const [busqueda, setBusqueda] = useState('');
+  const [filtroEstado, setFiltroEstado] = useState('TODOS');
+  const [ordenamiento, setOrdenamiento] = useState('RECIENTES');
+  const [cambiandoEstado, setCambiandoEstado] = useState(null);
+
+  // Estados para paginación
+  const [paginaActual, setPaginaActual] = useState(1);
+  const productosPorPagina = 10;
+
   const [formData, setFormData] = useState({
     nombre: '',
     descripcion: '',
@@ -189,6 +200,128 @@ function GestionProductos() {
     }
   };
 
+  // Cambiar estado del producto (switch rápido)
+  const cambiarEstadoProducto = async (producto) => {
+    const nuevoEstado = producto.estado === 'DISPONIBLE' ? 'NO_DISPONIBLE' : 'DISPONIBLE';
+
+    try {
+      setCambiandoEstado(producto.id);
+
+      // Actualizar solo el estado
+      await productoService.actualizar(producto.id, {
+        ...producto,
+        estado: nuevoEstado,
+        categoriaId: producto.categoria?.id || producto.categoriaId,
+        mercadoId: producto.mercado?.id || producto.mercadoId
+      });
+
+      // Actualizar localmente
+      setProductos(productos.map(p =>
+        p.id === producto.id ? { ...p, estado: nuevoEstado } : p
+      ));
+
+      const mensaje = nuevoEstado === 'DISPONIBLE'
+        ? '✅ Producto marcado como disponible. Se enviaron notificaciones a los suscriptores.'
+        : '⚠️ Producto marcado como no disponible';
+
+      toast.success(mensaje);
+    } catch (error) {
+      console.error('Error al cambiar estado:', error);
+      toast.error(error.response?.data?.error || 'Error al cambiar estado');
+    } finally {
+      setCambiandoEstado(null);
+    }
+  };
+
+  // Filtrar y ordenar productos
+  const productosFiltrados = productos
+    .filter(producto => {
+      // Filtro por búsqueda
+      const coincideBusqueda = producto.nombre.toLowerCase().includes(busqueda.toLowerCase()) ||
+        (producto.categoria?.nombre || '').toLowerCase().includes(busqueda.toLowerCase());
+
+      // Filtro por estado
+      const coincideEstado = filtroEstado === 'TODOS' || producto.estado === filtroEstado;
+
+      return coincideBusqueda && coincideEstado;
+    })
+    .sort((a, b) => {
+      switch (ordenamiento) {
+        case 'RECIENTES':
+          return new Date(b.fechaActualizacion) - new Date(a.fechaActualizacion);
+        case 'ANTIGUOS':
+          return new Date(a.fechaActualizacion) - new Date(b.fechaActualizacion);
+        case 'ALFABETICO':
+          return a.nombre.localeCompare(b.nombre);
+        case 'ALFABETICO_DESC':
+          return b.nombre.localeCompare(a.nombre);
+        default:
+          return 0;
+      }
+    });
+
+  // Calcular paginación
+  const totalPaginas = Math.ceil(productosFiltrados.length / productosPorPagina);
+  const indiceInicio = (paginaActual - 1) * productosPorPagina;
+  const indiceFin = indiceInicio + productosPorPagina;
+  const productosPaginados = productosFiltrados.slice(indiceInicio, indiceFin);
+
+  // Resetear a página 1 cuando cambian los filtros
+  useEffect(() => {
+    setPaginaActual(1);
+  }, [busqueda, filtroEstado, ordenamiento]);
+
+  // Funciones de paginación
+  const irAPagina = (numeroPagina) => {
+    setPaginaActual(numeroPagina);
+    // Scroll suave al inicio de la tabla
+    document.querySelector('.productos-lista')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  };
+
+  const paginaAnterior = () => {
+    if (paginaActual > 1) {
+      irAPagina(paginaActual - 1);
+    }
+  };
+
+  const paginaSiguiente = () => {
+    if (paginaActual < totalPaginas) {
+      irAPagina(paginaActual + 1);
+    }
+  };
+
+  // Generar números de página visibles
+  const obtenerNumerosPaginas = () => {
+    const numeros = [];
+    const maxVisible = 5;
+
+    if (totalPaginas <= maxVisible) {
+      for (let i = 1; i <= totalPaginas; i++) {
+        numeros.push(i);
+      }
+    } else {
+      if (paginaActual <= 3) {
+        for (let i = 1; i <= 4; i++) numeros.push(i);
+        numeros.push('...');
+        numeros.push(totalPaginas);
+      } else if (paginaActual >= totalPaginas - 2) {
+        numeros.push(1);
+        numeros.push('...');
+        for (let i = totalPaginas - 3; i <= totalPaginas; i++) numeros.push(i);
+      } else {
+        numeros.push(1);
+        numeros.push('...');
+        numeros.push(paginaActual - 1);
+        numeros.push(paginaActual);
+        numeros.push(paginaActual + 1);
+        numeros.push('...');
+        numeros.push(totalPaginas);
+      }
+    }
+
+    return numeros;
+  };
+
   if (loading) {
     return <div className="gestion-container"><div className="loading">Cargando...</div></div>;
   }
@@ -196,11 +329,74 @@ function GestionProductos() {
   return (
     <div className="gestion-container">
       <div className="gestion-header">
-        <h1>Gestión de Productos</h1>
-        {mercado && <p>Mercado: {mercado.nombre}</p>}
-        <button onClick={abrirFormularioNuevo} className="btn-primary">
-          + Agregar Producto
-        </button>
+        <div className="header-top">
+          <div className="header-info">
+            <h1>Gestión de Productos</h1>
+            {mercado && <p className="mercado-nombre">📍 {mercado.nombre}</p>}
+          </div>
+          <button onClick={abrirFormularioNuevo} className="btn-primary">
+            + Agregar Producto
+          </button>
+        </div>
+
+        {/* Barra de filtros y búsqueda */}
+        <div className="filtros-container">
+          <div className="busqueda-box">
+            <input
+              type="text"
+              placeholder="🔍 Buscar producto..."
+              value={busqueda}
+              onChange={(e) => setBusqueda(e.target.value)}
+              className="input-busqueda-productos"
+            />
+            {busqueda && (
+              <button
+                onClick={() => setBusqueda('')}
+                className="btn-limpiar-busqueda"
+                title="Limpiar búsqueda"
+              >
+                ✕
+              </button>
+            )}
+          </div>
+
+          <div className="filtros-box">
+            <select
+              value={filtroEstado}
+              onChange={(e) => setFiltroEstado(e.target.value)}
+              className="select-filtro"
+            >
+              <option value="TODOS">Todos los estados</option>
+              <option value="DISPONIBLE">✓ Disponibles</option>
+              <option value="NO_DISPONIBLE">✕ No disponibles</option>
+            </select>
+
+            <select
+              value={ordenamiento}
+              onChange={(e) => setOrdenamiento(e.target.value)}
+              className="select-filtro"
+            >
+              <option value="RECIENTES">Más recientes</option>
+              <option value="ANTIGUOS">Más antiguos</option>
+              <option value="ALFABETICO">A → Z</option>
+              <option value="ALFABETICO_DESC">Z → A</option>
+            </select>
+          </div>
+        </div>
+
+        {/* Contador de resultados */}
+        {productosFiltrados.length > 0 && (
+          <div className="resultados-info">
+            {(busqueda || filtroEstado !== 'TODOS') ? (
+              <>Mostrando {productosFiltrados.length} de {productos.length} productos</>
+            ) : (
+              <>Total: {productos.length} productos</>
+            )}
+            {totalPaginas > 1 && (
+              <> • Página {paginaActual} de {totalPaginas}</>
+            )}
+          </div>
+        )}
       </div>
 
       {mostrarFormulario && (
@@ -558,43 +754,124 @@ function GestionProductos() {
 
       <div className="productos-lista">
         {productos.length === 0 ? (
-          <div className="no-results">No tienes productos aún</div>
+          <div className="no-results">
+            <p>📦 No tienes productos aún</p>
+            <button onClick={abrirFormularioNuevo} className="btn-primary">
+              Agregar tu primer producto
+            </button>
+          </div>
+        ) : productosFiltrados.length === 0 ? (
+          <div className="no-results">
+            <p>🔍 No se encontraron productos</p>
+            <p className="no-results-subtitle">Intenta cambiar los filtros o la búsqueda</p>
+            <button
+              onClick={() => {
+                setBusqueda('');
+                setFiltroEstado('TODOS');
+              }}
+              className="btn-secondary"
+            >
+              Limpiar filtros
+            </button>
+          </div>
         ) : (
           <div className="table-container">
             <table>
               <thead>
                 <tr>
-                  <th>Nombre</th>
+                  <th>Producto</th>
                   <th>Categoría</th>
                   <th>Precio</th>
-                  <th>Estado</th>
+                  <th>Disponibilidad</th>
                   <th>Actualizado</th>
                   <th>Acciones</th>
                 </tr>
               </thead>
               <tbody>
-                {productos.map((producto) => (
+                {productosPaginados.map((producto) => (
                   <tr key={producto.id}>
-                    <td><strong>{producto.nombre}</strong></td>
-                    <td>{producto.categoria?.nombre || producto.categoria}</td>
-                    <td>{producto.precio ? `$${producto.precio.toFixed(2)}` : '-'}</td>
                     <td>
-                      <span className={`badge ${producto.estado.toLowerCase()}`}>
-                        {producto.estado}
+                      <div className="producto-nombre-col">
+                        {producto.imagenes && producto.imagenes.length > 0 ? (
+                          <img
+                            src={`http://localhost:5000${producto.imagenes[0]}`}
+                            alt={producto.nombre}
+                            className="producto-miniatura"
+                          />
+                        ) : producto.plantilla?.imagen ? (
+                          <img
+                            src={`http://localhost:5000${producto.plantilla.imagen}`}
+                            alt={producto.nombre}
+                            className="producto-miniatura"
+                          />
+                        ) : (
+                          <div className="producto-miniatura-placeholder">📦</div>
+                        )}
+                        <div className="producto-info">
+                          <strong>{producto.nombre}</strong>
+                          {producto.tipoProducto && (
+                            <small className="tipo-badge">{producto.tipoProducto}</small>
+                          )}
+                        </div>
+                      </div>
+                    </td>
+                    <td>{producto.categoria?.nombre || producto.categoria}</td>
+                    <td>
+                      {producto.precio ? (
+                        <span className="precio-valor">
+                          ${producto.precio.toFixed(2)}
+                          {producto.unidadPrecio && producto.unidadPrecio !== 'UNIDAD' && (
+                            <small>/{producto.unidadPrecio.toLowerCase()}</small>
+                          )}
+                        </span>
+                      ) : (
+                        <span className="precio-no-disponible">-</span>
+                      )}
+                    </td>
+                    <td>
+                      <div className="disponibilidad-toggle">
+                        <label className="switch">
+                          <input
+                            type="checkbox"
+                            checked={producto.estado === 'DISPONIBLE'}
+                            onChange={() => cambiarEstadoProducto(producto)}
+                            disabled={cambiandoEstado === producto.id}
+                          />
+                          <span className="slider"></span>
+                        </label>
+                        <span className={`estado-texto ${producto.estado.toLowerCase()}`}>
+                          {cambiandoEstado === producto.id ? (
+                            '⏳'
+                          ) : producto.estado === 'DISPONIBLE' ? (
+                            '✓ Disponible'
+                          ) : (
+                            '✕ No disponible'
+                          )}
+                        </span>
+                      </div>
+                    </td>
+                    <td>
+                      <span className="fecha-texto">
+                        {new Date(producto.fechaActualizacion).toLocaleDateString('es-ES', {
+                          day: '2-digit',
+                          month: 'short',
+                          year: 'numeric'
+                        })}
                       </span>
                     </td>
-                    <td>{new Date(producto.fechaActualizacion).toLocaleDateString()}</td>
                     <td>
                       <div className="acciones">
-                        <button 
+                        <button
                           onClick={() => abrirFormularioEditar(producto)}
                           className="btn-editar"
+                          title="Editar producto"
                         >
                           ✏️
                         </button>
-                        <button 
+                        <button
                           onClick={() => handleEliminar(producto.id)}
                           className="btn-eliminar"
+                          title="Eliminar producto"
                         >
                           🗑️
                         </button>
@@ -604,6 +881,45 @@ function GestionProductos() {
                 ))}
               </tbody>
             </table>
+
+            {/* Controles de paginación */}
+            {totalPaginas > 1 && (
+              <div className="paginacion-container">
+                <button
+                  onClick={paginaAnterior}
+                  disabled={paginaActual === 1}
+                  className="btn-paginacion"
+                  title="Página anterior"
+                >
+                  ← Anterior
+                </button>
+
+                <div className="numeros-pagina">
+                  {obtenerNumerosPaginas().map((numero, index) => (
+                    numero === '...' ? (
+                      <span key={`dots-${index}`} className="dots-paginacion">...</span>
+                    ) : (
+                      <button
+                        key={numero}
+                        onClick={() => irAPagina(numero)}
+                        className={`btn-numero-pagina ${paginaActual === numero ? 'activo' : ''}`}
+                      >
+                        {numero}
+                      </button>
+                    )
+                  ))}
+                </div>
+
+                <button
+                  onClick={paginaSiguiente}
+                  disabled={paginaActual === totalPaginas}
+                  className="btn-paginacion"
+                  title="Página siguiente"
+                >
+                  Siguiente →
+                </button>
+              </div>
+            )}
           </div>
         )}
       </div>

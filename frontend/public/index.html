@@ -39,5 +39,39 @@
       To begin the development, run `npm start` or `yarn start`.
       To create a production bundle, use `npm run build` or `yarn build`.
     -->
+
+    <!-- Registrar Service Worker para notificaciones push -->
+    <script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('/service-worker.js')
+            .then(registration => {
+              console.log('Service Worker registrado:', registration);
+
+              // Buscar actualizaciones cada vez que se carga la página
+              registration.update();
+
+              // Buscar actualizaciones cada hora
+              setInterval(() => {
+                registration.update();
+              }, 60 * 60 * 1000); // 1 hora
+
+              // Detectar cuando hay una nueva versión esperando
+              registration.addEventListener('updatefound', () => {
+                const newWorker = registration.installing;
+                newWorker.addEventListener('statechange', () => {
+                  if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                    // Nueva versión disponible, se activará automáticamente
+                    console.log('Nueva versión del Service Worker instalada');
+                  }
+                });
+              });
+            })
+            .catch(error => {
+              console.log('Error al registrar Service Worker:', error);
+            });
+        });
+      }
+    </script>
   </body>
 </html>

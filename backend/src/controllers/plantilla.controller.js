@@ -215,15 +215,8 @@ const eliminarPlantilla = async (req, res) => {
 // Obtener plantillas con productos disponibles (público)
 const obtenerPlantillasDisponibles = async (req, res) => {
   try {
-    // Obtener todas las plantillas que tienen al menos 1 producto DISPONIBLE
+    // Obtener TODAS las plantillas (con y sin productos)
     const plantillas = await prisma.plantillaProducto.findMany({
-      where: {
-        productos: {
-          some: {
-            estado: 'DISPONIBLE'
-          }
-        }
-      },
       include: {
         categoria: {
           select: {
@@ -246,7 +239,7 @@ const obtenerPlantillasDisponibles = async (req, res) => {
       }
     });
 
-    // Enriquecer con count de mercados únicos
+    // Enriquecer con count de mercados únicos y disponibilidad
     const plantillasEnriquecidas = await Promise.all(
       plantillas.map(async (plantilla) => {
         // Obtener mercados únicos donde hay productos disponibles de esta plantilla
@@ -261,17 +254,28 @@ const obtenerPlantillasDisponibles = async (req, res) => {
           distinct: ['mercadoId']
         });
 
+        const mercadosUnicos = productos.length;
+        const tieneProductos = plantilla._count.productos > 0;
+
         return {
           ...plantilla,
           _count: {
             ...plantilla._count,
-            mercadosUnicos: productos.length
-          }
+            mercadosUnicos
+          },
+          disponible: tieneProductos
         };
       })
     );
 
-    res.json(plantillasEnriquecidas);
+    // Ordenar: primero las que tienen productos, luego las que no
+    const plantillasOrdenadas = plantillasEnriquecidas.sort((a, b) => {
+      if (a.disponible && !b.disponible) return -1;
+      if (!a.disponible && b.disponible) return 1;
+      return 0;
+    });
+
+    res.json(plantillasOrdenadas);
   } catch (error) {
     console.error('Error al obtener plantillas disponibles:', error);
     res.status(500).json({

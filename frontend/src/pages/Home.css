@@ -302,6 +302,27 @@
   font-size: 0.85rem;
 }
 
+.estado-no-disponible {
+  color: #ef4444;
+  font-weight: 500;
+  font-size: 0.85rem;
+}
+
+/* Card No Disponible */
+.producto-card-horizontal.no-disponible {
+  opacity: 0.7;
+  border: 2px dashed #d1d5db;
+}
+
+.producto-card-horizontal.no-disponible .producto-imagen-horizontal {
+  filter: grayscale(50%);
+}
+
+.producto-card-horizontal.no-disponible:hover {
+  opacity: 0.85;
+  transform: translateY(-3px);
+}
+
 .producto-ver-detalles-horizontal {
   width: 100%;
   padding: 0.6rem;
@@ -313,6 +334,14 @@
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
+}
+
+.producto-card-horizontal.no-disponible .producto-ver-detalles-horizontal {
+  background-color: #6b7280;
+}
+
+.producto-card-horizontal.no-disponible .producto-ver-detalles-horizontal:hover {
+  background-color: #4b5563;
 }
 
 .producto-ver-detalles-horizontal:hover {

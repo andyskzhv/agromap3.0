@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { productoService, comentarioService, valoracionService } from '../services/api';
 import { useToast } from '../components/Toast';
 import { usePageTitle } from '../hooks/usePageTitle';
+import BotonNotificacion from '../components/BotonNotificacion';
 import { FaArrowLeft, FaClock, FaFolder, FaTag, FaDollarSign, FaBox, FaStore, FaMapMarkerAlt, FaComments, FaThumbsUp, FaTrash, FaCheckCircle, FaTimesCircle, FaStar } from 'react-icons/fa';
 import './DetalleProducto.css';
 
@@ -333,6 +334,14 @@ function DetalleProducto() {
             <p><strong>{producto.mercado.nombre}</strong></p>
             <p><FaMapMarkerAlt /> {producto.mercado.direccion}</p>
             <p>{producto.mercado.municipio}, {producto.mercado.provincia}</p>
+          </div>
+
+          {/* Botón de notificaciones */}
+          <div className="notificacion-section">
+            <BotonNotificacion
+              productoId={parseInt(id)}
+              estadoProducto={producto.estado}
+            />
           </div>
         </div>
       </div>

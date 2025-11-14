@@ -899,3 +899,20 @@
     transform: translateX(0);
   }
 }
+
+/* Sección de Notificaciones */
+.notificacion-section {
+  margin-top: 2rem;
+  padding-top: 1.5rem;
+  border-top: 2px solid #e5e7eb;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+@media (max-width: 768px) {
+  .notificacion-section {
+    margin-top: 1.5rem;
+    padding-top: 1rem;
+  }
+}

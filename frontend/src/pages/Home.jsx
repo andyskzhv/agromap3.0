@@ -142,7 +142,7 @@ function Home() {
                 {plantillas.map((plantilla) => (
                   <div
                     key={plantilla.id}
-                    className="producto-card-horizontal"
+                    className={`producto-card-horizontal ${!plantilla.disponible ? 'no-disponible' : ''}`}
                     onClick={() => verDetallePlantilla(plantilla.id)}
                   >
                     <div className="producto-imagen-horizontal">
@@ -161,11 +161,17 @@ function Home() {
 
                     <div className="producto-info-horizontal">
                       <h4 className="producto-nombre">{plantilla.nombre}</h4>
-                      <span className="estado-disponible">
-                        ✓ Disponible en {plantilla._count?.mercadosUnicos || 0} mercados
-                      </span>
+                      {plantilla.disponible ? (
+                        <span className="estado-disponible">
+                          ✓ Disponible en {plantilla._count?.mercadosUnicos || 0} mercados
+                        </span>
+                      ) : (
+                        <span className="estado-no-disponible">
+                          ✕ No disponible actualmente
+                        </span>
+                      )}
                       <button className="producto-ver-detalles-horizontal">
-                        Ver Disponibilidad
+                        {plantilla.disponible ? 'Ver Disponibilidad' : 'Ver Detalles'}
                       </button>
                     </div>
                   </div>

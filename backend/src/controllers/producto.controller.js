@@ -1,5 +1,6 @@
 const { PrismaClient } = require('@prisma/client');
 const { eliminarArchivos, eliminarArchivosNoUsados } = require('../utils/fileUtils');
+const { notificarDisponibilidad } = require('./suscripcion.controller');
 const prisma = new PrismaClient();
 
 // Obtener todos los productos (público)
@@ -153,7 +154,8 @@ const crearProducto = async (req, res) => {
       precio,
       unidadPrecio,
       estado,
-      mercadoId
+      mercadoId,
+      plantillaId
     } = req.body;
 
     // Validaciones
@@ -224,7 +226,8 @@ const crearProducto = async (req, res) => {
         unidadPrecio: unidadPrecio || 'UNIDAD',
         moneda: 'CUP',
         estado: estado || 'DISPONIBLE',
-        mercadoId: parseInt(mercadoId)
+        mercadoId: parseInt(mercadoId),
+        plantillaId: plantillaId ? parseInt(plantillaId) : null
       },
       include: {
         mercado: {
@@ -290,7 +293,8 @@ const actualizarProducto = async (req, res) => {
       tipoProducto,
       precio,
       unidadPrecio,
-      estado
+      estado,
+      plantillaId
     } = req.body;
 
     // Si se está actualizando la categoría, verificar que existe y está activa
@@ -353,6 +357,7 @@ const actualizarProducto = async (req, res) => {
         ...(precio !== undefined && { precio: precio ? parseFloat(precio) : null }),
         ...(unidadPrecio && { unidadPrecio }),
         ...(estado && { estado }),
+        ...(plantillaId !== undefined && { plantillaId: plantillaId ? parseInt(plantillaId) : null }),
         fechaActualizacion: new Date()
       },
       include: {
@@ -370,6 +375,14 @@ const actualizarProducto = async (req, res) => {
         }
       }
     });
+
+    // Si el producto cambió a DISPONIBLE, notificar a suscriptores
+    if (estado === 'DISPONIBLE' && productoExistente.estado !== 'DISPONIBLE') {
+      // Ejecutar notificación de forma asíncrona sin bloquear la respuesta
+      notificarDisponibilidad(productoId).catch(err => {
+        console.error('Error al enviar notificaciones:', err);
+      });
+    }
 
     res.json({
       message: 'Producto actualizado exitosamente',

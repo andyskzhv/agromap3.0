@@ -19,10 +19,29 @@ function EditarPerfil() {
   });
   const [imagenFile, setImagenFile] = useState(null);
   const [imagenPreview, setImagenPreview] = useState(null);
-  const [provincias, setProvincias] = useState([]);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(true);
   const [guardando, setGuardando] = useState(false);
+
+  // Lista completa de provincias de Cuba
+  const provincias = [
+    'Pinar del Río',
+    'Artemisa',
+    'La Habana',
+    'Mayabeque',
+    'Matanzas',
+    'Cienfuegos',
+    'Villa Clara',
+    'Sancti Spíritus',
+    'Ciego de Ávila',
+    'Camagüey',
+    'Las Tunas',
+    'Holguín',
+    'Granma',
+    'Santiago de Cuba',
+    'Guantánamo',
+    'Isla de la Juventud'
+  ];
 
   useEffect(() => {
     cargarDatos();
@@ -30,13 +49,9 @@ function EditarPerfil() {
 
   const cargarDatos = async () => {
     try {
-      const [perfilRes, provinciasRes] = await Promise.all([
-        authService.obtenerPerfil(),
-        mercadoService.obtenerProvincias()
-      ]);
+      const perfilRes = await authService.obtenerPerfil();
 
       setUsuario(perfilRes.data);
-      setProvincias(provinciasRes.data);
       setFormData({
         nombre: perfilRes.data.nombre,
         provincia: perfilRes.data.provincia || '',

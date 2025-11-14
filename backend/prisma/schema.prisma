@@ -62,6 +62,7 @@ model Usuario {
   comentarios   Comentario[]
   valoraciones  Valoracion[]
   likesComentarios UsuarioLikeComentario[]
+  suscripciones SuscripcionProducto[]
 
   @@map("usuarios")
 }
@@ -115,6 +116,7 @@ model Producto {
   plantilla          PlantillaProducto? @relation(fields: [plantillaId], references: [id], onDelete: SetNull)
   comentarios        Comentario[]
   valoraciones       Valoracion[]
+  suscripciones      SuscripcionProducto[]
 
   @@map("productos")
 }
@@ -180,4 +182,21 @@ model UsuarioLikeComentario {
 
   @@unique([usuarioId, comentarioId])
   @@map("usuario_like_comentario")
+}
+
+model SuscripcionProducto {
+  id         Int      @id @default(autoincrement())
+  usuarioId  Int
+  productoId Int
+  endpoint   String   @db.Text  // URL del endpoint de push
+  p256dh     String   @db.Text  // Clave pública
+  auth       String   @db.Text  // Clave de autenticación
+  creadoEn   DateTime @default(now())
+
+  // Relaciones
+  usuario    Usuario  @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
+  producto   Producto @relation(fields: [productoId], references: [id], onDelete: Cascade)
+
+  @@unique([usuarioId, productoId, endpoint])
+  @@map("suscripciones_productos")
 }

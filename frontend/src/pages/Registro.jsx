@@ -17,23 +17,28 @@ function Registro() {
   });
   const [imagenFile, setImagenFile] = useState(null);
   const [imagenPreview, setImagenPreview] = useState(null);
-  const [provincias, setProvincias] = useState([]);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
-  useEffect(() => {
-    cargarProvincias();
-  }, []);
-
-  const cargarProvincias = async () => {
-    try {
-      const response = await mercadoService.obtenerProvincias();
-      setProvincias(response.data);
-    } catch (err) {
-      console.error('Error al cargar provincias:', err);
-      toast.error('Error al cargar las provincias');
-    }
-  };
+  // Lista completa de provincias de Cuba
+  const provincias = [
+    'Pinar del Río',
+    'Artemisa',
+    'La Habana',
+    'Mayabeque',
+    'Matanzas',
+    'Cienfuegos',
+    'Villa Clara',
+    'Sancti Spíritus',
+    'Ciego de Ávila',
+    'Camagüey',
+    'Las Tunas',
+    'Holguín',
+    'Granma',
+    'Santiago de Cuba',
+    'Guantánamo',
+    'Isla de la Juventud'
+  ];
 
   const handleChange = (e) => {
     setFormData({
