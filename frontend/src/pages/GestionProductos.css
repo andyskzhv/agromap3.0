@@ -34,16 +34,17 @@
 
 /* Filtros y búsqueda */
 .filtros-container {
-  display: flex;
-  gap: 15px;
-  align-items: center;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: minmax(250px, 450px) auto;
+  gap: 20px;
+  align-items: start;
+  width: 100%;
 }
 
 .busqueda-box {
-  flex: 1;
-  min-width: 250px;
+  width: 100%;
   position: relative;
+  max-width: 450px;
 }
 
 .input-busqueda-productos {
@@ -88,6 +89,9 @@
 .filtros-box {
   display: flex;
   gap: 10px;
+  flex-shrink: 0;
+  flex-wrap: nowrap;
+  justify-self: end;
 }
 
 .select-filtro {
@@ -99,7 +103,8 @@
   background: white;
   cursor: pointer;
   transition: all 0.3s ease;
-  min-width: 150px;
+  min-width: 160px;
+  white-space: nowrap;
 }
 
 .select-filtro:focus {
@@ -583,7 +588,7 @@ td {
   font-size: 20px;
   text-align: center;
   font-weight: 700;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -601,14 +606,14 @@ td {
   border-radius: 15px;
   font-size: 16px;
   transition: all 0.3s ease;
-  background: linear-gradient(to right, #ffffff, #f9f9ff);
+  background: linear-gradient(to right, #ffffff, #f0fdf4);
   box-shadow: 0 2px 8px rgba(0,0,0,0.05);
 }
 
 .input-busqueda:focus {
   outline: none;
-  border-color: #667eea;
-  box-shadow: 0 4px 20px rgba(102, 126, 234, 0.2);
+  border-color: #10b981;
+  box-shadow: 0 4px 20px rgba(16, 185, 129, 0.2);
   transform: translateY(-2px);
 }
 
@@ -620,14 +625,14 @@ td {
 .contador-resultados {
   display: block;
   margin-top: 10px;
-  color: #667eea;
+  color: #059669;
   font-weight: 700;
   font-size: 14px;
   text-align: center;
   padding: 8px;
-  background: linear-gradient(135deg, #f0f4ff 0%, #e8f0fe 100%);
+  background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
   border-radius: 10px;
-  border: 2px solid #e0e8ff;
+  border: 2px solid #86efac;
 }
 
 .no-resultados {
@@ -650,9 +655,9 @@ td {
   max-height: 450px;
   overflow-y: auto;
   padding: 10px;
-  background: linear-gradient(135deg, #f8f9fe 0%, #f0f2ff 100%);
+  background: linear-gradient(135deg, #f0fdf4 0%, #d1fae5 100%);
   border-radius: 15px;
-  border: 2px solid #e8e8ff;
+  border: 2px solid #86efac;
 }
 
 /* Scrollbar personalizado */
@@ -666,12 +671,12 @@ td {
 }
 
 .plantillas-lista::-webkit-scrollbar-thumb {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
   border-radius: 10px;
 }
 
 .plantillas-lista::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(135deg, #5568d3 0%, #6a3f8f 100%);
+  background: linear-gradient(135deg, #059669 0%, #047857 100%);
 }
 
 /* Item de plantilla en lista */
@@ -679,15 +684,16 @@ td {
   background: white;
   border: 2px solid transparent;
   border-radius: 12px;
-  padding: 12px;
+  padding: 10px 12px;
   cursor: pointer;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   display: flex;
   align-items: center;
-  gap: 15px;
+  gap: 12px;
   box-shadow: 0 2px 4px rgba(0,0,0,0.05);
   position: relative;
-  overflow: hidden;
+  overflow: visible;
+  min-height: 70px;
 }
 
 .plantilla-item::before {
@@ -697,7 +703,7 @@ td {
   top: 0;
   width: 4px;
   height: 100%;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
   transform: scaleY(0);
   transition: transform 0.3s ease;
 }
@@ -707,17 +713,17 @@ td {
 }
 
 .plantilla-item:hover {
-  border-color: #667eea;
-  box-shadow: 0 6px 16px rgba(102, 126, 234, 0.15);
+  border-color: #10b981;
+  box-shadow: 0 6px 16px rgba(16, 185, 129, 0.15);
   transform: translateX(8px);
-  background: linear-gradient(to right, #ffffff, #f9f9ff);
+  background: linear-gradient(to right, #ffffff, #f0fdf4);
 }
 
 /* Imagen de plantilla en lista */
 .plantilla-imagen-container {
   flex-shrink: 0;
-  width: 80px;
-  height: 80px;
+  width: 60px;
+  height: 60px;
   border-radius: 10px;
   overflow: hidden;
   box-shadow: 0 2px 8px rgba(0,0,0,0.1);
@@ -737,11 +743,11 @@ td {
 .plantilla-sin-imagen-lista {
   width: 100%;
   height: 100%;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 36px;
+  font-size: 28px;
 }
 
 /* Detalles de la plantilla */
@@ -761,23 +767,22 @@ td {
 
 .plantilla-nombre-categoria strong {
   color: #2c3e50;
-  font-size: 16px;
+  font-size: 15px;
   font-weight: 700;
-  line-height: 1.3;
+  line-height: 1.4;
   transition: color 0.3s;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  display: block;
+  margin-bottom: 6px;
 }
 
 .plantilla-item:hover .plantilla-nombre-categoria strong {
-  color: #667eea;
+  color: #10b981;
 }
 
 .plantilla-nombre-categoria small {
   color: white;
   font-size: 10px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
   padding: 4px 10px;
   border-radius: 10px;
   display: inline-block;
@@ -785,7 +790,7 @@ td {
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.5px;
-  box-shadow: 0 2px 6px rgba(102, 126, 234, 0.25);
+  box-shadow: 0 2px 6px rgba(16, 185, 129, 0.25);
 }
 
 .plantilla-descripcion-lista {
@@ -807,20 +812,20 @@ td {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, #f0f4ff 0%, #e8f0fe 100%);
+  background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
   border-radius: 50%;
   transition: all 0.3s ease;
 }
 
 .icono-seleccionar {
   font-size: 24px;
-  color: #667eea;
+  color: #10b981;
   font-weight: bold;
   transition: transform 0.3s ease;
 }
 
 .plantilla-item:hover .plantilla-accion {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
 }
 
 .plantilla-item:hover .icono-seleccionar {
@@ -832,8 +837,8 @@ td {
   width: 100%;
   padding: 16px;
   background: white;
-  border: 3px dashed #667eea;
-  color: #667eea;
+  border: 3px dashed #10b981;
+  color: #10b981;
   border-radius: 15px;
   font-weight: 700;
   font-size: 16px;
@@ -851,7 +856,7 @@ td {
   left: -100%;
   width: 100%;
   height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(102, 126, 234, 0.1), transparent);
+  background: linear-gradient(90deg, transparent, rgba(16, 185, 129, 0.1), transparent);
   transition: left 0.5s;
 }
 
@@ -860,16 +865,16 @@ td {
 }
 
 .btn-manual:hover {
-  background: linear-gradient(135deg, #f0f4ff 0%, #e8f0fe 100%);
-  border-color: #5568d3;
+  background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
+  border-color: #059669;
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.2);
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2);
 }
 
 /* Preview de plantilla seleccionada */
 .plantilla-preview-seleccionada {
-  background: linear-gradient(135deg, #f0f4ff 0%, #e8f0fe 100%);
-  border: 2px solid #667eea;
+  background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
+  border: 2px solid #10b981;
   border-radius: 12px;
   padding: 20px;
   margin-bottom: 25px;
@@ -884,14 +889,14 @@ td {
 
 .plantilla-preview-header h4 {
   margin: 0;
-  color: #667eea;
+  color: #059669;
   font-size: 18px;
 }
 
 .btn-cambiar-plantilla {
   background: white;
-  border: 2px solid #667eea;
-  color: #667eea;
+  border: 2px solid #10b981;
+  color: #10b981;
   padding: 8px 16px;
   border-radius: 8px;
   font-size: 14px;
@@ -901,10 +906,10 @@ td {
 }
 
 .btn-cambiar-plantilla:hover {
-  background: #667eea;
+  background: #10b981;
   color: white;
   transform: translateY(-2px);
-  box-shadow: 0 4px 8px rgba(102, 126, 234, 0.3);
+  box-shadow: 0 4px 8px rgba(16, 185, 129, 0.3);
 }
 
 .plantilla-preview-content {
@@ -937,7 +942,7 @@ td {
 
 .plantilla-preview-info .categoria-badge {
   display: inline-block;
-  background: #667eea;
+  background: #10b981;
   color: white;
   padding: 6px 12px;
   border-radius: 20px;
@@ -1067,17 +1072,20 @@ td {
   }
 
   .filtros-container {
+    display: flex;
     flex-direction: column;
     gap: 12px;
   }
 
   .busqueda-box {
-    min-width: 100%;
+    width: 100%;
+    max-width: 100%;
   }
 
   .filtros-box {
     flex-direction: column;
     width: 100%;
+    justify-self: unset;
   }
 
   .select-filtro {

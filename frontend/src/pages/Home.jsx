@@ -12,6 +12,9 @@ function Home() {
   const [busqueda, setBusqueda] = useState('');
   const [loading, setLoading] = useState(true);
   const [scrollPositions, setScrollPositions] = useState({});
+  const [mostrarTodasCategorias, setMostrarTodasCategorias] = useState(false);
+
+  const CATEGORIAS_INICIALES = 4;
 
   useEffect(() => {
     cargarDatos();
@@ -115,7 +118,9 @@ function Home() {
       <section className="productos-section">
         <h2 className="section-title">Productos Disponibles</h2>
 
-        {Object.entries(plantillasPorCategoria).map(([categoria, plantillas]) => (
+        {Object.entries(plantillasPorCategoria)
+          .slice(0, mostrarTodasCategorias ? undefined : CATEGORIAS_INICIALES)
+          .map(([categoria, plantillas]) => (
           <div key={categoria} className="categoria-grupo">
             <div className="categoria-header">
               <h3 className="categoria-titulo">{categoria}</h3>
@@ -200,12 +205,14 @@ function Home() {
         )}
 
         <div className="ver-mas-container">
-          <button
-            onClick={() => navigate('/productos')}
-            className="ver-mas-button"
-          >
-            Ver más
-          </button>
+          {Object.keys(plantillasPorCategoria).length > CATEGORIAS_INICIALES && (
+            <button
+              onClick={() => setMostrarTodasCategorias(!mostrarTodasCategorias)}
+              className="ver-mas-button"
+            >
+              {mostrarTodasCategorias ? 'Ver Menos' : 'Ver Más'}
+            </button>
+          )}
           <button
             onClick={() => navigate('/productos')}
             className="ver-todos-productos-button"

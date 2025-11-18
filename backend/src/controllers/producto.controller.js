@@ -40,6 +40,17 @@ const obtenerProductos = async (req, res) => {
             id: true,
             nombre: true
           }
+        },
+        valoraciones: {
+          select: {
+            id: true,
+            estrellas: true
+          }
+        },
+        comentarios: {
+          select: {
+            id: true
+          }
         }
       },
       orderBy: {
