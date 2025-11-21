@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import { productoService, categoriaService, mercadoService } from '../services/api';
 import Pagination from '../components/Pagination';
 import { usePageTitle } from '../hooks/usePageTitle';
@@ -7,6 +7,7 @@ import './Productos.css';
 
 function Productos() {
   usePageTitle('Productos');
+  const [searchParams] = useSearchParams();
   const [productos, setProductos] = useState([]);
   const [categorias, setCategorias] = useState([]);
   const [provincias, setProvincias] = useState([]);
@@ -21,6 +22,14 @@ function Productos() {
   const [ordenamiento, setOrdenamiento] = useState('RECIENTES');
   const [paginaActual, setPaginaActual] = useState(1);
   const productosPorPagina = 12;
+
+  // Leer parámetro de búsqueda de la URL al cargar
+  useEffect(() => {
+    const busquedaURL = searchParams.get('busqueda');
+    if (busquedaURL) {
+      setBusqueda(busquedaURL);
+    }
+  }, [searchParams]);
 
   useEffect(() => {
     cargarCategorias();
