@@ -17,6 +17,7 @@ function Productos() {
     estado: '',
     valoracionMin: ''
   });
+  const [busqueda, setBusqueda] = useState('');
   const [ordenamiento, setOrdenamiento] = useState('RECIENTES');
   const [paginaActual, setPaginaActual] = useState(1);
   const productosPorPagina = 12;
@@ -72,7 +73,13 @@ function Productos() {
 
   const limpiarFiltros = () => {
     setFiltros({ provincia: '', categoria: '', estado: '', valoracionMin: '' });
+    setBusqueda('');
     setOrdenamiento('RECIENTES');
+  };
+
+  const limpiarBusqueda = () => {
+    setBusqueda('');
+    setPaginaActual(1);
   };
 
   // Función para calcular valoración promedio
@@ -84,9 +91,18 @@ function Productos() {
 
   // Filtrar y ordenar productos
   const productosFiltrados = productos.filter(producto => {
+    // Filtro de valoración
     const valoracion = calcularValoracionPromedio(producto.valoraciones);
     const cumpleValoracion = !filtros.valoracionMin || valoracion >= parseFloat(filtros.valoracionMin);
-    return cumpleValoracion;
+
+    // Filtro de búsqueda
+    const cumpleBusqueda = !busqueda ||
+      producto.nombre.toLowerCase().includes(busqueda.toLowerCase()) ||
+      producto.descripcion?.toLowerCase().includes(busqueda.toLowerCase()) ||
+      producto.mercado?.nombre?.toLowerCase().includes(busqueda.toLowerCase()) ||
+      producto.mercado?.provincia?.toLowerCase().includes(busqueda.toLowerCase());
+
+    return cumpleValoracion && cumpleBusqueda;
   }).sort((a, b) => {
     switch (ordenamiento) {
       case 'RECIENTES':
@@ -124,6 +140,36 @@ function Productos() {
         <h1>Productos Disponibles</h1>
         <p>Encuentra los productos frescos de tu región</p>
       </header>
+
+      {/* Barra de búsqueda */}
+      <div className="search-bar-section">
+        <div className="search-bar-container">
+          <input
+            type="text"
+            className="search-bar-input"
+            placeholder="🔍 Buscar por nombre, descripción, mercado o provincia..."
+            value={busqueda}
+            onChange={(e) => {
+              setBusqueda(e.target.value);
+              setPaginaActual(1);
+            }}
+          />
+          {busqueda && (
+            <button
+              className="search-clear-btn"
+              onClick={limpiarBusqueda}
+              aria-label="Limpiar búsqueda"
+            >
+              ✕
+            </button>
+          )}
+        </div>
+        {busqueda && (
+          <p className="search-results-count">
+            Se encontraron <strong>{productosFiltrados.length}</strong> resultados
+          </p>
+        )}
+      </div>
 
       <div className="filtros-section">
         <div className="filtros-principales">
