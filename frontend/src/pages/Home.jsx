@@ -124,12 +124,6 @@ function Home() {
           <div key={categoria} className="categoria-grupo">
             <div className="categoria-header">
               <h3 className="categoria-titulo">{categoria}</h3>
-              <button
-                onClick={() => navigate('/productos')}
-                className="ver-todos-link"
-              >
-                Ver Todos
-              </button>
             </div>
 
             <div className="productos-carousel-wrapper">
