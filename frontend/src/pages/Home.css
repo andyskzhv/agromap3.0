@@ -88,9 +88,19 @@
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-.search-form {
-  max-width: 600px;
+.search-filters-container {
+  max-width: 1000px;
   margin: 0 auto;
+  display: flex;
+  gap: 1.5rem;
+  align-items: center;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.search-form {
+  flex: 1;
+  min-width: 300px;
   display: flex;
   gap: 0.5rem;
 }
@@ -123,6 +133,57 @@
 
 .search-button:hover {
   background-color: #008040;
+}
+
+/* Province Filter */
+.province-filter {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  background-color: #f5f5f5;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+}
+
+.province-label {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #333;
+  white-space: nowrap;
+}
+
+.province-select {
+  padding: 0.75rem 1rem;
+  border: 2px solid #00a650;
+  border-radius: 8px;
+  font-size: 1rem;
+  background-color: white;
+  color: #333;
+  cursor: pointer;
+  outline: none;
+  transition: all 0.3s ease;
+  min-width: 200px;
+}
+
+.province-select:hover {
+  border-color: #008040;
+}
+
+.province-select:focus {
+  border-color: #008040;
+  box-shadow: 0 0 0 3px rgba(0, 166, 80, 0.1);
+}
+
+.province-info {
+  text-align: center;
+  margin-top: 1rem;
+  font-size: 1rem;
+  color: #666;
+}
+
+.province-info strong {
+  color: #00a650;
+  font-weight: 600;
 }
 
 /* Productos Section */
@@ -502,6 +563,25 @@
 
   .categoria-titulo {
     font-size: 1.5rem;
+  }
+
+  .search-filters-container {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .search-form {
+    min-width: 100%;
+  }
+
+  .province-filter {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.5rem;
+  }
+
+  .province-select {
+    min-width: 100%;
   }
 
   .carousel-btn {

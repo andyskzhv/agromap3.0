@@ -215,6 +215,8 @@ const eliminarPlantilla = async (req, res) => {
 // Obtener plantillas con productos disponibles (público)
 const obtenerPlantillasDisponibles = async (req, res) => {
   try {
+    const { provincia } = req.query;
+
     // Obtener TODAS las plantillas (con y sin productos)
     const plantillas = await prisma.plantillaProducto.findMany({
       include: {
@@ -228,7 +230,12 @@ const obtenerPlantillasDisponibles = async (req, res) => {
           select: {
             productos: {
               where: {
-                estado: 'DISPONIBLE'
+                estado: 'DISPONIBLE',
+                ...(provincia && {
+                  mercado: {
+                    provincia: provincia
+                  }
+                })
               }
             }
           }
@@ -242,12 +249,20 @@ const obtenerPlantillasDisponibles = async (req, res) => {
     // Enriquecer con count de mercados únicos y disponibilidad
     const plantillasEnriquecidas = await Promise.all(
       plantillas.map(async (plantilla) => {
+        // Construir filtro de productos
+        const productosWhere = {
+          plantillaId: plantilla.id,
+          estado: 'DISPONIBLE',
+          ...(provincia && {
+            mercado: {
+              provincia: provincia
+            }
+          })
+        };
+
         // Obtener mercados únicos donde hay productos disponibles de esta plantilla
         const productos = await prisma.producto.findMany({
-          where: {
-            plantillaId: plantilla.id,
-            estado: 'DISPONIBLE'
-          },
+          where: productosWhere,
           select: {
             mercadoId: true
           },

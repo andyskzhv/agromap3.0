@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { plantillaService, categoriaService } from '../services/api';
+import { plantillaService, categoriaService, mercadoService } from '../services/api';
 import { usePageTitle } from '../hooks/usePageTitle';
+import { useToast } from '../components/Toast';
 import './Home.css';
 
 function Home() {
   usePageTitle('Inicio');
   const navigate = useNavigate();
+  const toast = useToast();
   const [categorias, setCategorias] = useState([]);
   const [plantillasPorCategoria, setPlantillasPorCategoria] = useState({});
   const [busqueda, setBusqueda] = useState('');
@@ -14,17 +16,41 @@ function Home() {
   const [scrollPositions, setScrollPositions] = useState({});
   const [mostrarTodasCategorias, setMostrarTodasCategorias] = useState(false);
 
+  // Estados para el filtro de provincia
+  const [provincias, setProvincias] = useState([]);
+  const [provinciaSeleccionada, setProvinciaSeleccionada] = useState(
+    localStorage.getItem('provinciaPreferida') || ''
+  );
+
   const CATEGORIAS_INICIALES = 4;
 
   useEffect(() => {
-    cargarDatos();
+    cargarProvincias();
   }, []);
+
+  useEffect(() => {
+    cargarDatos();
+  }, [provinciaSeleccionada]);
+
+  const cargarProvincias = async () => {
+    try {
+      const response = await mercadoService.obtenerProvincias();
+      setProvincias(response.data);
+    } catch (error) {
+      console.error('Error al cargar provincias:', error);
+    }
+  };
 
   const cargarDatos = async () => {
     try {
+      const params = {};
+      if (provinciaSeleccionada) {
+        params.provincia = provinciaSeleccionada;
+      }
+
       const [categoriasRes, plantillasRes] = await Promise.all([
         categoriaService.obtenerTodas({ activas: 'true' }),
-        plantillaService.obtenerDisponibles()
+        plantillaService.obtenerDisponibles(params)
       ]);
 
       setCategorias(categoriasRes.data);
@@ -47,13 +73,35 @@ function Home() {
     }
   };
 
+  const handleProvinciaChange = (e) => {
+    const nuevaProvincia = e.target.value;
+    setProvinciaSeleccionada(nuevaProvincia);
+    localStorage.setItem('provinciaPreferida', nuevaProvincia);
+    setLoading(true);
+  };
+
   const handleBuscar = (e) => {
     e.preventDefault();
     navigate(`/productos?busqueda=${busqueda}`);
   };
 
-  const verDetallePlantilla = (id) => {
-    navigate(`/plantilla/${id}`);
+  const verDetallePlantilla = (plantilla) => {
+    // Si el producto no está disponible, mostrar notificación
+    if (!plantilla.disponible) {
+      if (provinciaSeleccionada) {
+        toast.warning(
+          `"${plantilla.nombre}" no está disponible actualmente en ${provinciaSeleccionada}. Intenta seleccionar otra provincia o vuelve más tarde.`
+        );
+      } else {
+        toast.info(
+          `"${plantilla.nombre}" no está disponible en ningún mercado actualmente. Vuelve más tarde para ver disponibilidad.`
+        );
+      }
+      return;
+    }
+
+    // Si está disponible, navegar a los detalles
+    navigate(`/plantilla/${plantilla.id}`);
   };
 
   const scroll = (categoria, direction) => {
@@ -98,20 +146,46 @@ function Home() {
         </div>
       </section>
 
-      {/* Barra de Búsqueda */}
+      {/* Barra de Búsqueda y Filtro de Provincia */}
       <section className="search-section">
-        <form onSubmit={handleBuscar} className="search-form">
-          <input
-            type="text"
-            placeholder="Buscar productos y mercados"
-            value={busqueda}
-            onChange={(e) => setBusqueda(e.target.value)}
-            className="search-input"
-          />
-          <button type="submit" className="search-button">
-            🔍
-          </button>
-        </form>
+        <div className="search-filters-container">
+          <form onSubmit={handleBuscar} className="search-form">
+            <input
+              type="text"
+              placeholder="Buscar productos y mercados"
+              value={busqueda}
+              onChange={(e) => setBusqueda(e.target.value)}
+              className="search-input"
+            />
+            <button type="submit" className="search-button">
+              🔍
+            </button>
+          </form>
+
+          <div className="province-filter">
+            <label htmlFor="provincia-select" className="province-label">
+              📍 Provincia:
+            </label>
+            <select
+              id="provincia-select"
+              value={provinciaSeleccionada}
+              onChange={handleProvinciaChange}
+              className="province-select"
+            >
+              <option value="">Todas las provincias</option>
+              {provincias.map((provincia) => (
+                <option key={provincia} value={provincia}>
+                  {provincia}
+                </option>
+              ))}
+            </select>
+          </div>
+        </div>
+        {provinciaSeleccionada && (
+          <p className="province-info">
+            Mostrando productos disponibles en <strong>{provinciaSeleccionada}</strong>
+          </p>
+        )}
       </section>
 
       {/* Productos Disponibles */}
@@ -142,7 +216,7 @@ function Home() {
                   <div
                     key={plantilla.id}
                     className={`producto-card-horizontal ${!plantilla.disponible ? 'no-disponible' : ''}`}
-                    onClick={() => verDetallePlantilla(plantilla.id)}
+                    onClick={() => verDetallePlantilla(plantilla)}
                   >
                     <div className="producto-imagen-horizontal">
                       {plantilla.imagen ? (

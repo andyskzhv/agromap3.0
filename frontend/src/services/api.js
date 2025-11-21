@@ -210,7 +210,7 @@ export const valoracionService = {
 export const plantillaService = {
   obtenerTodas: (params) => api.get('/plantillas', { params }),
   obtenerPorId: (id) => api.get(`/plantillas/${id}`),
-  obtenerDisponibles: () => api.get('/plantillas/disponibles'),
+  obtenerDisponibles: (params) => api.get('/plantillas/disponibles', { params }),
   obtenerDetalle: (id) => api.get(`/plantillas/${id}/detalle`),
   crear: (datos) => {
     if (datos instanceof FormData) {
