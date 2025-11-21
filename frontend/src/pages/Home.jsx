@@ -89,7 +89,7 @@ function Home() {
               comodidad de su hogar.
             </p>
             <button
-              onClick={() => navigate('/mercados')}
+              onClick={() => navigate('/sobre-nosotros')}
               className="hero-button"
             >
               Sobre Nosotros

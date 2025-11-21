@@ -16,6 +16,7 @@ import GestionProductos from './pages/GestionProductos';
 import DetalleProducto from './pages/DetalleProducto';
 import DetallePlantilla from './pages/DetallePlantilla';
 import DashboardAdmin from './pages/DashboardAdmin';
+import AboutUs from './pages/AboutUs';
 
 function App() {
   return (
@@ -38,6 +39,7 @@ function App() {
           <Route path="/plantilla/:id" element={<DetallePlantilla />} />
           <Route path="/gestion-productos" element={<GestionProductos />} />
           <Route path="/admin" element={<DashboardAdmin />} />
+          <Route path="/sobre-nosotros" element={<AboutUs />} />
         </Routes>
       </ToastProvider>
     </Router>

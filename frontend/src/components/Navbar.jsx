@@ -83,13 +83,13 @@ function Navbar() {
 
         {/* Links centrados */}
         <div className={`navbar-menu ${menuAbierto ? 'active' : ''}`}>
-          <a
-            href="#sobre-nosotros"
-            className="navbar-link"
+          <Link
+            to="/sobre-nosotros"
+            className={`navbar-link ${isActive('/sobre-nosotros')}`}
             onClick={() => setMenuAbierto(false)}
           >
             Sobre Nosotros
-          </a>
+          </Link>
 
           <Link
             to="/productos"
