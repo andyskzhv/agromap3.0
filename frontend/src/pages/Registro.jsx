@@ -12,33 +12,12 @@ function Registro() {
   const [formData, setFormData] = useState({
     nombre: '',
     nombreUsuario: '',
-    contrasena: '',
-    provincia: ''
+    contrasena: ''
   });
   const [imagenFile, setImagenFile] = useState(null);
   const [imagenPreview, setImagenPreview] = useState(null);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-
-  // Lista completa de provincias de Cuba
-  const provincias = [
-    'Pinar del Río',
-    'Artemisa',
-    'La Habana',
-    'Mayabeque',
-    'Matanzas',
-    'Cienfuegos',
-    'Villa Clara',
-    'Sancti Spíritus',
-    'Ciego de Ávila',
-    'Camagüey',
-    'Las Tunas',
-    'Holguín',
-    'Granma',
-    'Santiago de Cuba',
-    'Guantánamo',
-    'Isla de la Juventud'
-  ];
 
   const handleChange = (e) => {
     setFormData({
@@ -89,9 +68,6 @@ function Registro() {
       formDataToSend.append('nombre', formData.nombre);
       formDataToSend.append('nombreUsuario', formData.nombreUsuario);
       formDataToSend.append('contrasena', formData.contrasena);
-      if (formData.provincia) {
-        formDataToSend.append('provincia', formData.provincia);
-      }
       if (imagenFile) {
         formDataToSend.append('imagen', imagenFile);
       }
@@ -190,22 +166,6 @@ function Registro() {
               placeholder="Mínimo 6 caracteres"
               minLength="6"
             />
-          </div>
-
-          <div className="form-group">
-            <label>Provincia (opcional)</label>
-            <select
-              name="provincia"
-              value={formData.provincia}
-              onChange={handleChange}
-            >
-              <option value="">Selecciona una provincia</option>
-              {provincias.map((provincia) => (
-                <option key={provincia} value={provincia}>
-                  {provincia}
-                </option>
-              ))}
-            </select>
           </div>
 
           <button type="submit" className="btn-primary" disabled={loading}>

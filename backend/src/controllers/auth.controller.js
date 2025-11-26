@@ -8,7 +8,7 @@ const prisma = new PrismaClient();
 // Registrar nuevo usuario
 const registro = async (req, res) => {
   try {
-    const { nombre, nombreUsuario, contrasena, provincia } = req.body;
+    const { nombre, nombreUsuario, contrasena } = req.body;
     const imagen = req.file ? `/uploads/perfiles/${req.file.filename}` : null;
 
     // Validaciones básicas
@@ -40,7 +40,6 @@ const registro = async (req, res) => {
         nombreUsuario,
         contrasena: contrasenaHash,
         imagen,
-        provincia: provincia || null,
         rol: 'USUARIO'
       },
       select: {
@@ -49,7 +48,6 @@ const registro = async (req, res) => {
         nombreUsuario: true,
         imagen: true,
         rol: true,
-        provincia: true,
         creadoEn: true
       }
     });
@@ -152,7 +150,6 @@ const obtenerPerfil = async (req, res) => {
         nombreUsuario: true,
         imagen: true,
         rol: true,
-        provincia: true,
         creadoEn: true
       }
     });
@@ -177,7 +174,7 @@ const obtenerPerfil = async (req, res) => {
 // Actualizar perfil del usuario autenticado
 const actualizarPerfil = async (req, res) => {
   try {
-    const { nombre, provincia, contrasenaActual, contrasenaNueva } = req.body;
+    const { nombre, contrasenaActual, contrasenaNueva } = req.body;
     const nuevaImagen = req.file ? `/uploads/perfiles/${req.file.filename}` : null;
 
     // Obtener usuario actual
@@ -193,7 +190,6 @@ const actualizarPerfil = async (req, res) => {
     const datosActualizar = {};
 
     if (nombre) datosActualizar.nombre = nombre;
-    if (provincia !== undefined) datosActualizar.provincia = provincia || null;
 
     // Si hay una nueva imagen, eliminar la anterior y actualizar
     if (nuevaImagen) {
@@ -241,7 +237,6 @@ const actualizarPerfil = async (req, res) => {
         nombreUsuario: true,
         imagen: true,
         rol: true,
-        provincia: true,
         creadoEn: true
       }
     });

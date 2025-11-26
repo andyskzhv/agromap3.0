@@ -12,7 +12,6 @@ function EditarPerfil() {
   const [usuario, setUsuario] = useState(null);
   const [formData, setFormData] = useState({
     nombre: '',
-    provincia: '',
     contrasenaActual: '',
     contrasenaNueva: '',
     confirmarContrasena: ''
@@ -22,26 +21,6 @@ function EditarPerfil() {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(true);
   const [guardando, setGuardando] = useState(false);
-
-  // Lista completa de provincias de Cuba
-  const provincias = [
-    'Pinar del Río',
-    'Artemisa',
-    'La Habana',
-    'Mayabeque',
-    'Matanzas',
-    'Cienfuegos',
-    'Villa Clara',
-    'Sancti Spíritus',
-    'Ciego de Ávila',
-    'Camagüey',
-    'Las Tunas',
-    'Holguín',
-    'Granma',
-    'Santiago de Cuba',
-    'Guantánamo',
-    'Isla de la Juventud'
-  ];
 
   useEffect(() => {
     cargarDatos();
@@ -54,7 +33,6 @@ function EditarPerfil() {
       setUsuario(perfilRes.data);
       setFormData({
         nombre: perfilRes.data.nombre,
-        provincia: perfilRes.data.provincia || '',
         contrasenaActual: '',
         contrasenaNueva: '',
         confirmarContrasena: ''
@@ -150,8 +128,7 @@ function EditarPerfil() {
 
       const formDataToSend = new FormData();
       formDataToSend.append('nombre', formData.nombre);
-      formDataToSend.append('provincia', formData.provincia);
-      
+
       if (formData.contrasenaNueva) {
         formDataToSend.append('contrasenaActual', formData.contrasenaActual);
         formDataToSend.append('contrasenaNueva', formData.contrasenaNueva);
@@ -243,22 +220,6 @@ function EditarPerfil() {
               className="input-disabled"
             />
             <small className="helper-text">El nombre de usuario no se puede cambiar</small>
-          </div>
-
-          <div className="form-group">
-            <label>Provincia</label>
-            <select
-              name="provincia"
-              value={formData.provincia}
-              onChange={handleChange}
-            >
-              <option value="">Selecciona una provincia</option>
-              {provincias.map((provincia) => (
-                <option key={provincia} value={provincia}>
-                  {provincia}
-                </option>
-              ))}
-            </select>
           </div>
 
           <div className="form-divider">

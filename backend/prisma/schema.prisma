@@ -53,7 +53,6 @@ model Usuario {
   contrasena    String
   imagen        String?
   rol           Rol          @default(USUARIO)
-  provincia     String?
   creadoEn      DateTime     @default(now())
   actualizadoEn DateTime     @updatedAt
 

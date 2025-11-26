@@ -30,11 +30,9 @@ function DashboardAdmin() {
     nombre: '',
     nombreUsuario: '',
     contrasena: '',
-    rol: 'USUARIO',
-    provincia: ''
+    rol: 'USUARIO'
   });
   const [imagenUsuario, setImagenUsuario] = useState(null);
-  const [provincias, setProvincias] = useState([]);
   const [formProducto, setFormProducto] = useState({
     nombre: '',
     descripcion: '',
@@ -75,14 +73,12 @@ function DashboardAdmin() {
 
   const cargarEstadisticas = async () => {
     try {
-      const [statsRes, actividadRes, provinciasRes] = await Promise.all([
+      const [statsRes, actividadRes] = await Promise.all([
         adminService.obtenerEstadisticas(),
-        adminService.obtenerActividad(),
-        mercadoService.obtenerProvincias()
+        adminService.obtenerActividad()
       ]);
       setEstadisticas(statsRes.data);
       setActividad(actividadRes.data);
-      setProvincias(provinciasRes.data);
     } catch (error) {
       console.error('Error:', error);
     } finally {
@@ -202,9 +198,6 @@ function DashboardAdmin() {
       formData.append('nombreUsuario', formUsuario.nombreUsuario);
       formData.append('contrasena', formUsuario.contrasena);
       formData.append('rol', formUsuario.rol);
-      if (formUsuario.provincia) {
-        formData.append('provincia', formUsuario.provincia);
-      }
       if (imagenUsuario) {
         formData.append('imagen', imagenUsuario);
       }
@@ -212,7 +205,7 @@ function DashboardAdmin() {
       await adminService.crearUsuario(formData);
       toast.success('Usuario creado exitosamente');
       setMostrarModalUsuario(false);
-      setFormUsuario({ nombre: '', nombreUsuario: '', contrasena: '', rol: 'USUARIO', provincia: '' });
+      setFormUsuario({ nombre: '', nombreUsuario: '', contrasena: '', rol: 'USUARIO' });
       setImagenUsuario(null);
       cargarDatosVista();
     } catch (error) {
@@ -482,7 +475,6 @@ function DashboardAdmin() {
                   <th>Nombre</th>
                   <th>Usuario</th>
                   <th>Rol</th>
-                  <th>Provincia</th>
                   <th>Mercados</th>
                   <th>Comentarios</th>
                   <th>Acciones</th>
@@ -495,8 +487,8 @@ function DashboardAdmin() {
                     <td>{u.nombre}</td>
                     <td>{u.nombreUsuario}</td>
                     <td>
-                      <select 
-                        value={u.rol} 
+                      <select
+                        value={u.rol}
                         onChange={(e) => handleCambiarRol(u.id, e.target.value)}
                         className="rol-select"
                       >
@@ -505,7 +497,6 @@ function DashboardAdmin() {
                         <option value="ADMIN">Admin</option>
                       </select>
                     </td>
-                    <td>{u.provincia || '-'}</td>
                     <td>{u._count.mercados}</td>
                     <td>{u._count.comentarios}</td>
                     <td>
@@ -812,20 +803,6 @@ function DashboardAdmin() {
                   <option value="USUARIO">Usuario</option>
                   <option value="GESTOR">Gestor</option>
                   <option value="ADMIN">Admin</option>
-                </select>
-              </div>
-              <div className="form-group">
-                <label>Provincia</label>
-                <select
-                  value={formUsuario.provincia}
-                  onChange={(e) => setFormUsuario({...formUsuario, provincia: e.target.value})}
-                >
-                  <option value="">Selecciona una provincia</option>
-                  {provincias.map((provincia) => (
-                    <option key={provincia} value={provincia}>
-                      {provincia}
-                    </option>
-                  ))}
                 </select>
               </div>
               <div className="modal-buttons">

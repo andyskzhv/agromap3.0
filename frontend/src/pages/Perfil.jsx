@@ -86,12 +86,6 @@ function Perfil() {
                 {usuario.rol}
               </span>
             </div>
-            {usuario.provincia && (
-              <div className="info-row">
-                <strong>Provincia:</strong>
-                <span>{usuario.provincia}</span>
-              </div>
-            )}
             <div className="info-row">
               <strong>Miembro desde:</strong>
               <span>{new Date(usuario.creadoEn).toLocaleDateString()}</span>

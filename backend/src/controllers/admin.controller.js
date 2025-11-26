@@ -65,7 +65,6 @@ const obtenerUsuarios = async (req, res) => {
         nombre: true,
         nombreUsuario: true,
         rol: true,
-        provincia: true,
         imagen: true,
         creadoEn: true,
         _count: {
@@ -93,7 +92,7 @@ const obtenerUsuarios = async (req, res) => {
 // Crear usuario (Admin)
 const crearUsuario = async (req, res) => {
   try {
-    const { nombre, nombreUsuario, contrasena, rol, provincia } = req.body;
+    const { nombre, nombreUsuario, contrasena, rol } = req.body;
     const imagen = req.file ? `/uploads/perfiles/${req.file.filename}` : null;
 
     // Validaciones
@@ -131,8 +130,7 @@ const crearUsuario = async (req, res) => {
         nombreUsuario,
         contrasena: contrasenaHash,
         imagen,
-        rol: rol || 'USUARIO',
-        provincia: provincia || null
+        rol: rol || 'USUARIO'
       },
       select: {
         id: true,
@@ -140,7 +138,6 @@ const crearUsuario = async (req, res) => {
         nombreUsuario: true,
         imagen: true,
         rol: true,
-        provincia: true,
         creadoEn: true
       }
     });
