@@ -107,13 +107,13 @@ function Navbar() {
             Establecimientos
           </Link>
 
-          <a
-            href="#contacto"
-            className="navbar-link"
+          <Link
+            to="/contacto"
+            className={`navbar-link ${isActive('/contacto')}`}
             onClick={() => setMenuAbierto(false)}
           >
             Contacto
-          </a>
+          </Link>
         </div>
 
         {/* Búsqueda y Perfil */}

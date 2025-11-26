@@ -266,4 +266,9 @@ export const adminService = {
   obtenerComentarios: () => api.get('/admin/comentarios')
 };
 
+// Servicios de contacto
+export const contactoService = {
+  enviar: (datos) => api.post('/contacto', datos)
+};
+
 export default api;

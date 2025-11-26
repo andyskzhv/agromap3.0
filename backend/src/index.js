@@ -32,6 +32,7 @@ app.use('/api/plantillas', require('./routes/plantilla.routes'));
 app.use('/api/categorias', require('./routes/categoria.routes'));
 app.use('/api/admin', require('./routes/admin.routes'));
 app.use('/api/suscripciones', require('./routes/suscripcion.routes'));
+app.use('/api/contacto', require('./routes/contacto.routes'));
 
 // Manejo de errores
 app.use((err, req, res, next) => {

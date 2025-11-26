@@ -17,6 +17,7 @@ import DetalleProducto from './pages/DetalleProducto';
 import DetallePlantilla from './pages/DetallePlantilla';
 import DashboardAdmin from './pages/DashboardAdmin';
 import AboutUs from './pages/AboutUs';
+import Contacto from './pages/Contacto';
 
 function App() {
   return (
@@ -40,6 +41,7 @@ function App() {
           <Route path="/gestion-productos" element={<GestionProductos />} />
           <Route path="/admin" element={<DashboardAdmin />} />
           <Route path="/sobre-nosotros" element={<AboutUs />} />
+          <Route path="/contacto" element={<Contacto />} />
         </Routes>
       </ToastProvider>
     </Router>
