@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { plantillaService, categoriaService, mercadoService } from '../services/api';
 import { usePageTitle } from '../hooks/usePageTitle';
@@ -9,11 +9,9 @@ function Home() {
   usePageTitle('Inicio');
   const navigate = useNavigate();
   const toast = useToast();
-  const [categorias, setCategorias] = useState([]);
   const [plantillasPorCategoria, setPlantillasPorCategoria] = useState({});
   const [busqueda, setBusqueda] = useState('');
   const [loading, setLoading] = useState(true);
-  const [scrollPositions, setScrollPositions] = useState({});
   const [mostrarTodasCategorias, setMostrarTodasCategorias] = useState(false);
 
   // Estados para el filtro de provincia
@@ -28,10 +26,6 @@ function Home() {
     cargarProvincias();
   }, []);
 
-  useEffect(() => {
-    cargarDatos();
-  }, [provinciaSeleccionada]);
-
   const cargarProvincias = async () => {
     try {
       const response = await mercadoService.obtenerProvincias();
@@ -41,7 +35,7 @@ function Home() {
     }
   };
 
-  const cargarDatos = async () => {
+  const cargarDatos = useCallback(async () => {
     try {
       const params = {};
       if (provinciaSeleccionada) {
@@ -52,8 +46,6 @@ function Home() {
         categoriaService.obtenerTodas({ activas: 'true' }),
         plantillaService.obtenerDisponibles(params)
       ]);
-
-      setCategorias(categoriasRes.data);
 
       // Agrupar plantillas por categoría
       const agrupados = {};
@@ -71,7 +63,11 @@ function Home() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [provinciaSeleccionada]);
+
+  useEffect(() => {
+    cargarDatos();
+  }, [cargarDatos]);
 
   const handleProvinciaChange = (e) => {
     const nuevaProvincia = e.target.value;
