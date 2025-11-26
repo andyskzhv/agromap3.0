@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { ToastProvider } from './components/Toast';
 import Navbar from './components/Navbar';
 import Breadcrumbs from './components/Breadcrumbs';
+import Footer from './components/Footer';
 import Home from './pages/Home';
 import Registro from './pages/Registro';
 import Login from './pages/Login';
@@ -43,6 +44,7 @@ function App() {
           <Route path="/sobre-nosotros" element={<AboutUs />} />
           <Route path="/contacto" element={<Contacto />} />
         </Routes>
+        <Footer />
       </ToastProvider>
     </Router>
   );

@@ -289,58 +289,6 @@ function Home() {
           </button>
         </div>
       </section>
-
-      {/* Footer */}
-      <footer className="home-footer">
-        <div className="footer-content">
-          <div className="footer-section">
-            <div className="footer-logo">
-              <span className="logo-icon">🌾</span>
-              <span className="logo-text">AgroMap</span>
-            </div>
-            <p className="footer-description">
-              Conectamos a los consumidores con los productos agrícolas más frescos y
-              saludables. Descubre la disponibilidad de alimentos en mercados cercanos,
-              apoya sus beneficios nutricionales y planifica tu compra desde la comodidad
-              de tu hogar.
-            </p>
-          </div>
-
-          <div className="footer-section">
-            <h4 className="footer-titulo">Enlaces Rápidos</h4>
-            <ul className="footer-links">
-              <li><a href="#inicio">Inicio</a></li>
-              <li><a href="/mercados">Mercados</a></li>
-              <li><a href="/productos">Productos</a></li>
-              <li><a href="#establecimientos">Establecimientos</a></li>
-              <li><a href="/login">Iniciar Sesión</a></li>
-            </ul>
-          </div>
-
-          <div className="footer-section">
-            <h4 className="footer-titulo">Contacto</h4>
-            <ul className="footer-contacto">
-              <li>📧 info@agromap.com</li>
-              <li>📞 +53 78338068</li>
-              <li>📍 INIFAT, Santiago de las Vegas, Boyeros</li>
-            </ul>
-          </div>
-
-          <div className="footer-section">
-            <h4 className="footer-titulo">Colaboradores</h4>
-            <div className="colaboradores-logos">
-              {/* Aquí puedes agregar los logos de los colaboradores */}
-              <div className="colaborador-placeholder">UCI</div>
-              <div className="colaborador-placeholder">INIFAT</div>
-              <div className="colaborador-placeholder">PNUD</div>
-            </div>
-          </div>
-        </div>
-
-        <div className="footer-bottom">
-          <p>&copy; 2025 AgroMap. Todos los derechos reservados.</p>
-        </div>
-      </footer>
     </div>
   );
 }
