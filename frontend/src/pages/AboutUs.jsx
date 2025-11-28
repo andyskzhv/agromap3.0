@@ -7,11 +7,11 @@ function AboutUs() {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
   const carouselImages = [
-    '/about-3.jpg',
+    '/feria2.jpg',
     '/about-4.jpg',
-    '/comercializacion.jpg',
+    '/feriataguasco.jpeg',
     '/interaccion.jpg',
-    '/venta.jpg',
+    '/veguita.jpg',
   ];
 
   useEffect(() => {
@@ -25,6 +25,11 @@ function AboutUs() {
   }, [carouselImages.length]);
 
   const collaborators = [
+     {
+      name: 'MINAG',
+      logo: '/minag.png',
+      url: 'https://www.minag.gob.cu/', // URL por definir
+    },
     {
       name: 'EICMA',
       logo: '/eicma.png',
@@ -40,15 +45,11 @@ function AboutUs() {
       logo: '/inifat.jpg',
       url: 'https://www.facebook.com/people/Inifat-Inifat/100013255211882/', // URL por definir
     },
+   
     {
-      name: 'MINAG',
-      logo: '/minag.png',
-      url: 'https://www.minag.gob.cu/', // URL por definir
-    },
-    {
-      name: 'SAS',
-      logo: '/logo sas.jpg',
-      url: '#', // URL por definir
+      name: 'Unión Europea',
+      logo: '/europea.png',
+      url: 'https://european-union.europa.eu/index_es', // URL por definir
     },
     {
       name: 'UCI',
@@ -97,18 +98,9 @@ function AboutUs() {
       <section className="aboutus-section">
         <div className="aboutus-content">
           <div className="aboutus-text-block">
-            <h2>Nuestra Misión</h2>
+            <h2>¿Qué es Agromap?</h2>
             <p>
-              Agromap es una plataforma digital que busca revolucionar el mercado
-              agrícola en Cuba, facilitando la conexión directa entre productores
-              y consumidores. Nuestra misión es promover la agricultura sostenible
-              y garantizar el acceso a productos frescos y de calidad.
-            </p>
-            <p>
-              Trabajamos para crear un ecosistema donde los agricultores puedan
-              comercializar sus productos de manera eficiente y los consumidores
-              tengan acceso transparente a la información sobre los alimentos que
-              consumen.
+              Es una plataforma digital diseñada para facilitar el acceso a la información sobre la disponibilidad de productos agropecuarios en la red de mercados locales.
             </p>
           </div>
           <div className="aboutus-image">
@@ -121,20 +113,20 @@ function AboutUs() {
       <section className="aboutus-section aboutus-section-alt">
         <div className="aboutus-content aboutus-content-reverse">
           <div className="aboutus-image">
-            <img src="/about-4.jpg" alt="Visión Agromap" />
+            <img src="/capacitacion.jpg" alt="Visión Agromap" />
+            <div className="aboutus-project-logos">
+              <a href="#" className="aboutus-project-logo-link">
+                <img src="/logo posas.png" alt="Logo POSAS" className="aboutus-project-logo" />
+              </a>
+              <a href="#" className="aboutus-project-logo-link">
+                <img src="/logo sas.jpg" alt="Logo SAS" className="aboutus-project-logo" />
+              </a>
+            </div>
           </div>
           <div className="aboutus-text-block">
-            <h2>Nuestra Visión</h2>
+            <h2>¿Cómo surge?</h2>
             <p>
-              Aspiramos a ser la plataforma líder en Cuba para la comercialización
-              de productos agrícolas, contribuyendo al desarrollo sostenible del
-              sector agrario y mejorando la calidad de vida tanto de productores
-              como de consumidores.
-            </p>
-            <p>
-              Visualizamos un futuro donde la tecnología y la agricultura trabajen
-              en armonía, creando oportunidades económicas y fortaleciendo la
-              seguridad alimentaria de nuestro país.
+              Agromap es una iniciativa del proyecto de colaboración internacional "Fortalecimiento de políticas para la seguridad alimentaria sostenible en Cuba" (POSAS/SAS Cuba), implementado por el Ministerio de la Agricultura y la Organización de Naciones Unidas para la Alimentación y la Agricultura y financiado por la Unión Europea. Contribuye a la implementación del Decreto 35 de la comercialización de productos agropecuarios a nivel local.
             </p>
           </div>
         </div>
@@ -143,38 +135,34 @@ function AboutUs() {
       {/* Values Section */}
       <section className="aboutus-section">
         <div className="aboutus-content">
-          <h2 className="aboutus-section-title">Nuestros Valores</h2>
+          <h2 className="aboutus-section-title">Nuestros Objetivos</h2>
           <div className="aboutus-values-grid">
             <div className="aboutus-value-card">
               <div className="aboutus-value-icon">🌱</div>
-              <h3>Sostenibilidad</h3>
+              <h3>Facilitar</h3>
               <p>
-                Promovemos prácticas agrícolas que respetan el medio ambiente
-                y garantizan la producción a largo plazo.
+                Hacer más sencillo el acceso a la información sobre los productos disponibles en los mercados locales. 
               </p>
             </div>
             <div className="aboutus-value-card">
               <div className="aboutus-value-icon">🤝</div>
-              <h3>Transparencia</h3>
+              <h3>Organizar</h3>
               <p>
-                Fomentamos la confianza mediante información clara y accesible
-                sobre productos, precios y productores.
+                Presentar los datos de manera clara y ordenada para que el usuario entienda todo de un vistazo.
               </p>
             </div>
             <div className="aboutus-value-card">
               <div className="aboutus-value-icon">💡</div>
-              <h3>Innovación</h3>
+              <h3>Orientar</h3>
               <p>
-                Utilizamos tecnología para mejorar continuamente la experiencia
-                de usuarios y la eficiencia del mercado.
+               Guiar a las personas para que encuentren rápidamente los productos y puntos de venta que necesitan.
               </p>
             </div>
             <div className="aboutus-value-card">
               <div className="aboutus-value-icon">🌾</div>
-              <h3>Calidad</h3>
+              <h3>Conectar</h3>
               <p>
-                Nos comprometemos con productos frescos y de la más alta calidad
-                para satisfacer a nuestros consumidores.
+                Acercar a los mercados y la comunidad mediante información actualizada y útil.
               </p>
             </div>
           </div>
@@ -184,25 +172,32 @@ function AboutUs() {
       {/* Services Section */}
       <section className="aboutus-section aboutus-section-alt">
         <div className="aboutus-content">
-          <h2 className="aboutus-section-title">¿Qué Ofrecemos?</h2>
+          <h2 className="aboutus-section-title">¿Qué permite?</h2>
           <div className="aboutus-services-grid">
             <div className="aboutus-service-card">
               <img src="/comercializacion.jpg" alt="Comercialización" />
               <div className="aboutus-service-content">
-                <h3>Comercialización Directa</h3>
+                <h3>Información al alcance</h3>
                 <p>
-                  Conectamos productores con consumidores, eliminando
-                  intermediarios y garantizando mejores precios para ambos.
+                  Mostramos de manera clara qué productos están disponibles en los mercados locales, permitiendo a los usuarios encontrar lo que necesitan sin recorrer varios establecimientos.
                 </p>
               </div>
             </div>
             <div className="aboutus-service-card">
               <img src="/venta.jpg" alt="Venta de Productos" />
               <div className="aboutus-service-content">
-                <h3>Mercado en Línea</h3>
+                <h3>Datos nutricionales</h3>
                 <p>
-                  Plataforma digital intuitiva donde puedes encontrar productos
-                  agrícolas frescos de toda Cuba.
+                  Ofrecemos información básica sobre el valor nutricional de los productos presentes en la plataforma, ayudando a los usuarios a conocer mejor lo que consumen y a tomar decisiones más conscientes.
+                </p>
+              </div>
+            </div>
+            <div className="aboutus-service-card">
+              <img src="/interaccion.jpg" alt="Mercados y ubicación" />
+              <div className="aboutus-service-content">
+                <h3>Mercados y ubicación</h3>
+                <p>
+                  Mostramos la ubicación y la información esencial de los mercados locales que integran la plataforma, permitiendo a los usuarios identificar rápidamente dónde encontrar los productos que necesitan.
                 </p>
               </div>
             </div>

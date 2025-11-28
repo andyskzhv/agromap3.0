@@ -163,6 +163,35 @@
   object-fit: cover;
 }
 
+.aboutus-project-logos {
+  display: flex;
+  gap: 1rem;
+  justify-content: flex-start;
+  align-items: center;
+  margin-top: 1rem;
+  padding: 0.5rem 0;
+}
+
+.aboutus-project-logo-link {
+  display: block;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  padding: 0.5rem;
+}
+
+.aboutus-project-logo {
+  width: auto;
+  height: 45px;
+  object-fit: contain;
+  transition: all 0.3s ease;
+  opacity: 0.85;
+}
+
+.aboutus-project-logo-link:hover .aboutus-project-logo {
+  transform: scale(1.1);
+  opacity: 1;
+}
+
 /* Values Grid */
 .aboutus-values-grid {
   display: grid;
@@ -357,6 +386,15 @@
   .aboutus-carousel-indicators {
     bottom: 1rem;
   }
+
+  .aboutus-project-logos {
+    gap: 0.75rem;
+    margin-top: 0.75rem;
+  }
+
+  .aboutus-project-logo {
+    height: 35px;
+  }
 }
 
 @media (max-width: 480px) {
@@ -376,5 +414,14 @@
   .aboutus-carousel-indicator {
     width: 10px;
     height: 10px;
+  }
+
+  .aboutus-project-logos {
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+  }
+
+  .aboutus-project-logo {
+    height: 30px;
   }
 }
