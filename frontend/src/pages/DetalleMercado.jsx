@@ -266,23 +266,10 @@ function DetalleMercado() {
             {/* SAS - Sección independiente */}
             {mercado.perteneceSas && (
               <section className="seccion-card seccion-sas">
-                <div className="sas-content">
-                  <div className="sas-info">
-                    <h2>Programa SAS Cuba</h2>
-                    <p>
-                      El "Programa SAS Cuba" es una iniciativa de apoyo estratégico a la seguridad alimentaria sostenible en Cuba,
-                      implementada entre 2019 y 2025 con financiamiento de la Unión Europea. Se enfoca en fortalecer los sistemas
-                      alimentarios locales en seis municipios de las provincias de Villa Clara y Sancti Spíritus, promoviendo la
-                      resiliencia y la producción de alimentos de calidad.
-                    </p>
-                    <p className="sas-proyectos">
-                      El programa incluye tres proyectos principales: Fortalecimiento de políticas para la seguridad alimentaria
-                      sostenible (POSAS), Autoabastecimiento local para una alimentación sostenible y sana (ALASS), y Fortalecimiento
-                      del Sistema Integrado de Gestión del Conocimiento para la seguridad alimentaria sostenible (CONSAS).
-                    </p>
-                  </div>
+                <h2>Mercado potenciado por el Programa SAS Cuba</h2>
+                <a href="#" className="sas-logo-link" target="_blank" rel="noopener noreferrer">
                   <img src="/logo sas.jpg" alt="Programa SAS Cuba" className="sas-logo" />
-                </div>
+                </a>
               </section>
             )}
           </div>
