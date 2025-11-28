@@ -54,6 +54,10 @@ function DashboardAdmin() {
     activa: true
   });
   const [imagenPlantilla, setImagenPlantilla] = useState(null);
+  const [tablaMacronutrientes, setTablaMacronutrientes] = useState(null);
+  const [tablaVitaminas, setTablaVitaminas] = useState(null);
+  const [tablaMinerales, setTablaMinerales] = useState(null);
+  const [tablaAminoacidos, setTablaAminoacidos] = useState(null);
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
@@ -265,6 +269,18 @@ function DashboardAdmin() {
       if (imagenPlantilla) {
         formData.append('imagen', imagenPlantilla);
       }
+      if (tablaMacronutrientes) {
+        formData.append('tablaMacronutrientes', tablaMacronutrientes);
+      }
+      if (tablaVitaminas) {
+        formData.append('tablaVitaminas', tablaVitaminas);
+      }
+      if (tablaMinerales) {
+        formData.append('tablaMinerales', tablaMinerales);
+      }
+      if (tablaAminoacidos) {
+        formData.append('tablaAminoacidos', tablaAminoacidos);
+      }
 
       if (plantillaEditando) {
         await plantillaService.actualizar(plantillaEditando.id, formData);
@@ -278,6 +294,10 @@ function DashboardAdmin() {
       setPlantillaEditando(null);
       setFormPlantilla({ nombre: '', descripcion: '', categoriaId: '' });
       setImagenPlantilla(null);
+      setTablaMacronutrientes(null);
+      setTablaVitaminas(null);
+      setTablaMinerales(null);
+      setTablaAminoacidos(null);
       cargarDatosVista();
     } catch (error) {
       toast.error(error.response?.data?.error || 'Error al guardar plantilla');
@@ -956,12 +976,90 @@ function DashboardAdmin() {
                 />
               </div>
               <div className="form-group">
-                <label>Descripción</label>
+                <label>Descripción (Información Nutricional)</label>
                 <textarea
                   value={formPlantilla.descripcion}
                   onChange={(e) => setFormPlantilla({...formPlantilla, descripcion: e.target.value})}
                   rows="3"
+                  placeholder="Ejemplo: Estos son los datos nutricionales extraídos de la Tabla de Valor Nutricional de Alimentos Utilizados en Cuba"
                 />
+                <small style={{ color: '#666', fontSize: '12px' }}>
+                  Este texto se mostrará en el detalle de la plantilla. Puedes explicar de dónde provienen los datos nutricionales.
+                </small>
+              </div>
+
+              {/* Tablas Nutricionales */}
+              <div className="form-group">
+                <label style={{ fontSize: '16px', fontWeight: 'bold', marginTop: '15px', display: 'block' }}>
+                  📊 Tablas Nutricionales (Imágenes)
+                </label>
+                <small style={{ color: '#666', fontSize: '12px', marginBottom: '10px', display: 'block' }}>
+                  Sube las imágenes de las tablas nutricionales. Estas se mostrarán como botones expandibles en el detalle de la plantilla.
+                </small>
+              </div>
+
+              <div className="form-group">
+                <label>Tabla de Macronutrientes</label>
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={(e) => setTablaMacronutrientes(e.target.files[0])}
+                />
+                {plantillaEditando?.tablaMacronutrientes && !tablaMacronutrientes && (
+                  <img
+                    src={`http://localhost:5000${plantillaEditando.tablaMacronutrientes}`}
+                    alt="Tabla Macronutrientes"
+                    style={{ width: '100px', marginTop: '10px', borderRadius: '8px' }}
+                  />
+                )}
+              </div>
+
+              <div className="form-group">
+                <label>Tabla de Vitaminas</label>
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={(e) => setTablaVitaminas(e.target.files[0])}
+                />
+                {plantillaEditando?.tablaVitaminas && !tablaVitaminas && (
+                  <img
+                    src={`http://localhost:5000${plantillaEditando.tablaVitaminas}`}
+                    alt="Tabla Vitaminas"
+                    style={{ width: '100px', marginTop: '10px', borderRadius: '8px' }}
+                  />
+                )}
+              </div>
+
+              <div className="form-group">
+                <label>Tabla de Minerales</label>
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={(e) => setTablaMinerales(e.target.files[0])}
+                />
+                {plantillaEditando?.tablaMinerales && !tablaMinerales && (
+                  <img
+                    src={`http://localhost:5000${plantillaEditando.tablaMinerales}`}
+                    alt="Tabla Minerales"
+                    style={{ width: '100px', marginTop: '10px', borderRadius: '8px' }}
+                  />
+                )}
+              </div>
+
+              <div className="form-group">
+                <label>Tabla de Aminoácidos</label>
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={(e) => setTablaAminoacidos(e.target.files[0])}
+                />
+                {plantillaEditando?.tablaAminoacidos && !tablaAminoacidos && (
+                  <img
+                    src={`http://localhost:5000${plantillaEditando.tablaAminoacidos}`}
+                    alt="Tabla Aminoácidos"
+                    style={{ width: '100px', marginTop: '10px', borderRadius: '8px' }}
+                  />
+                )}
               </div>
               <div className="form-group">
                 <label>Categoría *</label>

@@ -70,11 +70,17 @@ const obtenerPlantillaPorId = async (req, res) => {
 const crearPlantilla = async (req, res) => {
   try {
     const { nombre, descripcion, categoriaId } = req.body;
-    const imagen = req.file ? `/uploads/plantillas/${req.file.filename}` : null;
+
+    // Procesar archivos subidos
+    const imagen = req.files?.imagen?.[0] ? `/uploads/plantillas/${req.files.imagen[0].filename}` : null;
+    const tablaMacronutrientes = req.files?.tablaMacronutrientes?.[0] ? `/uploads/plantillas/${req.files.tablaMacronutrientes[0].filename}` : null;
+    const tablaVitaminas = req.files?.tablaVitaminas?.[0] ? `/uploads/plantillas/${req.files.tablaVitaminas[0].filename}` : null;
+    const tablaMinerales = req.files?.tablaMinerales?.[0] ? `/uploads/plantillas/${req.files.tablaMinerales[0].filename}` : null;
+    const tablaAminoacidos = req.files?.tablaAminoacidos?.[0] ? `/uploads/plantillas/${req.files.tablaAminoacidos[0].filename}` : null;
 
     if (!nombre || !categoriaId) {
-      return res.status(400).json({ 
-        error: 'Nombre y categoría son obligatorios' 
+      return res.status(400).json({
+        error: 'Nombre y categoría son obligatorios'
       });
     }
 
@@ -92,6 +98,10 @@ const crearPlantilla = async (req, res) => {
         nombre,
         descripcion,
         imagen,
+        tablaMacronutrientes,
+        tablaVitaminas,
+        tablaMinerales,
+        tablaAminoacidos,
         categoriaId: parseInt(categoriaId)
       },
       include: {
@@ -110,9 +120,9 @@ const crearPlantilla = async (req, res) => {
     });
   } catch (error) {
     console.error('Error al crear plantilla:', error);
-    res.status(500).json({ 
+    res.status(500).json({
       error: 'Error al crear plantilla',
-      details: error.message 
+      details: error.message
     });
   }
 };
@@ -122,7 +132,13 @@ const actualizarPlantilla = async (req, res) => {
   try {
     const { id } = req.params;
     const { nombre, descripcion, categoriaId } = req.body;
-    const imagen = req.file ? `/uploads/plantillas/${req.file.filename}` : undefined;
+
+    // Procesar archivos subidos
+    const imagen = req.files?.imagen?.[0] ? `/uploads/plantillas/${req.files.imagen[0].filename}` : undefined;
+    const tablaMacronutrientes = req.files?.tablaMacronutrientes?.[0] ? `/uploads/plantillas/${req.files.tablaMacronutrientes[0].filename}` : undefined;
+    const tablaVitaminas = req.files?.tablaVitaminas?.[0] ? `/uploads/plantillas/${req.files.tablaVitaminas[0].filename}` : undefined;
+    const tablaMinerales = req.files?.tablaMinerales?.[0] ? `/uploads/plantillas/${req.files.tablaMinerales[0].filename}` : undefined;
+    const tablaAminoacidos = req.files?.tablaAminoacidos?.[0] ? `/uploads/plantillas/${req.files.tablaAminoacidos[0].filename}` : undefined;
 
     const plantillaExistente = await prisma.plantillaProducto.findUnique({
       where: { id: parseInt(id) }
@@ -143,9 +159,21 @@ const actualizarPlantilla = async (req, res) => {
       }
     }
 
-    // Si hay una nueva imagen, eliminar la anterior
+    // Eliminar imágenes antiguas si se suben nuevas
     if (imagen && plantillaExistente.imagen) {
       eliminarArchivo(plantillaExistente.imagen);
+    }
+    if (tablaMacronutrientes && plantillaExistente.tablaMacronutrientes) {
+      eliminarArchivo(plantillaExistente.tablaMacronutrientes);
+    }
+    if (tablaVitaminas && plantillaExistente.tablaVitaminas) {
+      eliminarArchivo(plantillaExistente.tablaVitaminas);
+    }
+    if (tablaMinerales && plantillaExistente.tablaMinerales) {
+      eliminarArchivo(plantillaExistente.tablaMinerales);
+    }
+    if (tablaAminoacidos && plantillaExistente.tablaAminoacidos) {
+      eliminarArchivo(plantillaExistente.tablaAminoacidos);
     }
 
     const plantillaActualizada = await prisma.plantillaProducto.update({
@@ -154,7 +182,11 @@ const actualizarPlantilla = async (req, res) => {
         ...(nombre && { nombre }),
         ...(descripcion !== undefined && { descripcion }),
         ...(categoriaId && { categoriaId: parseInt(categoriaId) }),
-        ...(imagen && { imagen })
+        ...(imagen && { imagen }),
+        ...(tablaMacronutrientes && { tablaMacronutrientes }),
+        ...(tablaVitaminas && { tablaVitaminas }),
+        ...(tablaMinerales && { tablaMinerales }),
+        ...(tablaAminoacidos && { tablaAminoacidos })
       },
       include: {
         categoria: {
@@ -172,9 +204,9 @@ const actualizarPlantilla = async (req, res) => {
     });
   } catch (error) {
     console.error('Error al actualizar plantilla:', error);
-    res.status(500).json({ 
+    res.status(500).json({
       error: 'Error al actualizar plantilla',
-      details: error.message 
+      details: error.message
     });
   }
 };
@@ -197,9 +229,21 @@ const eliminarPlantilla = async (req, res) => {
       where: { id: parseInt(id) }
     });
 
-    // Eliminar la imagen física de la plantilla
+    // Eliminar todas las imágenes físicas de la plantilla
     if (plantillaExistente.imagen) {
       eliminarArchivo(plantillaExistente.imagen);
+    }
+    if (plantillaExistente.tablaMacronutrientes) {
+      eliminarArchivo(plantillaExistente.tablaMacronutrientes);
+    }
+    if (plantillaExistente.tablaVitaminas) {
+      eliminarArchivo(plantillaExistente.tablaVitaminas);
+    }
+    if (plantillaExistente.tablaMinerales) {
+      eliminarArchivo(plantillaExistente.tablaMinerales);
+    }
+    if (plantillaExistente.tablaAminoacidos) {
+      eliminarArchivo(plantillaExistente.tablaAminoacidos);
     }
 
     res.json({ message: 'Plantilla eliminada exitosamente' });

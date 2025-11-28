@@ -126,6 +126,11 @@ model PlantillaProducto {
   descripcion String?  @db.Text
   imagen      String?
   categoriaId Int
+  // Tablas nutricionales (imágenes)
+  tablaMacronutrientes String?  // Imagen de tabla de macronutrientes
+  tablaVitaminas       String?  // Imagen de tabla de vitaminas
+  tablaMinerales       String?  // Imagen de tabla de minerales
+  tablaAminoacidos     String?  // Imagen de tabla de aminoácidos
   creadoEn    DateTime @default(now())
 
   // Relaciones
