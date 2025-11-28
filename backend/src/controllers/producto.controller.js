@@ -41,6 +41,13 @@ const obtenerProductos = async (req, res) => {
             nombre: true
           }
         },
+        plantilla: {
+          select: {
+            id: true,
+            nombre: true,
+            imagen: true
+          }
+        },
         valoraciones: {
           select: {
             id: true,
@@ -91,6 +98,13 @@ const obtenerProductoPorId = async (req, res) => {
           select: {
             id: true,
             nombre: true
+          }
+        },
+        plantilla: {
+          select: {
+            id: true,
+            nombre: true,
+            imagen: true
           }
         },
         comentarios: {
@@ -176,16 +190,6 @@ const crearProducto = async (req, res) => {
       });
     }
 
-    // Validar que se haya subido al menos una imagen
-    const hayImagenesSubidas = req.files && req.files.length > 0;
-    const hayImagenesEnviadas = imagenes && (Array.isArray(imagenes) ? imagenes.length > 0 : true);
-
-    if (!hayImagenesSubidas && !hayImagenesEnviadas) {
-      return res.status(400).json({
-        error: 'Debe subir al menos una imagen del producto'
-      });
-    }
-
     // Verificar que la categoría existe
     const categoria = await prisma.categoria.findUnique({
       where: { id: parseInt(categoriaId) }
@@ -222,6 +226,18 @@ const crearProducto = async (req, res) => {
     } else if (imagenes) {
       // Si se envía como JSON (array de strings), mantenerlo
       imagenesUrls = Array.isArray(imagenes) ? imagenes : [imagenes];
+    }
+    // Si no hay imágenes y hay plantilla, verificar si la plantilla tiene imagen
+    if (imagenesUrls.length === 0 && plantillaId) {
+      const plantilla = await prisma.plantillaProducto.findUnique({
+        where: { id: parseInt(plantillaId) }
+      });
+      // Si la plantilla tiene imagen, usarla como referencia (no copiarla)
+      // El producto usará la imagen de la plantilla cuando se consulte
+      if (plantilla && plantilla.imagen) {
+        // No agregamos la imagen a imagenesUrls para que quede vacío
+        // La lógica del frontend mostrará la imagen de la plantilla
+      }
     }
 
     const nuevoProducto = await prisma.producto.create({
@@ -473,6 +489,13 @@ const obtenerMisProductos = async (req, res) => {
           select: {
             id: true,
             nombre: true
+          }
+        },
+        plantilla: {
+          select: {
+            id: true,
+            nombre: true,
+            imagen: true
           }
         }
       },

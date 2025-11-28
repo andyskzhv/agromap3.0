@@ -156,11 +156,15 @@ function GestionProductos() {
       }
 
       // Si estamos editando y hay imágenes existentes, mantenerlas
-      if (productoEditando && imagenesExistentes.length > 0) {
-        datos.imagenes = imagenesExistentes;
-        // Si también hay nuevas imágenes, combinarlas
-        if (imagenesSeleccionadas.length > 0) {
-          datos.imagenes = [...imagenesExistentes, ...imagenesSeleccionadas];
+      if (productoEditando) {
+        if (imagenesExistentes.length > 0) {
+          datos.imagenes = imagenesExistentes;
+          // Si también hay nuevas imágenes, combinarlas
+          if (imagenesSeleccionadas.length > 0) {
+            datos.imagenes = [...imagenesExistentes, ...imagenesSeleccionadas];
+          }
+        } else if (imagenesSeleccionadas.length > 0) {
+          datos.imagenes = imagenesSeleccionadas;
         }
       }
 
@@ -666,7 +670,7 @@ function GestionProductos() {
                 </div>
 
                 <div className="form-group">
-                  <label>Imágenes del producto *</label>
+                  <label>Imágenes del producto</label>
                   <input
                     type="file"
                     accept="image/*"
@@ -677,7 +681,9 @@ function GestionProductos() {
                   <small className="form-help">
                     {productoEditando
                       ? 'Puedes seleccionar múltiples imágenes (máximo 10)'
-                      : '⚠️ Debes subir al menos 1 imagen (máximo 10)'}
+                      : plantillaSeleccionada && plantillaSeleccionada.id
+                      ? 'Opcional. Si no subes imágenes, se usará la imagen de la plantilla seleccionada (máximo 10)'
+                      : 'Opcional. Puedes seleccionar múltiples imágenes (máximo 10)'}
                   </small>
                   
                   {/* Preview de imágenes seleccionadas */}

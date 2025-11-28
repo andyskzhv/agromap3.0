@@ -260,16 +260,19 @@ function DetalleProducto() {
         </div>
 
         {/* Galería de imágenes */}
-        {producto.imagenes && producto.imagenes.length > 0 && (
+        {((producto.imagenes && producto.imagenes.length > 0) || (producto.plantilla && producto.plantilla.imagen)) && (
           <div className="producto-imagenes">
             <div className="imagen-principal">
-              <img 
-                src={`http://localhost:5000${producto.imagenes[imagenPrincipal]}`} 
+              <img
+                src={producto.imagenes && producto.imagenes.length > 0
+                  ? `http://localhost:5000${producto.imagenes[imagenPrincipal]}`
+                  : `http://localhost:5000${producto.plantilla.imagen}`
+                }
                 alt={producto.nombre}
                 className="imagen-producto"
               />
             </div>
-            {producto.imagenes.length > 1 && (
+            {producto.imagenes && producto.imagenes.length > 1 && (
               <div className="imagenes-miniatura">
                 {producto.imagenes.map((url, index) => (
                   <img

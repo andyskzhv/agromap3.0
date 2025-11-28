@@ -419,6 +419,12 @@ function DetalleMercado() {
                         alt={producto.nombre}
                         className="producto-imagen"
                       />
+                    ) : producto.plantilla && producto.plantilla.imagen ? (
+                      <img
+                        src={`http://localhost:5000${producto.plantilla.imagen}`}
+                        alt={producto.nombre}
+                        className="producto-imagen"
+                      />
                     ) : (
                       <div className="producto-sin-imagen">
                         <span>📦</span>

@@ -274,6 +274,8 @@ function Productos() {
               const totalComentarios = producto.comentarios?.length || 0;
               const imagenPrincipal = producto.imagenes && producto.imagenes.length > 0
                 ? `http://localhost:5000${producto.imagenes[0]}`
+                : producto.plantilla && producto.plantilla.imagen
+                ? `http://localhost:5000${producto.plantilla.imagen}`
                 : null;
 
               return (
