@@ -86,100 +86,97 @@ function DetallePlantilla() {
             <p className="plantilla-descripcion">{plantilla.descripcion}</p>
           )}
           <div className="categoria-badge">{plantilla.categoria.nombre}</div>
+
+          {/* Información Nutricional */}
+          {(plantilla.tablaMacronutrientes || plantilla.tablaVitaminas || plantilla.tablaMinerales || plantilla.tablaAminoacidos) && (
+            <div className="info-nutricional-header">
+              <h3>📊 Información Nutricional</h3>
+              <div className="tablas-grid-header">
+                {plantilla.tablaMacronutrientes && (
+                  <div className="tabla-nutricional-card">
+                    <button
+                      className="btn-tabla"
+                      onClick={() => setTablaExpandida(tablaExpandida === 'macronutrientes' ? null : 'macronutrientes')}
+                    >
+                      Macronutrientes
+                    </button>
+                    {tablaExpandida === 'macronutrientes' && (
+                      <div className="tabla-imagen-expandida">
+                        <img
+                          src={`http://localhost:5000${plantilla.tablaMacronutrientes}`}
+                          alt="Tabla de Macronutrientes"
+                          onClick={() => setTablaExpandida(null)}
+                        />
+                        <button className="btn-cerrar-tabla" onClick={() => setTablaExpandida(null)}>✕</button>
+                      </div>
+                    )}
+                  </div>
+                )}
+                {plantilla.tablaVitaminas && (
+                  <div className="tabla-nutricional-card">
+                    <button
+                      className="btn-tabla"
+                      onClick={() => setTablaExpandida(tablaExpandida === 'vitaminas' ? null : 'vitaminas')}
+                    >
+                      Vitaminas
+                    </button>
+                    {tablaExpandida === 'vitaminas' && (
+                      <div className="tabla-imagen-expandida">
+                        <img
+                          src={`http://localhost:5000${plantilla.tablaVitaminas}`}
+                          alt="Tabla de Vitaminas"
+                          onClick={() => setTablaExpandida(null)}
+                        />
+                        <button className="btn-cerrar-tabla" onClick={() => setTablaExpandida(null)}>✕</button>
+                      </div>
+                    )}
+                  </div>
+                )}
+                {plantilla.tablaMinerales && (
+                  <div className="tabla-nutricional-card">
+                    <button
+                      className="btn-tabla"
+                      onClick={() => setTablaExpandida(tablaExpandida === 'minerales' ? null : 'minerales')}
+                    >
+                      Minerales
+                    </button>
+                    {tablaExpandida === 'minerales' && (
+                      <div className="tabla-imagen-expandida">
+                        <img
+                          src={`http://localhost:5000${plantilla.tablaMinerales}`}
+                          alt="Tabla de Minerales"
+                          onClick={() => setTablaExpandida(null)}
+                        />
+                        <button className="btn-cerrar-tabla" onClick={() => setTablaExpandida(null)}>✕</button>
+                      </div>
+                    )}
+                  </div>
+                )}
+                {plantilla.tablaAminoacidos && (
+                  <div className="tabla-nutricional-card">
+                    <button
+                      className="btn-tabla"
+                      onClick={() => setTablaExpandida(tablaExpandida === 'aminoacidos' ? null : 'aminoacidos')}
+                    >
+                      Aminoácidos
+                    </button>
+                    {tablaExpandida === 'aminoacidos' && (
+                      <div className="tabla-imagen-expandida">
+                        <img
+                          src={`http://localhost:5000${plantilla.tablaAminoacidos}`}
+                          alt="Tabla de Aminoácidos"
+                          onClick={() => setTablaExpandida(null)}
+                        />
+                        <button className="btn-cerrar-tabla" onClick={() => setTablaExpandida(null)}>✕</button>
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
         </div>
       </section>
-
-      {/* Sección de Tablas Nutricionales */}
-      {(plantilla.tablaMacronutrientes || plantilla.tablaVitaminas || plantilla.tablaMinerales || plantilla.tablaAminoacidos) && (
-        <section className="tablas-nutricionales">
-          <h2>📊 Información Nutricional</h2>
-          {plantilla.descripcion && (
-            <p className="info-nutricional-texto">{plantilla.descripcion}</p>
-          )}
-          <div className="tablas-grid">
-            {plantilla.tablaMacronutrientes && (
-              <div className="tabla-nutricional-card">
-                <button
-                  className="btn-tabla"
-                  onClick={() => setTablaExpandida(tablaExpandida === 'macronutrientes' ? null : 'macronutrientes')}
-                >
-                  Macronutrientes
-                </button>
-                {tablaExpandida === 'macronutrientes' && (
-                  <div className="tabla-imagen-expandida">
-                    <img
-                      src={`http://localhost:5000${plantilla.tablaMacronutrientes}`}
-                      alt="Tabla de Macronutrientes"
-                      onClick={() => setTablaExpandida(null)}
-                    />
-                    <button className="btn-cerrar-tabla" onClick={() => setTablaExpandida(null)}>✕</button>
-                  </div>
-                )}
-              </div>
-            )}
-            {plantilla.tablaVitaminas && (
-              <div className="tabla-nutricional-card">
-                <button
-                  className="btn-tabla"
-                  onClick={() => setTablaExpandida(tablaExpandida === 'vitaminas' ? null : 'vitaminas')}
-                >
-                  Vitaminas
-                </button>
-                {tablaExpandida === 'vitaminas' && (
-                  <div className="tabla-imagen-expandida">
-                    <img
-                      src={`http://localhost:5000${plantilla.tablaVitaminas}`}
-                      alt="Tabla de Vitaminas"
-                      onClick={() => setTablaExpandida(null)}
-                    />
-                    <button className="btn-cerrar-tabla" onClick={() => setTablaExpandida(null)}>✕</button>
-                  </div>
-                )}
-              </div>
-            )}
-            {plantilla.tablaMinerales && (
-              <div className="tabla-nutricional-card">
-                <button
-                  className="btn-tabla"
-                  onClick={() => setTablaExpandida(tablaExpandida === 'minerales' ? null : 'minerales')}
-                >
-                  Minerales
-                </button>
-                {tablaExpandida === 'minerales' && (
-                  <div className="tabla-imagen-expandida">
-                    <img
-                      src={`http://localhost:5000${plantilla.tablaMinerales}`}
-                      alt="Tabla de Minerales"
-                      onClick={() => setTablaExpandida(null)}
-                    />
-                    <button className="btn-cerrar-tabla" onClick={() => setTablaExpandida(null)}>✕</button>
-                  </div>
-                )}
-              </div>
-            )}
-            {plantilla.tablaAminoacidos && (
-              <div className="tabla-nutricional-card">
-                <button
-                  className="btn-tabla"
-                  onClick={() => setTablaExpandida(tablaExpandida === 'aminoacidos' ? null : 'aminoacidos')}
-                >
-                  Aminoácidos
-                </button>
-                {tablaExpandida === 'aminoacidos' && (
-                  <div className="tabla-imagen-expandida">
-                    <img
-                      src={`http://localhost:5000${plantilla.tablaAminoacidos}`}
-                      alt="Tabla de Aminoácidos"
-                      onClick={() => setTablaExpandida(null)}
-                    />
-                    <button className="btn-cerrar-tabla" onClick={() => setTablaExpandida(null)}>✕</button>
-                  </div>
-                )}
-              </div>
-            )}
-          </div>
-        </section>
-      )}
 
       {/* Lista de mercados donde está disponible */}
       <section className="mercados-disponibles">
