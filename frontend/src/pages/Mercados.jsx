@@ -115,10 +115,71 @@ function Mercados() {
     }
   };
 
-  // Verificar si el mercado está abierto (por simplicidad, siempre abierto por ahora)
+  // Verificar si el mercado está abierto basándose en el horario
   const estaAbierto = (mercado) => {
-    // Aquí podrías implementar lógica basada en horario
-    return true;
+    // Si no tiene horario definido, asumimos que está cerrado
+    if (!mercado.horario) {
+      return false;
+    }
+
+    try {
+      const ahora = new Date();
+      const horaActual = ahora.getHours() * 60 + ahora.getMinutes(); // Minutos desde medianoche
+      const diaActual = ahora.getDay(); // 0 = Domingo, 1 = Lunes, ..., 6 = Sábado
+
+      // Parseamos el horario (esperamos formato como "Lunes a Viernes: 8:00 AM - 5:00 PM" o "8:00-17:00")
+      const horarioTexto = mercado.horario.toLowerCase();
+
+      // Extraer horas usando regex (busca patrones como 8:00, 17:00, 8:00 am, 5:00 pm)
+      const patronHoras = /(\d{1,2}):(\d{2})\s*(am|pm)?/gi;
+      const matches = [...horarioTexto.matchAll(patronHoras)];
+
+      if (matches.length >= 2) {
+        let horaApertura = parseInt(matches[0][1]);
+        const minApertura = parseInt(matches[0][2]);
+        const ampmApertura = matches[0][3];
+
+        let horaCierre = parseInt(matches[1][1]);
+        const minCierre = parseInt(matches[1][2]);
+        const ampmCierre = matches[1][3];
+
+        // Convertir a formato 24 horas si tiene AM/PM
+        if (ampmApertura) {
+          if (ampmApertura === 'pm' && horaApertura !== 12) horaApertura += 12;
+          if (ampmApertura === 'am' && horaApertura === 12) horaApertura = 0;
+        }
+        if (ampmCierre) {
+          if (ampmCierre === 'pm' && horaCierre !== 12) horaCierre += 12;
+          if (ampmCierre === 'am' && horaCierre === 12) horaCierre = 0;
+        }
+
+        const apertura = horaApertura * 60 + minApertura;
+        const cierre = horaCierre * 60 + minCierre;
+
+        // Verificar si tiene restricción de días
+        const esFindeSemana = diaActual === 0 || diaActual === 6;
+        const esDiaSemana = diaActual >= 1 && diaActual <= 5;
+
+        // Si el horario menciona "lunes" o "días de semana" y hoy es fin de semana, está cerrado
+        if ((horarioTexto.includes('lunes') || horarioTexto.includes('semana')) && !horarioTexto.includes('sábado') && !horarioTexto.includes('domingo') && esFindeSemana) {
+          return false;
+        }
+
+        // Si el horario menciona solo "sábado" o "domingo" y hoy es día de semana, está cerrado
+        if ((horarioTexto.includes('sábado') || horarioTexto.includes('domingo')) && !horarioTexto.includes('lunes') && esDiaSemana) {
+          return false;
+        }
+
+        // Verificar si está dentro del horario
+        return horaActual >= apertura && horaActual < cierre;
+      }
+
+      // Si no se pudo parsear el horario, retornar false
+      return false;
+    } catch (error) {
+      console.error('Error al verificar horario:', error);
+      return false;
+    }
   };
 
   if (loading) {
