@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { authService, mercadoService } from '../services/api';
+import { FaEye, FaEyeSlash } from 'react-icons/fa';
+import { authService } from '../services/api';
 import { useToast } from '../components/Toast';
 import { usePageTitle } from '../hooks/usePageTitle';
 import './Auth.css';
@@ -18,12 +19,17 @@ function Registro() {
   const [imagenPreview, setImagenPreview] = useState(null);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [mostrarContrasena, setMostrarContrasena] = useState(false);
 
   const handleChange = (e) => {
     setFormData({
       ...formData,
       [e.target.name]: e.target.value
     });
+  };
+
+  const toggleMostrarContrasena = () => {
+    setMostrarContrasena(!mostrarContrasena);
   };
 
   const handleImagenChange = (e) => {
@@ -58,6 +64,14 @@ function Registro() {
     }
   };
 
+  const eliminarImagen = () => {
+    setImagenFile(null);
+    setImagenPreview(null);
+    // Limpiar el input file
+    const fileInput = document.querySelector('input[type="file"]');
+    if (fileInput) fileInput.value = '';
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
@@ -78,21 +92,14 @@ function Registro() {
       localStorage.setItem('token', response.data.token);
       localStorage.setItem('usuario', JSON.stringify(response.data.usuario));
       
-      toast.success('¡Registro exitoso! Bienvenido a Agromap');
+      toast.success('¡Registro exitoso!');
       navigate('/perfil');
     } catch (err) {
-      const errorMsg = err.response?.data?.error || 'Error al registrarse';
-      setError(errorMsg);
-      toast.error(errorMsg);
+      setError(err.response?.data?.error || 'Error al registrar usuario');
+      toast.error(err.response?.data?.error || 'Error al registrar usuario');
     } finally {
       setLoading(false);
     }
-  };
-
-  const eliminarImagen = () => {
-    setImagenFile(null);
-    setImagenPreview(null);
-    document.getElementById('imagen-input').value = '';
   };
 
   return (
@@ -101,50 +108,26 @@ function Registro() {
         <div className="auth-logo">
           <img src="/logo.png" alt="Agromap" />
         </div>
-        <h1>Registro en Agromap</h1>
-        <p className="subtitle">Crea tu cuenta para comenzar</p>
+        <h1>Crear Cuenta</h1>
+        <p className="subtitle">Únete a la comunidad de Agromap</p>
 
         {error && <div className="error-message">{error}</div>}
 
         <form onSubmit={handleSubmit} className="auth-form">
           <div className="form-group">
-            <label>Foto de perfil (opcional)</label>
-            <input
-              type="file"
-              id="imagen-input"
-              accept="image/*"
-              onChange={handleImagenChange}
-              className="file-input"
-            />
-            {imagenPreview && (
-              <div className="imagen-preview">
-                <img src={imagenPreview} alt="Preview" />
-                <button 
-                  type="button" 
-                  onClick={eliminarImagen}
-                  className="btn-eliminar-preview"
-                >
-                  ✕ Eliminar
-                </button>
-              </div>
-            )}
-            <small className="helper-text">Máximo 5MB - Formatos: JPG, PNG, GIF, WEBP</small>
-          </div>
-
-          <div className="form-group">
-            <label>Nombre completo *</label>
+            <label>Nombre completo</label>
             <input
               type="text"
               name="nombre"
               value={formData.nombre}
               onChange={handleChange}
               required
-              placeholder="Ingresa tu nombre"
+              placeholder="Tu nombre completo"
             />
           </div>
 
           <div className="form-group">
-            <label>Nombre de usuario *</label>
+            <label>Nombre de usuario</label>
             <input
               type="text"
               name="nombreUsuario"
@@ -156,16 +139,53 @@ function Registro() {
           </div>
 
           <div className="form-group">
-            <label>Contraseña *</label>
+            <label>Contraseña</label>
+            <div className="password-input-container">
+              <input
+                type={mostrarContrasena ? "text" : "password"}
+                name="contrasena"
+                value={formData.contrasena}
+                onChange={handleChange}
+                required
+                placeholder="Crea una contraseña segura"
+                className="password-input"
+              />
+              <button
+                type="button"
+                className="toggle-password-btn"
+                onClick={toggleMostrarContrasena}
+                aria-label={mostrarContrasena ? "Ocultar contraseña" : "Mostrar contraseña"}
+              >
+                {mostrarContrasena ? <FaEyeSlash /> : <FaEye />}
+              </button>
+            </div>
+          </div>
+
+          <div className="form-group">
+            <label>Foto de perfil (opcional)</label>
             <input
-              type="password"
-              name="contrasena"
-              value={formData.contrasena}
-              onChange={handleChange}
-              required
-              placeholder="Mínimo 6 caracteres"
-              minLength="6"
+              type="file"
+              accept="image/*"
+              onChange={handleImagenChange}
+              className="file-input"
             />
+            <span className="helper-text">
+              Formatos: JPG, PNG, GIF, WebP. Máximo 5MB
+            </span>
+            
+            {imagenPreview && (
+              <div className="imagen-preview">
+                <img src={imagenPreview} alt="Preview" />
+                <button
+                  type="button"
+                  onClick={eliminarImagen}
+                  className="btn-eliminar-preview"
+                  aria-label="Eliminar imagen"
+                >
+                  ×
+                </button>
+              </div>
+            )}
           </div>
 
           <button type="submit" className="btn-primary" disabled={loading}>

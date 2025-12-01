@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
+import { FaEye, FaEyeSlash } from 'react-icons/fa';
 import { authService } from '../services/api';
 import { useToast } from '../components/Toast';
 import { usePageTitle } from '../hooks/usePageTitle';
@@ -15,12 +16,17 @@ function Login() {
   });
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [mostrarContrasena, setMostrarContrasena] = useState(false);
 
   const handleChange = (e) => {
     setFormData({
       ...formData,
       [e.target.name]: e.target.value
     });
+  };
+
+  const toggleMostrarContrasena = () => {
+    setMostrarContrasena(!mostrarContrasena);
   };
 
   const handleSubmit = async (e) => {
@@ -71,14 +77,25 @@ function Login() {
 
           <div className="form-group">
             <label>Contraseña</label>
-            <input
-              type="password"
-              name="contrasena"
-              value={formData.contrasena}
-              onChange={handleChange}
-              required
-              placeholder="Tu contraseña"
-            />
+            <div className="password-input-container">
+              <input
+                type={mostrarContrasena ? "text" : "password"}
+                name="contrasena"
+                value={formData.contrasena}
+                onChange={handleChange}
+                required
+                placeholder="Tu contraseña"
+                className="password-input"
+              />
+              <button
+                type="button"
+                className="toggle-password-btn"
+                onClick={toggleMostrarContrasena}
+                aria-label={mostrarContrasena ? "Ocultar contraseña" : "Mostrar contraseña"}
+              >
+                {mostrarContrasena ? <FaEyeSlash /> : <FaEye />}
+              </button>
+            </div>
           </div>
 
           <button type="submit" className="btn-primary" disabled={loading}>
