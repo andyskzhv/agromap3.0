@@ -1,6 +1,7 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { ToastProvider } from './components/Toast';
+import ScrollToTop from './components/ScrollToTop';
 import Navbar from './components/Navbar';
 import Breadcrumbs from './components/Breadcrumbs';
 import Footer from './components/Footer';
@@ -23,6 +24,7 @@ import Contacto from './pages/Contacto';
 function App() {
   return (
     <Router>
+      <ScrollToTop />
       <ToastProvider>
         <Navbar />
         <Breadcrumbs />
