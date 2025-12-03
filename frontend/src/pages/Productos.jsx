@@ -333,9 +333,7 @@ function Productos() {
                       <div className="producto-precio-destacado">
                         <span className="precio-valor">${producto.precio.toFixed(2)}</span>
                         <span className="precio-unidad">
-                          CUP {producto.unidadPrecio && producto.unidadPrecio !== 'UNIDAD'
-                            ? `/ ${producto.unidadPrecio.toLowerCase()}`
-                            : '/ unidad'}
+                          CUP {producto.unidadPrecio === 'LB' ? '/ lb' : producto.unidadPrecio === 'UNIDAD' ? '/ unidad' : producto.unidadPrecio ? `/ ${producto.unidadPrecio.toLowerCase()}` : '/ lb'}
                         </span>
                       </div>
                     )}
@@ -349,7 +347,7 @@ function Productos() {
                         <div className="info-item">
                           <strong>📦 Disponible:</strong>
                           <span>
-                            {producto.cantidad} {producto.unidadMedida ? producto.unidadMedida.toLowerCase() : 'unidad(es)'}
+                            {producto.cantidad} kg
                           </span>
                         </div>
                       )}

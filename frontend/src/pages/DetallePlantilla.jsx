@@ -191,7 +191,7 @@ function DetallePlantilla() {
               <div className="mercado-card-body">
                 {producto.precio && (
                   <p className="producto-precio">
-                    ${producto.precio.toFixed(2)} CUP / {producto.unidadPrecio.toLowerCase()}
+                    ${producto.precio.toFixed(2)} CUP / {producto.unidadPrecio === 'LB' ? 'lb' : producto.unidadPrecio === 'UNIDAD' ? 'unidad' : producto.unidadPrecio ? producto.unidadPrecio.toLowerCase() : 'lb'}
                   </p>
                 )}
                 {producto.tipoProducto && (

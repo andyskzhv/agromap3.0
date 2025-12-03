@@ -32,11 +32,11 @@ function GestionProductos() {
     nombre: '',
     descripcion: '',
     cantidad: '',
-    unidadMedida: 'UNIDAD',
+    unidadMedida: 'KG',
     categoriaId: '',
     tipoProducto: '',
     precio: '',
-    unidadPrecio: 'UNIDAD',
+    unidadPrecio: 'LB',
     estado: 'DISPONIBLE'
   });
   const [imagenesSeleccionadas, setImagenesSeleccionadas] = useState([]);
@@ -654,12 +654,7 @@ function GestionProductos() {
                       value={formData.unidadMedida}
                       onChange={handleChange}
                     >
-                      <option value="UNIDAD">Unidad</option>
                       <option value="KG">Kilogramo (kg)</option>
-                      <option value="LB">Libra (lb)</option>
-                      <option value="SACO">Saco</option>
-                      <option value="QUINTAL">Quintal</option>
-                      <option value="TONELADA">Tonelada</option>
                     </select>
                   </div>
                 </div>
@@ -684,12 +679,8 @@ function GestionProductos() {
                       value={formData.unidadPrecio}
                       onChange={handleChange}
                     >
-                      <option value="UNIDAD">Unidad</option>
-                      <option value="KG">Kilogramo (kg)</option>
                       <option value="LB">Libra (lb)</option>
-                      <option value="SACO">Saco</option>
-                      <option value="QUINTAL">Quintal</option>
-                      <option value="TONELADA">Tonelada</option>
+                      <option value="UNIDAD">Unidad</option>
                     </select>
                   </div>
                 </div>

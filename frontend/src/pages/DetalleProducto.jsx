@@ -310,11 +310,10 @@ function DetalleProducto() {
                 <strong><FaDollarSign /> Precio</strong>
                 <span className="precio-destacado">
                   ${producto.precio.toFixed(2)} CUP
-                  {producto.unidadPrecio && producto.unidadPrecio !== 'UNIDAD' && (
-                    <span className="unidad-precio"> / {producto.unidadPrecio.toLowerCase()}</span>
-                  )}
-                  {producto.unidadPrecio === 'UNIDAD' && (
-                    <span className="unidad-precio"> / unidad</span>
+                  {producto.unidadPrecio && (
+                    <span className="unidad-precio">
+                      {producto.unidadPrecio === 'LB' ? ' / lb' : producto.unidadPrecio === 'UNIDAD' ? ' / unidad' : ` / ${producto.unidadPrecio.toLowerCase()}`}
+                    </span>
                   )}
                 </span>
               </div>
@@ -323,7 +322,7 @@ function DetalleProducto() {
               <div className="info-card">
                 <strong><FaBox /> Cantidad Disponible</strong>
                 <span>
-                  {producto.cantidad} {producto.unidadMedida ? producto.unidadMedida.toLowerCase() : 'unidad(es)'}
+                  {producto.cantidad} kg
                 </span>
               </div>
             )}
