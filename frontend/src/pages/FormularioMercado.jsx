@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { mercadoService } from '../services/api';
 import { useToast } from '../components/Toast';
@@ -37,6 +37,7 @@ function FormularioMercado() {
 
   const [imagenes, setImagenes] = useState([]);
   const [imagenesExistentes, setImagenesExistentes] = useState([]);
+  const [imagenesPreviewUrls, setImagenesPreviewUrls] = useState([]);
   const [municipiosDisponibles, setMunicipiosDisponibles] = useState([]);
   const [mercadoExistente, setMercadoExistente] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -57,6 +58,29 @@ function FormularioMercado() {
       }
     }
   }, [formData.provincia]);
+
+  // Crear URLs de preview para las nuevas imágenes
+  useEffect(() => {
+    if (imagenes.length === 0) {
+      setImagenesPreviewUrls([]);
+      return;
+    }
+
+    // Crear nuevas URLs solo si hay imágenes
+    const nuevasUrls = imagenes.map(file => URL.createObjectURL(file));
+    setImagenesPreviewUrls(nuevasUrls);
+
+    // Cleanup: revocar URLs cuando el componente se desmonte o las imágenes cambien
+    return () => {
+      nuevasUrls.forEach(url => {
+        try {
+          URL.revokeObjectURL(url);
+        } catch (e) {
+          // Ignorar errores si la URL ya fue revocada
+        }
+      });
+    };
+  }, [imagenes]);
 
   const verificarMercadoExistente = async () => {
     try {
@@ -104,13 +128,13 @@ function FormularioMercado() {
     });
   };
 
-  const handleMapChange = ({ latitud, longitud }) => {
+  const handleMapChange = useCallback(({ latitud, longitud }) => {
     setFormData(prev => ({
       ...prev,
       latitud,
       longitud
     }));
-  };
+  }, []);
 
   const handleHorarioChange = (dia, campo, valor) => {
     setHorario(prev => ({
@@ -184,7 +208,18 @@ function FormularioMercado() {
         await mercadoService.crear(datos);
         toast.success('¡Mercado creado exitosamente!');
       }
-      navigate('/perfil');
+
+      // Limpiar las URLs de preview antes de navegar
+      imagenesPreviewUrls.forEach(url => {
+        try {
+          URL.revokeObjectURL(url);
+        } catch (e) {
+          // Ignorar errores
+        }
+      });
+
+      // Usar window.location para forzar recarga completa de la página
+      window.location.href = '/perfil';
     } catch (err) {
       const errorMsg = err.response?.data?.error || 'Error al guardar el mercado';
       setError(errorMsg);
@@ -307,10 +342,10 @@ function FormularioMercado() {
               <div className="imagenes-preview">
                 <h4>Nuevas imágenes:</h4>
                 <div className="imagenes-grid">
-                  {imagenes.map((file, index) => (
+                  {imagenesPreviewUrls.map((url, index) => (
                     <div key={index} className="imagen-preview-item">
                       <img
-                        src={URL.createObjectURL(file)}
+                        src={url}
                         alt={`Nueva imagen ${index + 1}`}
                       />
                       <button

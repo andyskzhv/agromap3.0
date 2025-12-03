@@ -41,7 +41,8 @@ function MapPicker({ latitud, longitud, onChange }) {
         longitud: position.lng.toFixed(6)
       });
     }
-  }, [position, onChange]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [position]); // Solo depender de position, no de onChange
 
   return (
     <div className="map-picker-container">

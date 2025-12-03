@@ -41,10 +41,34 @@ function GestionProductos() {
   });
   const [imagenesSeleccionadas, setImagenesSeleccionadas] = useState([]);
   const [imagenesExistentes, setImagenesExistentes] = useState([]);
+  const [imagenesPreviewUrls, setImagenesPreviewUrls] = useState([]);
 
   useEffect(() => {
     cargarDatos();
   }, []);
+
+  // Crear URLs de preview para las nuevas imágenes
+  useEffect(() => {
+    if (imagenesSeleccionadas.length === 0) {
+      setImagenesPreviewUrls([]);
+      return;
+    }
+
+    // Crear nuevas URLs solo si hay imágenes
+    const nuevasUrls = imagenesSeleccionadas.map(file => URL.createObjectURL(file));
+    setImagenesPreviewUrls(nuevasUrls);
+
+    // Cleanup: revocar URLs cuando el componente se desmonte o las imágenes cambien
+    return () => {
+      nuevasUrls.forEach(url => {
+        try {
+          URL.revokeObjectURL(url);
+        } catch (e) {
+          // Ignorar errores si la URL ya fue revocada
+        }
+      });
+    };
+  }, [imagenesSeleccionadas]);
 
   const cargarDatos = async () => {
     try {
@@ -176,10 +200,19 @@ function GestionProductos() {
         toast.success('Producto creado exitosamente');
       }
 
-      setMostrarFormulario(false);
-      setPlantillaSeleccionada(null);
+      // Limpiar las URLs de preview antes de cerrar el formulario
+      imagenesPreviewUrls.forEach(url => {
+        try {
+          URL.revokeObjectURL(url);
+        } catch (e) {
+          // Ignorar errores
+        }
+      });
+      setImagenesPreviewUrls([]);
       setImagenesSeleccionadas([]);
       setImagenesExistentes([]);
+      setMostrarFormulario(false);
+      setPlantillaSeleccionada(null);
       cargarDatos();
     } catch (error) {
       toast.error(error.response?.data?.error || 'Error al guardar');
@@ -691,10 +724,10 @@ function GestionProductos() {
                     <div className="imagenes-preview">
                       <h4>Nuevas imágenes:</h4>
                       <div className="imagenes-grid">
-                        {imagenesSeleccionadas.map((file, index) => (
+                        {imagenesPreviewUrls.map((url, index) => (
                           <div key={index} className="imagen-preview-item">
-                            <img 
-                              src={URL.createObjectURL(file)} 
+                            <img
+                              src={url}
                               alt={`Preview ${index + 1}`}
                               className="imagen-preview"
                             />
