@@ -98,7 +98,7 @@ function AboutUs() {
       <section className="aboutus-section">
         <div className="aboutus-content">
           <div className="aboutus-text-block">
-            <h2>¿Qué es Agromap?</h2>
+            <h2>¿Qué es AgroMap?</h2>
             <p>
               Es una plataforma digital diseñada para facilitar el acceso a la información sobre la disponibilidad de productos agropecuarios en la red de mercados locales.
             </p>
