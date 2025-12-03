@@ -79,8 +79,46 @@ export const mercadoService = {
     return api.post('/mercados', datos);
   },
   actualizar: (id, datos) => {
-    // Si datos es FormData, enviarlo directamente
-    // Si no, enviarlo como JSON
+    // Verificar si hay un array de imágenes (sea con Files o solo strings o vacío)
+    const tieneImagenes = datos.imagenes && Array.isArray(datos.imagenes);
+
+    if (tieneImagenes) {
+      const formData = new FormData();
+      const imagenesArchivos = [];
+      const imagenesStrings = [];
+
+      // Separar objetos File (nuevas imágenes) de strings (URLs existentes)
+      datos.imagenes.forEach(item => {
+        if (item instanceof File) {
+          imagenesArchivos.push(item);
+        } else if (typeof item === 'string') {
+          imagenesStrings.push(item);
+        }
+      });
+
+      // Agregar archivos nuevos al FormData
+      imagenesArchivos.forEach(file => {
+        formData.append('imagenes', file);
+      });
+
+      // SIEMPRE enviar imagenesExistentes (aunque sea array vacío) para que el backend sepa qué mantener
+      formData.append('imagenesExistentes', JSON.stringify(imagenesStrings));
+
+      // Agregar el resto de los campos del formulario
+      Object.keys(datos).forEach(key => {
+        if (key !== 'imagenes' && datos[key] !== null && datos[key] !== undefined) {
+          formData.append(key, datos[key]);
+        }
+      });
+
+      return api.put(`/mercados/${id}`, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+      });
+    }
+
+    // Si datos es FormData pero sin array de imágenes, enviarlo directamente
     if (datos instanceof FormData) {
       return api.put(`/mercados/${id}`, datos, {
         headers: {
@@ -88,6 +126,8 @@ export const mercadoService = {
         }
       });
     }
+
+    // Si no hay array de imágenes, enviar como JSON
     return api.put(`/mercados/${id}`, datos);
   },
   eliminar: (id) => api.delete(`/mercados/${id}`)

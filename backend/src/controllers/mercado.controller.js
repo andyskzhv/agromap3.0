@@ -190,16 +190,31 @@ const actualizarMercado = async (req, res) => {
       perteneceSas
     } = req.body;
 
-    // Procesar nuevas imágenes subidas
-    const nuevasImagenes = req.files ? req.files.map(file => `/uploads/mercados/${file.filename}`) : [];
+    // Procesar imágenes con lógica de merge inteligente
+    let imagenesUrls = mercadoExistente.imagenes || [];
 
-    // Si hay nuevas imágenes, reemplazar las antiguas; si no, mantener las existentes
-    const imagenesFinales = nuevasImagenes.length > 0 ? nuevasImagenes : mercadoExistente.imagenes;
-
-    // Si se están reemplazando las imágenes, eliminar las antiguas
-    if (nuevasImagenes.length > 0 && mercadoExistente.imagenes && mercadoExistente.imagenes.length > 0) {
-      eliminarArchivos(mercadoExistente.imagenes);
+    // Parsear imágenes existentes del form data (si se envió)
+    let imagenesExistentesArray = [];
+    if (req.body.imagenesExistentes !== undefined) {
+      try {
+        imagenesExistentesArray = JSON.parse(req.body.imagenesExistentes);
+      } catch (e) {
+        // Si falla el parse, usar array vacío
+        imagenesExistentesArray = [];
+      }
+      // Si se envió imagenesExistentes, usar ese array como base
+      imagenesUrls = imagenesExistentesArray;
     }
+
+    // Si hay nuevos archivos subidos, agregarlos
+    if (req.files && req.files.length > 0) {
+      const nuevasImagenes = req.files.map(file => `/uploads/mercados/${file.filename}`);
+      imagenesUrls = [...imagenesUrls, ...nuevasImagenes];
+    }
+
+    // Limpiar archivos huérfanos (imágenes eliminadas por el usuario)
+    const imagenesAntiguasUrls = mercadoExistente.imagenes || [];
+    eliminarArchivosNoUsados(imagenesAntiguasUrls, imagenesUrls);
 
     const mercadoActualizado = await prisma.mercado.update({
       where: { id: mercadoId },
@@ -211,7 +226,7 @@ const actualizarMercado = async (req, res) => {
         ...(municipio && { municipio }),
         ...(latitud && { latitud: parseFloat(latitud) }),
         ...(longitud && { longitud: parseFloat(longitud) }),
-        imagenes: imagenesFinales,
+        imagenes: imagenesUrls,
         ...(beneficiarioLegal !== undefined && { beneficiarioLegal }),
         ...(horario !== undefined && { horario }),
         ...(perteneceSas !== undefined && { perteneceSas: perteneceSas === 'true' || perteneceSas === true })

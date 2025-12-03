@@ -23,8 +23,8 @@ router.get('/:id', obtenerMercadoPorId);
 
 // Rutas protegidas - Gestor o Admin
 router.get('/mi/mercado', verificarToken, verificarGestorOAdmin, obtenerMiMercado);
-router.post('/', verificarToken, verificarGestorOAdmin, uploadMercados.array('imagenes', 5), crearMercado);
-router.put('/:id', verificarToken, verificarGestorOAdmin, uploadMercados.array('imagenes', 5), actualizarMercado);
+router.post('/', verificarToken, verificarGestorOAdmin, uploadMercados.array('imagenes', 10), crearMercado);
+router.put('/:id', verificarToken, verificarGestorOAdmin, uploadMercados.array('imagenes', 10), actualizarMercado);
 
 // Rutas protegidas - Solo Admin
 router.delete('/:id', verificarToken, verificarAdmin, eliminarMercado);

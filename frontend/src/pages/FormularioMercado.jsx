@@ -125,9 +125,11 @@ function FormularioMercado() {
   const handleImagenesChange = (e) => {
     const files = Array.from(e.target.files);
 
-    // Validar máximo 5 imágenes
-    if (files.length > 5) {
-      toast.error('Máximo 5 imágenes permitidas');
+    // Verificar que el total de imágenes (existentes + nuevas actuales + nuevas a agregar) no exceda 10
+    const totalImagenes = imagenesExistentes.length + imagenes.length + files.length;
+    if (totalImagenes > 10) {
+      const espacioDisponible = 10 - imagenesExistentes.length - imagenes.length;
+      toast.error(`Máximo 10 imágenes permitidas. Actualmente tienes ${imagenesExistentes.length + imagenes.length} imagen${(imagenesExistentes.length + imagenes.length) !== 1 ? 'es' : ''}. Puedes agregar hasta ${espacioDisponible} más.`);
       return;
     }
 
@@ -140,11 +142,16 @@ function FormularioMercado() {
       }
     }
 
-    setImagenes(files);
-    // Si se suben nuevas imágenes, limpiar las existentes
-    if (files.length > 0) {
-      setImagenesExistentes([]);
-    }
+    // Agregar nuevas imágenes a las ya seleccionadas
+    setImagenes([...imagenes, ...files]);
+  };
+
+  const eliminarImagenSeleccionada = (index) => {
+    setImagenes(imagenes.filter((_, i) => i !== index));
+  };
+
+  const eliminarImagenExistente = (index) => {
+    setImagenesExistentes(imagenesExistentes.filter((_, i) => i !== index));
   };
 
   const handleSubmit = async (e) => {
@@ -153,37 +160,28 @@ function FormularioMercado() {
     setLoading(true);
 
     try {
-      // Crear FormData para enviar archivos
-      const formDataToSend = new FormData();
+      // Preparar datos a enviar
+      const datos = {
+        ...formData,
+        horario: JSON.stringify(horario)
+      };
 
-      // Agregar campos de texto
-      formDataToSend.append('nombre', formData.nombre);
-      formDataToSend.append('descripcion', formData.descripcion);
-      formDataToSend.append('direccion', formData.direccion);
-      formDataToSend.append('provincia', formData.provincia);
-      formDataToSend.append('municipio', formData.municipio);
-      formDataToSend.append('latitud', formData.latitud);
-      formDataToSend.append('longitud', formData.longitud);
-      formDataToSend.append('beneficiarioLegal', formData.beneficiarioLegal);
-      formDataToSend.append('perteneceSas', formData.perteneceSas);
-
-      // Serializar horario a JSON
-      formDataToSend.append('horario', JSON.stringify(horario));
-
-      // Agregar imágenes
-      if (imagenes.length > 0) {
-        for (const imagen of imagenes) {
-          formDataToSend.append('imagenes', imagen);
-        }
-      }
-
+      // Manejar imágenes según el modo (crear o editar)
       if (mercadoExistente) {
+        // Al editar: siempre combinar imágenes existentes + nuevas (aunque sea array vacío)
+        datos.imagenes = [...imagenesExistentes, ...imagenes];
+
         // Actualizar mercado existente
-        await mercadoService.actualizar(mercadoExistente.id, formDataToSend);
+        await mercadoService.actualizar(mercadoExistente.id, datos);
         toast.success('¡Mercado actualizado exitosamente!');
       } else {
+        // Al crear: solo enviar nuevas imágenes
+        if (imagenes.length > 0) {
+          datos.imagenes = imagenes;
+        }
+
         // Crear nuevo mercado
-        await mercadoService.crear(formDataToSend);
+        await mercadoService.crear(datos);
         toast.success('¡Mercado creado exitosamente!');
       }
       navigate('/perfil');
@@ -276,30 +274,61 @@ function FormularioMercado() {
           <section className="form-section">
             <h2>Imágenes del Mercado</h2>
             <p className="section-description">
-              Puedes subir hasta 5 imágenes (máximo 5MB por imagen)
+              Puedes subir hasta 10 imágenes (máximo 5MB por imagen). {imagenesExistentes.length > 0 && `Actualmente tienes ${imagenesExistentes.length} imagen${imagenesExistentes.length !== 1 ? 'es' : ''}.`}
             </p>
 
+            {/* Imágenes existentes */}
             {imagenesExistentes.length > 0 && (
-              <div className="imagenes-existentes">
-                <p><strong>Imágenes actuales:</strong></p>
+              <div className="imagenes-preview">
+                <h4>Imágenes actuales:</h4>
                 <div className="imagenes-grid">
-                  {imagenesExistentes.map((img, index) => (
-                    <div key={index} className="imagen-preview">
+                  {imagenesExistentes.map((url, index) => (
+                    <div key={index} className="imagen-preview-item">
                       <img
-                        src={`http://localhost:5000${img}`}
-                        alt={`Imagen ${index + 1}`}
+                        src={`http://localhost:5000${url}`}
+                        alt={`Imagen actual ${index + 1}`}
                       />
+                      <button
+                        type="button"
+                        onClick={() => eliminarImagenExistente(index)}
+                        className="btn-eliminar-imagen"
+                        title="Eliminar imagen"
+                      >
+                        ✕
+                      </button>
                     </div>
                   ))}
                 </div>
-                <p className="text-muted">
-                  Si subes nuevas imágenes, reemplazarán las actuales
-                </p>
+              </div>
+            )}
+
+            {/* Nuevas imágenes seleccionadas */}
+            {imagenes.length > 0 && (
+              <div className="imagenes-preview">
+                <h4>Nuevas imágenes:</h4>
+                <div className="imagenes-grid">
+                  {imagenes.map((file, index) => (
+                    <div key={index} className="imagen-preview-item">
+                      <img
+                        src={URL.createObjectURL(file)}
+                        alt={`Nueva imagen ${index + 1}`}
+                      />
+                      <button
+                        type="button"
+                        onClick={() => eliminarImagenSeleccionada(index)}
+                        className="btn-eliminar-imagen"
+                        title="Eliminar imagen"
+                      >
+                        ✕
+                      </button>
+                    </div>
+                  ))}
+                </div>
               </div>
             )}
 
             <div className="form-group">
-              <label>Seleccionar imágenes</label>
+              <label>Agregar imágenes</label>
               <input
                 type="file"
                 accept="image/*"
@@ -307,11 +336,9 @@ function FormularioMercado() {
                 onChange={handleImagenesChange}
                 className="file-input"
               />
-              {imagenes.length > 0 && (
-                <p className="text-success">
-                  ✓ {imagenes.length} imagen{imagenes.length > 1 ? 'es' : ''} seleccionada{imagenes.length > 1 ? 's' : ''}
-                </p>
-              )}
+              <p className="text-muted">
+                {imagenesExistentes.length + imagenes.length}/10 imágenes
+              </p>
             </div>
           </section>
 
