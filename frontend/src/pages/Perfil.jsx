@@ -102,12 +102,21 @@ function Perfil() {
           </button>
           
           {usuario.rol === 'ADMIN' && (
-            <button 
-              onClick={() => navigate('/admin')} 
+            <button
+              onClick={() => navigate('/admin')}
               className="btn-primary"
               style={{ background: 'linear-gradient(135deg, #e74c3c 0%, #c0392b 100%)' }}
             >
               🛡️ Panel de Administración
+            </button>
+          )}
+          {(usuario.rol === 'GESTOR' || usuario.rol === 'ADMIN') && (
+            <button
+              onClick={() => navigate('/dashboard-gestor')}
+              className="btn-primary"
+              style={{ background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' }}
+            >
+              📊 Dashboard del Gestor
             </button>
           )}
           {(usuario.rol === 'GESTOR' || usuario.rol === 'ADMIN') && (

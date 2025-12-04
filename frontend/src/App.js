@@ -18,6 +18,7 @@ import GestionProductos from './pages/GestionProductos';
 import DetalleProducto from './pages/DetalleProducto';
 import DetallePlantilla from './pages/DetallePlantilla';
 import DashboardAdmin from './pages/DashboardAdmin';
+import DashboardGestor from './pages/DashboardGestor';
 import AboutUs from './pages/AboutUs';
 import Contacto from './pages/Contacto';
 
@@ -43,6 +44,7 @@ function App() {
           <Route path="/plantilla/:id" element={<DetallePlantilla />} />
           <Route path="/gestion-productos" element={<GestionProductos />} />
           <Route path="/admin" element={<DashboardAdmin />} />
+          <Route path="/dashboard-gestor" element={<DashboardGestor />} />
           <Route path="/sobre-nosotros" element={<AboutUs />} />
           <Route path="/contacto" element={<Contacto />} />
         </Routes>

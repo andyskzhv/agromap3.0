@@ -306,6 +306,12 @@ export const adminService = {
   obtenerComentarios: () => api.get('/admin/comentarios')
 };
 
+// Servicios de gestor
+export const gestorService = {
+  obtenerEstadisticas: () => api.get('/gestor/estadisticas'),
+  obtenerActividad: () => api.get('/gestor/actividad')
+};
+
 // Servicios de contacto
 export const contactoService = {
   enviar: (datos) => api.post('/contacto', datos)
