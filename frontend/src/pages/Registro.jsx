@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
+import HCaptcha from '@hcaptcha/react-hcaptcha';
 import { authService } from '../services/api';
 import { useToast } from '../components/Toast';
 import { usePageTitle } from '../hooks/usePageTitle';
@@ -20,6 +21,8 @@ function Registro() {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const [mostrarContrasena, setMostrarContrasena] = useState(false);
+  const [captchaToken, setCaptchaToken] = useState(null);
+  const captchaRef = React.useRef(null);
 
   const handleChange = (e) => {
     setFormData({
@@ -72,9 +75,35 @@ function Registro() {
     if (fileInput) fileInput.value = '';
   };
 
+  const handleCaptchaVerify = (token) => {
+    setCaptchaToken(token);
+    setError('');
+  };
+
+  const handleCaptchaExpire = () => {
+    setCaptchaToken(null);
+    setError('El captcha ha expirado. Por favor verifica nuevamente.');
+    toast.error('El captcha ha expirado');
+  };
+
+  const handleCaptchaError = (err) => {
+    setCaptchaToken(null);
+    setError('Error al cargar el captcha. Por favor recarga la página.');
+    toast.error('Error al cargar el captcha');
+    console.error('hCaptcha error:', err);
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
+
+    // Validar captcha antes de enviar
+    if (!captchaToken) {
+      setError('Por favor completa la verificación de seguridad');
+      toast.error('Por favor completa el captcha');
+      return;
+    }
+
     setLoading(true);
 
     try {
@@ -82,6 +111,7 @@ function Registro() {
       formDataToSend.append('nombre', formData.nombre);
       formDataToSend.append('nombreUsuario', formData.nombreUsuario);
       formDataToSend.append('contrasena', formData.contrasena);
+      formDataToSend.append('captchaToken', captchaToken);
       if (imagenFile) {
         formDataToSend.append('imagen', imagenFile);
       }
@@ -97,6 +127,12 @@ function Registro() {
     } catch (err) {
       setError(err.response?.data?.error || 'Error al registrar usuario');
       toast.error(err.response?.data?.error || 'Error al registrar usuario');
+
+      // Resetear captcha en caso de error
+      setCaptchaToken(null);
+      if (captchaRef.current) {
+        captchaRef.current.resetCaptcha();
+      }
     } finally {
       setLoading(false);
     }
@@ -185,6 +221,24 @@ function Registro() {
                   ×
                 </button>
               </div>
+            )}
+          </div>
+
+          <div className="form-group captcha-container">
+            <label>Verificación de seguridad</label>
+            <HCaptcha
+              ref={captchaRef}
+              sitekey={process.env.REACT_APP_HCAPTCHA_SITE_KEY}
+              onVerify={handleCaptchaVerify}
+              onExpire={handleCaptchaExpire}
+              onError={handleCaptchaError}
+              theme="light"
+              size="normal"
+            />
+            {!captchaToken && (
+              <span className="helper-text captcha-helper">
+                Por favor verifica que no eres un robot
+              </span>
             )}
           </div>
 

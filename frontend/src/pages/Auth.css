@@ -420,3 +420,44 @@
     right: 10px;
   }
 }
+
+/* hCaptcha Styling */
+.captcha-container {
+  margin: 1.5rem 0;
+}
+
+.captcha-container label {
+  display: block;
+  margin-bottom: 0.5rem;
+  color: #2c3e50;
+  font-weight: 500;
+}
+
+.captcha-helper {
+  display: block;
+  margin-top: 0.5rem;
+  font-size: 0.875rem;
+  color: #7f8c8d;
+}
+
+/* Centrar el widget de captcha */
+.captcha-container > div {
+  display: flex;
+  justify-content: center;
+  margin: 0.75rem 0;
+}
+
+/* Diseño responsive para captcha */
+@media (max-width: 768px) {
+  .captcha-container > div {
+    transform: scale(0.85);
+    transform-origin: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .captcha-container > div {
+    transform: scale(0.77);
+    transform-origin: center;
+  }
+}
