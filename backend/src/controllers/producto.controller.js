@@ -180,7 +180,8 @@ const crearProducto = async (req, res) => {
       unidadPrecio,
       estado,
       mercadoId,
-      plantillaId
+      plantillaId,
+      calidad
     } = req.body;
 
     // Validaciones
@@ -253,6 +254,7 @@ const crearProducto = async (req, res) => {
         unidadPrecio: unidadPrecio || 'UNIDAD',
         moneda: 'CUP',
         estado: estado || 'DISPONIBLE',
+        calidad: calidad ? parseInt(calidad) : null,
         mercadoId: parseInt(mercadoId),
         plantillaId: plantillaId ? parseInt(plantillaId) : null
       },
@@ -321,7 +323,8 @@ const actualizarProducto = async (req, res) => {
       precio,
       unidadPrecio,
       estado,
-      plantillaId
+      plantillaId,
+      calidad
     } = req.body;
 
     // Si se está actualizando la categoría, verificar que existe y está activa
@@ -385,6 +388,7 @@ const actualizarProducto = async (req, res) => {
         ...(unidadPrecio && { unidadPrecio }),
         ...(estado && { estado }),
         ...(plantillaId !== undefined && { plantillaId: plantillaId ? parseInt(plantillaId) : null }),
+        ...(calidad !== undefined && { calidad: calidad ? parseInt(calidad) : null }),
         fechaActualizacion: new Date()
       },
       include: {

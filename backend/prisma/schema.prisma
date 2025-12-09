@@ -103,6 +103,7 @@ model Producto {
   unidadPrecio       UnidadMedida    @default(UNIDAD)
   moneda             String          @default("CUP")
   estado             EstadoProducto  @default(DISPONIBLE)
+  calidad            Int?            // Calidad del producto: 1, 2 o 3 (opcional)
   fechaActualizacion DateTime        @default(now())
   mercadoId          Int
   plantillaId        Int?            // Nueva relación con plantilla (opcional)

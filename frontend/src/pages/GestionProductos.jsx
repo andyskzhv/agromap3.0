@@ -37,7 +37,8 @@ function GestionProductos() {
     tipoProducto: '',
     precio: '',
     unidadPrecio: 'LB',
-    estado: 'DISPONIBLE'
+    estado: 'DISPONIBLE',
+    calidad: ''
   });
   const [imagenesSeleccionadas, setImagenesSeleccionadas] = useState([]);
   const [imagenesExistentes, setImagenesExistentes] = useState([]);
@@ -107,7 +108,8 @@ function GestionProductos() {
       tipoProducto: '',
       precio: '',
       unidadPrecio: 'UNIDAD',
-      estado: 'DISPONIBLE'
+      estado: 'DISPONIBLE',
+      calidad: ''
     });
     setImagenesSeleccionadas([]);
     setImagenesExistentes([]);
@@ -125,7 +127,8 @@ function GestionProductos() {
       tipoProducto: '',
       precio: '',
       unidadPrecio: 'UNIDAD',
-      estado: 'DISPONIBLE'
+      estado: 'DISPONIBLE',
+      calidad: ''
     });
   };
 
@@ -141,7 +144,8 @@ function GestionProductos() {
       tipoProducto: producto.tipoProducto || '',
       precio: producto.precio || '',
       unidadPrecio: producto.unidadPrecio || 'UNIDAD',
-      estado: producto.estado
+      estado: producto.estado,
+      calidad: producto.calidad || ''
     });
     setImagenesSeleccionadas([]);
     setImagenesExistentes(producto.imagenes || []);
@@ -691,6 +695,19 @@ function GestionProductos() {
                     <option value="DISPONIBLE">Disponible</option>
                     <option value="NO_DISPONIBLE">No disponible</option>
                   </select>
+                </div>
+
+                <div className="form-group">
+                  <label>Calidad (Opcional)</label>
+                  <select name="calidad" value={formData.calidad} onChange={handleChange}>
+                    <option value="">Sin calidad especificada</option>
+                    <option value="1">🥇 Calidad 1</option>
+                    <option value="2">🥈 Calidad 2</option>
+                    <option value="3">🥉 Calidad 3</option>
+                  </select>
+                  <small className="form-help">
+                    Indica la calidad del producto según tu clasificación
+                  </small>
                 </div>
 
                 <div className="form-group">

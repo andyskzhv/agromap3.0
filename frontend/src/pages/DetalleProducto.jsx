@@ -305,6 +305,21 @@ function DetalleProducto() {
                 <span>{producto.tipoProducto}</span>
               </div>
             )}
+            {producto.calidad && (
+              <div className="info-card">
+                <strong>
+                  {producto.calidad === 1 && '🥇'}
+                  {producto.calidad === 2 && '🥈'}
+                  {producto.calidad === 3 && '🥉'}
+                  {' '}Calidad
+                </strong>
+                <span>
+                  {producto.calidad === 1 && 'Calidad 1'}
+                  {producto.calidad === 2 && 'Calidad 2'}
+                  {producto.calidad === 3 && 'Calidad 3'}
+                </span>
+              </div>
+            )}
             {producto.precio && (
               <div className="info-card precio-card">
                 <strong><FaDollarSign /> Precio</strong>
